@@ -1,5 +1,5 @@
 import configparser
-from system import System_25D
+from passive_interposer import PassiveInterposer
 
 def get_intp_types():
 	return ['passive']
@@ -31,7 +31,6 @@ def read_config():
 
 	interposer_type = config.get('interposer', 'intp_type')
 	assert interposer_type in get_intp_types(), 'only support for passive interposer so far (to update with active, photonic, and EMIB options)'
-	interposer_size = config.getfloat('interposer', 'intp_size')
 
 	chiplet_count = config.getint('chiplets', 'chiplet_count')
 	chiplet_width = get_list(config.get('chiplets', 'widths'))
@@ -39,10 +38,18 @@ def read_config():
 	chiplet_power = get_list(config.get('chiplets', 'powers'))
 	chiplet_connection = get_matrix(config.get('chiplets', 'connections'))
 
-	system = System_25D(chiplet_count)
+	if interposer_type == 'passive':
+		interposer_size = config.getfloat('interposer', 'intp_size')
+		system = PassiveInterposer()
+		system.set_chiplet_count(chiplet_count)
+		system.initialize()
+		system.set_interposer_size(interposer_size)
+		system.set_chiplet_power(chiplet_power)
+		system.set_chiplet_size(chiplet_width, chiplet_power)
+		system.set_connection_matrix(chiplet_connection)
 	return system
 
 if __name__ == "__main__":
 	system = read_config()
-	print (system.chiplet_count, system.power)
+	print (system.chiplet_count, system.intp_size, system.power)
 
