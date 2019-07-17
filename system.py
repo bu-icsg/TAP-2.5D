@@ -1,4 +1,4 @@
-from init_place_tight import InitPlaceTight
+import init_placement
 
 class System_25D:
 	# definiation of 2.5D system object, parent class, common properties and behaviors
@@ -36,6 +36,9 @@ class System_25D:
 	def set_connection_matrix(self, connection):
 		self.connection_matrix = connection
 
+	def set_granularity(self, granularity):
+		self.granularity = granularity
+
 	def initial_placement(self, init_place_option):
 		if init_place_option == 'tight':
-			InitPlaceTight(self.intp_size, self.chiplet_count, self.width, self.height)
+			init_placement.init_place_tight(self.intp_size, self.granularity, self.chiplet_count, self.width, self.height)
