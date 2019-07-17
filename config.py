@@ -20,7 +20,7 @@ def read_config():
 	path = config.get('general', 'path')
 
 	try:
-		granularity = config.getfloat('general', 'pddlacer_granularity')
+		granularity = config.getfloat('general', 'placer_granularity')
 	except:
 		granularity = 1.0
 
@@ -45,8 +45,9 @@ def read_config():
 		system.initialize()
 		system.set_interposer_size(interposer_size)
 		system.set_chiplet_power(chiplet_power)
-		system.set_chiplet_size(chiplet_width, chiplet_power)
+		system.set_chiplet_size(chiplet_width, chiplet_height)
 		system.set_connection_matrix(chiplet_connection)
+		system.set_granularity(granularity)
 	return system
 
 if __name__ == "__main__":
