@@ -48,9 +48,10 @@ def read_config():
 		system.set_chiplet_size(chiplet_width, chiplet_height)
 		system.set_connection_matrix(chiplet_connection)
 		system.set_granularity(granularity)
+		system.initial_placement(init_place_option)
 	return system
 
 if __name__ == "__main__":
 	system = read_config()
-	print (system.chiplet_count, system.intp_size, system.power)
+	print (system.chiplet_count, system.intp_size, system.power, system.x)
 

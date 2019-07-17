@@ -41,4 +41,10 @@ class System_25D:
 
 	def initial_placement(self, init_place_option):
 		if init_place_option == 'tight':
-			init_placement.init_place_tight(self.intp_size, self.granularity, self.chiplet_count, self.width, self.height)
+			x, y, rotation = init_placement.init_place_tight(self.intp_size, self.granularity, self.chiplet_count, self.width, self.height)
+			self.x = x
+			self.y = y
+			self.rotation = rotation
+
+	def gen_flp(self):
+		pass
