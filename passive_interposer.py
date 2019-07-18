@@ -66,38 +66,47 @@ class PassiveInterposer(System_25D):
 
 		with open(self.path+filename + 'sim.flp','w') as SIMP:
 			with open(self.path + filename + 'L3.flp', 'w') as L3_UbumpLayer:
-				L3_UbumpLayer.write("# Floorplan for Microbump Layer \n")
-				L3_UbumpLayer.write("# Line Format: <unit-name>\\t<width>\\t<height>\\t<left-x>\\t<bottom-y>\\t[<specific-heat>]\\t[<resistivity>]\n")
-				L3_UbumpLayer.write("# all dimensions are in meters\n")
-				L3_UbumpLayer.write("# comment lines begin with a '#' \n")
-				L3_UbumpLayer.write("# comments and empty lines are ignored\n\n")
-				x_offset0, y_offset0 = 0, 0
-				index_ubump = 0
-				for i in range(0, self.chiplet_count):
-					x_offset1 = x_offset0 + self.x[i] / 1000 - self.width[i] / 1000 * 0.5
-					y_offset1 = y_offset0 + self.y[i] / 1000 - self.height[i] / 1000 * 0.5
-					if self.ubump > 0:
-						L3_UbumpLayer.write("Ubump_"+str(index_ubump)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(self.ubump / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+mat_ubump)
-						L3_UbumpLayer.write("Ubump_"+str(index_ubump+1)+"\t"+str(self.ubump / 1000)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1+self.ubump / 1000)+mat_ubump)
-						L3_UbumpLayer.write("Ubump_"+str(index_ubump+2)+"\t"+str(self.ubump / 1000)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000)+"\t"+str(x_offset1+self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(y_offset1)+mat_ubump)
-						L3_UbumpLayer.write("Ubump_"+str(index_ubump+3)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(self.ubump / 1000)+"\t"+str(x_offset1+self.ubump / 1000)+"\t"+str(y_offset1+self.height[i] / 1000 - self.ubump / 1000)+mat_ubump)
-					index_ubump += 4
-					# not sure about the microbump density for the center region. Assume the same as the edge area so far. Need to be updated if the microbump pitch for center power/gnd clk is found
-					L3_UbumpLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(x_offset1 + self.ubump / 1000)+"\t"+str(y_offset1+self.ubump / 1000)+mat_ubump)
-					
-					SIMP.write("Unit_"+str(i)+"\t"+str(self.width[i] / 1000)+"\t"+str(self.height[i] / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+mat_ubump)
+				with open(self.path + filename + 'L4.flp', 'w') as L4_ChipLayer:
+					L3_UbumpLayer.write("# Floorplan for Microbump Layer \n")
+					L3_UbumpLayer.write("# Line Format: <unit-name>\\t<width>\\t<height>\\t<left-x>\\t<bottom-y>\\t[<specific-heat>]\\t[<resistivity>]\n")
+					L3_UbumpLayer.write("# all dimensions are in meters\n")
+					L3_UbumpLayer.write("# comment lines begin with a '#' \n")
+					L3_UbumpLayer.write("# comments and empty lines are ignored\n\n")
+					L4_ChipLayer.write("# Floorplan for Chip Layer\n")
+					L4_ChipLayer.write("# Line Format: <unit-name>\\t<width>\\t<height>\\t<left-x>\\t<bottom-y>\\t[<specific-heat>]\\t[<resistivity>]\n")
+					L4_ChipLayer.write("# all dimensions are in meters\n")
+					L4_ChipLayer.write("# comment lines begin with a '#' \n")
+					L4_ChipLayer.write("# comments and empty lines are ignored\n\n")
+
+					x_offset0, y_offset0 = 0, 0
+					index_ubump = 0
+					for i in range(0, self.chiplet_count):
+						x_offset1 = x_offset0 + self.x[i] / 1000 - self.width[i] / 1000 * 0.5
+						y_offset1 = y_offset0 + self.y[i] / 1000 - self.height[i] / 1000 * 0.5
+						if self.ubump > 0:
+							L3_UbumpLayer.write("Ubump_"+str(index_ubump)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(self.ubump / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+mat_ubump)
+							L3_UbumpLayer.write("Ubump_"+str(index_ubump+1)+"\t"+str(self.ubump / 1000)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1+self.ubump / 1000)+mat_ubump)
+							L3_UbumpLayer.write("Ubump_"+str(index_ubump+2)+"\t"+str(self.ubump / 1000)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000)+"\t"+str(x_offset1+self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(y_offset1)+mat_ubump)
+							L3_UbumpLayer.write("Ubump_"+str(index_ubump+3)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(self.ubump / 1000)+"\t"+str(x_offset1+self.ubump / 1000)+"\t"+str(y_offset1+self.height[i] / 1000 - self.ubump / 1000)+mat_ubump)
+							L4_ChipLayer.write("Ubump_"+str(index_ubump)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(self.ubump / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+Silicon)
+							L4_ChipLayer.write("Ubump_"+str(index_ubump+1)+"\t"+str(self.ubump / 1000)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1+self.ubump / 1000)+Silicon)
+							L4_ChipLayer.write("Ubump_"+str(index_ubump+2)+"\t"+str(self.ubump / 1000)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000)+"\t"+str(x_offset1+self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(y_offset1)+Silicon)
+							L4_ChipLayer.write("Ubump_"+str(index_ubump+3)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(self.ubump / 1000)+"\t"+str(x_offset1+self.ubump / 1000)+"\t"+str(y_offset1+self.height[i] / 1000 - self.ubump / 1000)+Silicon)
+						index_ubump += 4
+						# not sure about the microbump density for the center region. Assume the same as the edge area so far. Need to be updated if the microbump pitch for center power/gnd clk is found
+						L3_UbumpLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(x_offset1 + self.ubump / 1000)+"\t"+str(y_offset1+self.ubump / 1000)+mat_ubump)
+						L4_ChipLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(x_offset1 + self.ubump / 1000)+"\t"+str(y_offset1+self.ubump / 1000)+Silicon)
+						SIMP.write("Unit_"+str(i)+"\t"+str(self.width[i] / 1000)+"\t"+str(self.height[i] / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+mat_ubump)
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3.pdf")
+		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L4.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L4.pdf")
 
 		util.fill_space.fill_space(x_offset0,x_offset0+self.intp_size / 1000, y_offset0, y_offset0+self.intp_size / 1000, self.path+filename+'sim', self.path+filename+'L3', self.path+filename+'L3_UbumpLayer')
+		util.fill_space.fill_space(x_offset0,x_offset0+self.intp_size / 1000, y_offset0, y_offset0+self.intp_size / 1000, self.path+filename+'sim', self.path+filename+'L4', self.path+filename+'L4_ChipLayer')
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3_UbumpLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3_UbumpLayer.pdf")
+		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L4_ChipLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L4_ChipLayer.pdf")
 
 
 
 
 
-	# print floorplans into pdf files
-	# print "plotting floorplans......................."
-	# os.system("perl tofig.pl -f 4 "+path+filename+"L3.flp | fig2dev -L ps | ps2pdf - "+path+filename+"L3.pdf")
-	# os.system("perl tofig.pl -f 4 "+path+filename+"L4_Cores.flp | fig2dev -L ps | ps2pdf - "+path+filename+"L4_Cores.pdf")
-	# os.system("perl tofig.pl -f 4 "+path+filename+"L4.flp | fig2dev -L ps | ps2pdf - "+path+filename+"L4.pdf")
 	# os.system("perl tofig.pl -f 20 "+path+filename+"L5_TIM.flp | fig2dev -L ps | ps2pdf - "+path+filename+"L5_TIM.pdf")
