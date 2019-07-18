@@ -12,6 +12,9 @@ class System_25D:
 		self.x = [None] * self.chiplet_count
 		self.y = [None] * self.chiplet_count
 
+	def set_path(self, path):
+		self.path = path
+
 	def set_interposer_size(self, intp_size):
 		self.intp_size = intp_size
 
@@ -24,7 +27,8 @@ class System_25D:
 		self.height = [None] * self.chiplet_count
 		self.power = [None] * self.chiplet_count
 		self.x = [None] * self.chiplet_count
-		self.y = [None] * self.chiplet_count		
+		self.y = [None] * self.chiplet_count
+		self.ubump = 0
 
 	def set_chiplet_size(self, width, height):
 		self.width = width
