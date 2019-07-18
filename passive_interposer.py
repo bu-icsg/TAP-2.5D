@@ -1,6 +1,7 @@
 from system import System_25D
 import os
 import util.fill_space
+import subprocess
 
 class PassiveInterposer(System_25D):
 	"""docstring for Passive"""
@@ -144,3 +145,34 @@ class PassiveInterposer(System_25D):
 						Config_out.write(line.replace('0.1',str(r_convec)))
 					else:
 						Config_out.write(line)
+
+	def gen_ptrace(self, filename):
+		num_component = 0
+		component, component_name, component_index = [], [], []
+		# Read components from flp file
+		with open (self.path + filename + 'L4_ChipLayer.flp','r') as FLP:
+			for line in FLP:
+				line_sp = line.split()
+				if line_sp:
+					if line_sp[0] != '#':
+						component.append(line_sp[0])
+						comp = component[num_component].split('_')
+						component_name.append(comp[0])
+						component_index.append(int(comp[1]))
+						num_component+=1	
+
+		with open (self.path + filename + '.ptrace','w') as Ptrace:
+			# Write ptrace header
+			for i in range(0,num_component):
+				# if component_name[i] == 'Core':
+				Ptrace.write(component[i]+'\t')
+			Ptrace.write('\n')
+			for i in range(0,num_component):
+				if component_name[i] == 'Chiplet':
+					Ptrace.write(str(self.power[component_index[i]])+'\t')
+				# elif component_name[i] == 'Ubump':
+				# 	Ptrace.write('0.3\t')
+				else:
+					Ptrace.write('0\t')
+			Ptrace.write('\n')
+
