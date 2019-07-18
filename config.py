@@ -1,4 +1,5 @@
 import configparser
+import os
 from passive_interposer import PassiveInterposer
 
 def get_intp_types():
@@ -41,6 +42,9 @@ def read_config():
 	if interposer_type == 'passive':
 		interposer_size = config.getfloat('interposer', 'intp_size')
 		system = PassiveInterposer()
+		system.set_path(path)
+		if os.path.exists(path) == False:
+			os.system('mkdir -p ' + path)
 		system.set_chiplet_count(chiplet_count)
 		system.initialize()
 		system.set_interposer_size(interposer_size)
