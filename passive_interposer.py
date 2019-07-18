@@ -96,7 +96,7 @@ class PassiveInterposer(System_25D):
 						# not sure about the microbump density for the center region. Assume the same as the edge area so far. Need to be updated if the microbump pitch for center power/gnd clk is found
 						L3_UbumpLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(x_offset1 + self.ubump / 1000)+"\t"+str(y_offset1+self.ubump / 1000)+mat_ubump)
 						L4_ChipLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(x_offset1 + self.ubump / 1000)+"\t"+str(y_offset1+self.ubump / 1000)+Silicon)
-						SIMP.write("Unit_"+str(i)+"\t"+str(self.width[i] / 1000)+"\t"+str(self.height[i] / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+mat_ubump)
+						SIMP.write("Unit_"+str(i)+"\t"+str(self.width[i] / 1000)+"\t"+str(self.height[i] / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+"\n")
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3.pdf")
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L4.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L4.pdf")
 
