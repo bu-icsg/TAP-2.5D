@@ -105,8 +105,42 @@ class PassiveInterposer(System_25D):
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3_UbumpLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3_UbumpLayer.pdf")
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L4_ChipLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L4_ChipLayer.pdf")
 
+		with open(self.path+filename +'L5_TIM.flp','w') as L5_TIM:
+			L5_TIM.write("# Floorplan for TIM Layer \n")
+			L5_TIM.write("# Line Format: <unit-name>\\t<width>\\t<height>\\t<left-x>\\t<bottom-y>\\t[<specific-heat>]\\t[<resistivity>]\n")
+			L5_TIM.write("# all dimensions are in meters\n")
+			L5_TIM.write("# comment lines begin with a '#' \n")
+			L5_TIM.write("# comments and empty lines are ignored\n\n")
+			L5_TIM.write("TIM\t"+str(self.intp_size / 1000)+"\t"+str(self.intp_size / 1000)+"\t0.0\t0.0\n")
+		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L5_TIM.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L5_TIM.pdf")
 
+		with open(self.path+ 'layers.lcf','w') as LCF:
+			LCF.write("# File Format:\n")
+			LCF.write("#<Layer Number>\n")
+			LCF.write("#<Lateral heat flow Y/N?>\n")
+			LCF.write("#<Power Dissipation Y/N?>\n")
+			LCF.write("#<Specific heat capacity in J/(m^3K)>\n")
+			LCF.write("#<Resistivity in (m-K)/W>\n")
+			LCF.write("#<Thickness in m>\n")
+			LCF.write("#<floorplan file>\n")
+			LCF.write("\n# Layer 0: substrate\n0\nY\nN\n1.06E+06\n3.33\n0.0002\n"+self.path+filename+"L0_Substrate.flp\n")
+			LCF.write("\n# Layer 1: Epoxy SiO2 underfill with C4 copper pillar\n1\nY\nN\n2.32E+06\n0.625\n0.00007\n"+self.path+filename+"L1_C4Layer.flp\n")
+			LCF.write("\n# Layer 2: silicon interposer\n2\nY\nN\n1.75E+06\n0.01\n0.00011\n"+self.path+filename+"L2_Interposer.flp\n")
+			LCF.write("\n# Layer 3: Underfill with ubump\n3\nY\nN\n2.32E+06\n0.625\n1.00E-05\n"+self.path+filename+"L3_UbumpLayer.flp\n")
+			LCF.write("\n# Layer 4: Chip layer\n4\nY\nY\n1.75E+06\n0.01\n0.00015\n"+self.path+filename+"L4_ChipLayer.flp\n")
+			LCF.write("\n# Layer 5: TIM\n5\nY\nN\n4.00E+06\n0.25\n2.00E-05\n"+self.path+filename+"L5_TIM.flp\n")
 
-
-
-	# os.system("perl tofig.pl -f 20 "+path+filename+"L5_TIM.flp | fig2dev -L ps | ps2pdf - "+path+filename+"L5_TIM.pdf")
+		with open('util/hotspot.config','r') as Config_in:
+			with open(self.path + 'new_hotspot.config','w') as Config_out:
+				size_spreader = 2 * self.intp_size / 1000
+				size_heatsink = 2 * size_spreader
+				r_convec =  0.1 * 0.06 * 0.06 / size_heatsink / size_heatsink   #0.1*0.06*0.06 are from default hotspot.config file
+				for line in Config_in:
+					if line == '		-s_sink				0.06\n':
+						Config_out.write(line.replace('0.06',str(size_heatsink)))
+					elif line == '		-s_spreader			0.03\n':
+						Config_out.write(line.replace('0.03',str(size_spreader)))
+					elif line == '		-r_convec			0.1\n':
+						Config_out.write(line.replace('0.1',str(r_convec)))
+					else:
+						Config_out.write(line)
