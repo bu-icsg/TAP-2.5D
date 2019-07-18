@@ -52,3 +52,9 @@ class System_25D:
 
 	def gen_flp(self):
 		pass
+
+	def gen_ptrace(self):
+		pass
+
+	def run_hotspot(self):
+		pass
