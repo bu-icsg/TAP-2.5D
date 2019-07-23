@@ -115,7 +115,7 @@ class PassiveInterposer(System_25D):
 			L5_TIM.write("TIM\t"+str(self.intp_size / 1000)+"\t"+str(self.intp_size / 1000)+"\t0.0\t0.0\n")
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L5_TIM.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L5_TIM.pdf")
 
-		with open(self.path+ 'layers.lcf','w') as LCF:
+		with open(self.path+filename + 'layers.lcf','w') as LCF:
 			LCF.write("# File Format:\n")
 			LCF.write("#<Layer Number>\n")
 			LCF.write("#<Lateral heat flow Y/N?>\n")
