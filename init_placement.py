@@ -11,12 +11,12 @@ if it is already occupied. The grid (x, y) represent a unit square centered at (
 '''
 
 def slide_x_direction(grid, granularity, xx, yy, width, height):
-	while check_row_occupation(grid, granularity, xx-granularity, yy, width, height):
+	while check_col_occupation(grid, granularity, xx-granularity, yy, width, height):
 		xx -= granularity
 	return xx
 
 def slide_y_direction(grid, granularity, xx, yy, width, height):
-	while check_col_occupation(grid, granularity, xx, yy-granularity, width, height):
+	while check_row_occupation(grid, granularity, xx, yy-granularity, width, height):
 		yy -= granularity
 	return yy
 

@@ -20,7 +20,7 @@ def check_block_occupation(grid, granularity, xx, yy, width, height):
 			return False
 	return True
 
-def check_row_occupation(grid, granularity, xx, yy, width, height):
+def check_col_occupation(grid, granularity, xx, yy, width, height):
 	i = int(xx/granularity) - int(width/2/granularity+0.49)
 	if i<=0:
 		return False
@@ -29,7 +29,7 @@ def check_row_occupation(grid, granularity, xx, yy, width, height):
 	else:
 		return True
 
-def check_col_occupation(grid, granularity, xx, yy, width, height):
+def check_row_occupation(grid, granularity, xx, yy, width, height):
 	j = int(yy/granularity) - int(height/2/granularity+0.49)
 	if j<=0:
 		return False
