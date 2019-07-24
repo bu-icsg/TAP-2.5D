@@ -29,7 +29,7 @@ def set_block_occupation(grid, granularity, xx, yy, width, height, chiplet_index
 def clear_block_occupation(grid, granularity, xx, yy, width, height, chiplet_index):
 	for i in range(int(xx/granularity)-int(width/2/granularity+0.49), int(xx/granularity)+int(width/2/granularity+0.49)+1):
 		for j in range(int(yy/granularity)-int(height/2/granularity+0.49), int(yy/granularity)+int(height/2/granularity+0.49)+1):
-			if grid[i][j] != chiplet_index:
+			if grid[i][j] != chiplet_index + 2:
 				print ("something wrong, chiplet index mismatch")
 				exit()
 			grid[i][j] = 0
@@ -38,11 +38,6 @@ def clear_block_occupation(grid, granularity, xx, yy, width, height, chiplet_ind
 def replace_block_occupation(grid, granularity, xx, yy, xx_new, yy_new, width, height, chiplet_index):
 	for i in range(int(xx/granularity)-int(width/2/granularity+0.49), int(xx/granularity)+int(width/2/granularity+0.49)+1):
 		for j in range(int(yy/granularity)-int(height/2/granularity+0.49), int(yy/granularity)+int(height/2/granularity+0.49)+1):
-			if grid[i][j] != chiplet_index:
-				print ("something wrong, chiplet index mismatch")
-				exit()
-			grid[i][j] = 0	
-	for i in range(int(xx_new/granularity)-int(width/2/granularity+0.49), int(xx_new/granularity)+int(width/2/granularity+0.49)+1):
-		if (sum(grid[i][int(yy_new/granularity)-int(height/2/granularity+0.49):int(yy_new/granularity)+int(height/2/granularity+0.49)+1])):
-			return False
+			if (grid[i][j] != chiplet_index + 2) or (grid[i][j] != 0):
+				return False
 	return True
