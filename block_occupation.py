@@ -20,6 +20,24 @@ def check_block_occupation(grid, granularity, xx, yy, width, height):
 			return False
 	return True
 
+def check_row_occupation(grid, granularity, xx, yy, width, height):
+	i = int(xx/granularity) - int(width/2/granularity+0.49)
+	if i<=0:
+		return False
+	if (sum(grid[i][int(yy/granularity)-int(height/2/granularity+0.49):int(yy/granularity)+int(height/2/granularity+0.49)+1])):
+		return False
+	else:
+		return True
+
+def check_col_occupation(grid, granularity, xx, yy, width, height):
+	j = int(yy/granularity) - int(height/2/granularity+0.49)
+	if j<=0:
+		return False
+	for i in range(int(xx/granularity)-int(width/2/granularity+0.49), int(xx/granularity)+int(width/2/granularity+0.49)+1):
+		if grid[i][j]:
+			return False
+	return True
+
 def set_block_occupation(grid, granularity, xx, yy, width, height, chiplet_index):
 	for i in range(int(xx/granularity)-int(width/2/granularity+0.49), int(xx/granularity)+int(width/2/granularity+0.49)+1):
 		for j in range(int(yy/granularity)-int(height/2/granularity+0.49), int(yy/granularity)+int(height/2/granularity+0.49)+1):

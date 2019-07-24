@@ -10,24 +10,6 @@ if it is already occupied. The grid (x, y) represent a unit square centered at (
 (area from [x-0.5, x+0.5] * [y-0.5, y+0.5])
 '''
 
-def check_row_occupation(grid, granularity, xx, yy, width, height):
-	i = int(xx/granularity) - int(width/2/granularity+0.49)
-	if i<=0:
-		return False
-	if (sum(grid[i][int(yy/granularity)-int(height/2/granularity+0.49):int(yy/granularity)+int(height/2/granularity+0.49)+1])):
-		return False
-	else:
-		return True
-
-def check_col_occupation(grid, granularity, xx, yy, width, height):
-	j = int(yy/granularity) - int(height/2/granularity+0.49)
-	if j<=0:
-		return False
-	for i in range(int(xx/granularity)-int(width/2/granularity+0.49), int(xx/granularity)+int(width/2/granularity+0.49)+1):
-		if grid[i][j]:
-			return False
-	return True
-
 def slide_x_direction(grid, granularity, xx, yy, width, height):
 	while check_row_occupation(grid, granularity, xx-granularity, yy, width, height):
 		xx -= granularity
@@ -60,6 +42,7 @@ def init_place_tight(intp_size, granularity, chiplet_count, width, height):
 		# print ('slide to ', xx, yy)
 		grid = block_occupation.set_block_occupation(grid, granularity, xx, yy, width[i], height[i], i)
 		x[i], y[i] = xx, yy
+	# for testing purpose, print the grid
 	block_occupation.print_grid(grid)
 	return x, y, rotation
 
