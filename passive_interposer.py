@@ -187,7 +187,7 @@ class PassiveInterposer(System_25D):
 			"-grid_steady_file",self.path+filename+".grid.steady",
 			"-model_type","grid",
 			"-detailed_3D","on",
-			"-grid_layer_file",self.path+"layers.lcf"], 
+			"-grid_layer_file",self.path+filename+"layers.lcf"], 
 			stdout=subprocess.PIPE, stderr = subprocess.PIPE)
 		stdout, stderr = proc.communicate()
 		outlist = stdout.split()
