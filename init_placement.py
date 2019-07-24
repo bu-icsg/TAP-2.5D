@@ -58,7 +58,7 @@ def init_place_tight(intp_size, granularity, chiplet_count, width, height):
 		xx = slide_x_direction(grid, granularity, xx, yy, width[i], height[i])
 		yy = slide_y_direction(grid, granularity, xx, yy, width[i], height[i])
 		# print ('slide to ', xx, yy)
-		grid = block_occupation.set_block_occupation(grid, granularity, xx, yy, width[i], height[i], i+1)
+		grid = block_occupation.set_block_occupation(grid, granularity, xx, yy, width[i], height[i], i)
 		x[i], y[i] = xx, yy
 	block_occupation.print_grid(grid)
 	return x, y, rotation
