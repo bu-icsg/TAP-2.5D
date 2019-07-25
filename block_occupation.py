@@ -72,6 +72,8 @@ def clear_block_occupation(grid, granularity, xx, yy, width, height, chiplet_ind
 	for i in range(int(xx/granularity)-int(width/2/granularity+0.49), int(xx/granularity)+int(width/2/granularity+0.49)+1):
 		for j in range(int(yy/granularity)-int(height/2/granularity+0.49), int(yy/granularity)+int(height/2/granularity+0.49)+1):
 			if grid[i][j] != chiplet_index + 2:
+				print (chiplet_index, grid[i][j], i, j)
+				print ('x- ',int(xx/granularity)-int(width/2/granularity+0.49), int(xx/granularity)+int(width/2/granularity+0.49)+1, 'y-',int(yy/granularity)-int(height/2/granularity+0.49), int(yy/granularity)+int(height/2/granularity+0.49)+1)
 				print ("something wrong, chiplet index mismatch")
 				exit()
 			grid[i][j] = 0
