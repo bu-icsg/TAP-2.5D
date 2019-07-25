@@ -43,6 +43,6 @@ def init_place_tight(intp_size, granularity, chiplet_count, width, height):
 		grid = block_occupation.set_block_occupation(grid, granularity, xx, yy, width[i], height[i], i)
 		x[i], y[i] = xx, yy
 	# for testing purpose, print the grid
-	block_occupation.print_grid(grid)
+	# block_occupation.print_grid(grid)
 	return x, y, rotation
 

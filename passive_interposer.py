@@ -45,7 +45,7 @@ class PassiveInterposer(System_25D):
 			L0_Substrate.write("# comment lines begin with a '#' \n")
 			L0_Substrate.write("# comments and empty lines are ignored\n\n")
 			L0_Substrate.write("Substrate\t"+str(self.intp_size/1000)+"\t"+str(self.intp_size/1000)+"\t0.0\t0.0\n")
-		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L0_Substrate.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L0_Substrate.pdf")
+		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L0_Substrate.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L0_Substrate.pdf")
 
 		with open(self.path+filename +'L1_C4Layer.flp','w') as L1_C4Layer:
 			L1_C4Layer.write("# Floorplan for C4 Layer \n")
@@ -54,7 +54,7 @@ class PassiveInterposer(System_25D):
 			L1_C4Layer.write("# comment lines begin with a '#' \n")
 			L1_C4Layer.write("# comments and empty lines are ignored\n\n")
 			L1_C4Layer.write("C4Layer\t"+str(self.intp_size / 1000)+"\t"+str(self.intp_size / 1000)+"\t0.0\t0.0"+mat_C4)
-		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L1_C4Layer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L1_C4Layer.pdf")
+		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L1_C4Layer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L1_C4Layer.pdf")
 
 		with open(self.path+filename +'L2_Interposer.flp','w') as L2_Interposer:
 			L2_Interposer.write("# Floorplan for Silicon Interposer Layer\n")
@@ -63,7 +63,7 @@ class PassiveInterposer(System_25D):
 			L2_Interposer.write("# comment lines begin with a '#' \n")
 			L2_Interposer.write("# comments and empty lines are ignored\n\n")
 			L2_Interposer.write("Interposer\t"+str(self.intp_size / 1000)+"\t"+str(self.intp_size / 1000)+"\t0.0\t0.0"+mat_TSV)
-		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L2_Interposer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L2_Interposer.pdf")
+		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L2_Interposer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L2_Interposer.pdf")
 
 		with open(self.path+filename + 'sim.flp','w') as SIMP:
 			with open(self.path + filename + 'L3.flp', 'w') as L3_UbumpLayer:
@@ -98,12 +98,12 @@ class PassiveInterposer(System_25D):
 						L3_UbumpLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(x_offset1 + self.ubump / 1000)+"\t"+str(y_offset1+self.ubump / 1000)+mat_ubump)
 						L4_ChipLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(x_offset1 + self.ubump / 1000)+"\t"+str(y_offset1+self.ubump / 1000)+Silicon)
 						SIMP.write("Unit_"+str(i)+"\t"+str(self.width[i] / 1000)+"\t"+str(self.height[i] / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+"\n")
-		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3.pdf")
+		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3.pdf")
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L4.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L4.pdf")
 
 		util.fill_space.fill_space(x_offset0,x_offset0+self.intp_size / 1000, y_offset0, y_offset0+self.intp_size / 1000, self.path+filename+'sim', self.path+filename+'L3', self.path+filename+'L3_UbumpLayer')
 		util.fill_space.fill_space(x_offset0,x_offset0+self.intp_size / 1000, y_offset0, y_offset0+self.intp_size / 1000, self.path+filename+'sim', self.path+filename+'L4', self.path+filename+'L4_ChipLayer')
-		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3_UbumpLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3_UbumpLayer.pdf")
+		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3_UbumpLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3_UbumpLayer.pdf")
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L4_ChipLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L4_ChipLayer.pdf")
 
 		with open(self.path+filename +'L5_TIM.flp','w') as L5_TIM:
@@ -113,7 +113,7 @@ class PassiveInterposer(System_25D):
 			L5_TIM.write("# comment lines begin with a '#' \n")
 			L5_TIM.write("# comments and empty lines are ignored\n\n")
 			L5_TIM.write("TIM\t"+str(self.intp_size / 1000)+"\t"+str(self.intp_size / 1000)+"\t0.0\t0.0\n")
-		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L5_TIM.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L5_TIM.pdf")
+		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L5_TIM.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L5_TIM.pdf")
 
 		with open(self.path+filename + 'layers.lcf','w') as LCF:
 			LCF.write("# File Format:\n")
@@ -131,20 +131,21 @@ class PassiveInterposer(System_25D):
 			LCF.write("\n# Layer 4: Chip layer\n4\nY\nY\n1.75E+06\n0.01\n0.00015\n"+self.path+filename+"L4_ChipLayer.flp\n")
 			LCF.write("\n# Layer 5: TIM\n5\nY\nN\n4.00E+06\n0.25\n2.00E-05\n"+self.path+filename+"L5_TIM.flp\n")
 
-		with open('util/hotspot.config','r') as Config_in:
-			with open(self.path + 'new_hotspot.config','w') as Config_out:
-				size_spreader = 2 * self.intp_size / 1000
-				size_heatsink = 2 * size_spreader
-				r_convec =  0.1 * 0.06 * 0.06 / size_heatsink / size_heatsink   #0.1*0.06*0.06 are from default hotspot.config file
-				for line in Config_in:
-					if line == '		-s_sink				0.06\n':
-						Config_out.write(line.replace('0.06',str(size_heatsink)))
-					elif line == '		-s_spreader			0.03\n':
-						Config_out.write(line.replace('0.03',str(size_spreader)))
-					elif line == '		-r_convec			0.1\n':
-						Config_out.write(line.replace('0.1',str(r_convec)))
-					else:
-						Config_out.write(line)
+		if os.path.isfile(self.path + 'new_hotspot.config') == False:
+			with open('util/hotspot.config','r') as Config_in:
+				with open(self.path + 'new_hotspot.config','w') as Config_out:
+					size_spreader = 2 * self.intp_size / 1000
+					size_heatsink = 2 * size_spreader
+					r_convec =  0.1 * 0.06 * 0.06 / size_heatsink / size_heatsink   #0.1*0.06*0.06 are from default hotspot.config file
+					for line in Config_in:
+						if line == '		-s_sink				0.06\n':
+							Config_out.write(line.replace('0.06',str(size_heatsink)))
+						elif line == '		-s_spreader			0.03\n':
+							Config_out.write(line.replace('0.03',str(size_spreader)))
+						elif line == '		-r_convec			0.1\n':
+							Config_out.write(line.replace('0.1',str(r_convec)))
+						else:
+							Config_out.write(line)
 
 	def gen_ptrace(self, filename):
 		num_component = 0
