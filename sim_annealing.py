@@ -1,7 +1,9 @@
 import random
+import math
 import numpy as np
 import config
 import block_occupation
+from copy import deepcopy
 
 def boundary_check(system, p, x, y):
 	if (x - system.width[p] / 2) < 0:
@@ -24,17 +26,22 @@ def close_neighbor(system, grid):
 		# print ('chiplet ', p + 2)
 		for d in direction_order:
 			# print (d)
+			# re-connect the direction with the appropriate function in order to easily visulize using print-grid(). The dirctions are referring to the grid printed on screen, the directions in functions are referring to conventional x-y coordinates, origin in the left-bottom corner.
 			if d == 'left':
 				if block_occupation.check_down_occupation(grid, granularity, xx, yy - granularity, width, height):
+					print ('chiplet', p + 2, d)
 					return p, xx, yy - granularity
 			elif (d == 'right') and (yy + granularity <= system.intp_size):
 				if block_occupation.check_up_occupation(grid, granularity, xx, yy + granularity, width, height):
+					print ('chiplet', p + 2, d)
 					return p, xx, yy + granularity
 			elif d == 'up':
 				if block_occupation.check_left_occupation(grid, granularity, xx - granularity, yy, width, height):
+					print ('chiplet', p + 2, d)
 					return p, xx - granularity, yy
 			elif (d == 'down') and (xx + granularity <= system.intp_size):
 				if block_occupation.check_right_occupation(grid, granularity, xx + granularity, yy, width, height):
+					print ('chiplet', p + 2, d)
 					return p, xx + granularity, yy
 	print ('No chiplet can be moved.')
 	exit()
@@ -56,19 +63,45 @@ def random_neighbor(system, grid):
 		count += 1
 		if count > 10000:
 			# it's not easy to find a legal placement using random method. try move each chiplet (in random order) slightly until find a legal solution
-			close_neighbor(system, grid)
-			break
+			return close_neighbor(system, grid)
 	return pick_chiplet, x_new, y_new
+
+# def accept_probability(old_temp, new_temp, old_length, new_length, T):
+# 	if new_length <= length_threshold and old_length <= length_threshold:
+# 		# already meet length threshold, highlight temperature term
+# 		delta = 0.9 * (old_temp - new_temp) * 4.0 + 0.1 * (old_length - new_length)
+# 	else:
+# 		# not meet length threshold, highlight length term
+# 		delta = 0.1 * (old_temp - new_temp) * 4.0 + 0.9 * (old_length - new_length)
+# 	# delta = (old_temp - new_temp) * 4.0 + min(0, length_threshold - new_length)
+# 	print old_temp, new_temp, old_length, new_length, T, delta
+# 	if delta > 0:
+# 		ap = 1
+# 	else:
+# 		ap = math.exp( delta / T )
+# 	return ap
+
+def accept_probability(old_temp, new_temp, T):
+	delta = (old_temp - new_temp)
+	# delta = (old_temp - new_temp) * 4.0 + min(0, length_threshold - new_length)
+	# print (old_temp, new_temp, T, delta)
+	if delta > 0:
+		ap = 1
+	else:
+		ap = math.exp( delta / T )
+	return ap
 
 def anneal():
 	# first step: read config and generate initial placement
 	system = config.read_config()
+	system_new = deepcopy(system)
+	system_best = deepcopy(system)
 	step = 0
 	system.gen_flp('step_'+str(step))
 	system.gen_ptrace('step_'+str(step))
-	# temp_current = system.run_hotspot('step_'+str(step))
-	# temp_best = temp_current
-	# print ('step_'+str(step), temp_current)
+	temp_current = system.run_hotspot('step_'+str(step))
+	temp_best = temp_current
+	print ('step_'+str(step), temp_current)
 	step_best = 0
 	x_best, y_best = system.x[:], system.y[:]
 	intp_size = system.intp_size
@@ -76,18 +109,40 @@ def anneal():
 	grid = block_occupation.initialize_grid(int(intp_size/granularity))
 	for i in range(system.chiplet_count):
 		grid = block_occupation.set_block_occupation(grid, granularity, system.x[i], system.y[i], system.width[i], system.height[i], i)
-
-	print (close_neighbor(system, grid))
-
+	block_occupation.print_grid(grid)
 	# set annealing parameters
 	T = 1.0
 	T_min = 0.01
 	alpha = 0.8
-	# while T>T_min:
-	# 	i = 1
-	# 	while i <= intp_size:
-	# 		step += 1
-	# 		print ('step_'+str(step), ' T = ',T, ' i = ', i)
+	while T>T_min:
+		i = 1
+		while i <= intp_size:
+			step += 1
+			print ('step_'+str(step), ' T = ',T, ' i = ', i)
+			chiplet_moving, x_new, y_new = close_neighbor(system, grid)
+			print ('moving chiplet', chiplet_moving + 2, 'from (', system.x[chiplet_moving], system.y[chiplet_moving], ') to (', x_new, y_new, ')')
+
+			system_new.x[chiplet_moving], system_new.y[chiplet_moving] = x_new, y_new
+			system_new.gen_flp('step_' + str(step))
+			system_new.gen_ptrace('step_'+str(step))
+			temp_new = system_new.run_hotspot('step_'+str(step))
+			ap = accept_probability(temp_current, temp_new, T)
+			r = random.random()
+			if ap > r:
+				grid = block_occupation.clear_block_occupation(grid, granularity, system.x[chiplet_moving], system.y[chiplet_moving], system.width[chiplet_moving], system.height[chiplet_moving], chiplet_moving)
+				grid = block_occupation.set_block_occupation(grid, granularity, x_new, y_new, system.width[chiplet_moving], system.height[chiplet_moving], chiplet_moving)
+				block_occupation.print_grid(grid)
+				system = deepcopy(system_new)
+				temp_current = temp_new
+				if temp_new < temp_best:
+					temp_best = temp_new
+					system_best = deepcopy(system_new)
+				print ('AP = ', ap, ' > ', r, ' Accept!')				
+			else:
+				print ('AP = ', ap, ' < ', r, ' Reject!')	
+		T *= alpha
+	return system_best
 
 if __name__ == "__main__":
-	anneal()
+	solution = anneal()
+
