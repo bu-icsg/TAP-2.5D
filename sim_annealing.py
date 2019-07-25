@@ -63,6 +63,7 @@ def random_neighbor(system, grid):
 		count += 1
 		if count > 10000:
 			# it's not easy to find a legal placement using random method. try move each chiplet (in random order) slightly until find a legal solution
+			print ('cannot find a legal random placement, go with close_neighbor')
 			return close_neighbor(system, grid)
 	return pick_chiplet, x_new, y_new
 
@@ -119,9 +120,9 @@ def anneal():
 		while i <= intp_size:
 			step += 1
 			print ('step_'+str(step), ' T = ',T, ' i = ', i)
-			chiplet_moving, x_new, y_new = close_neighbor(system, grid)
+			chiplet_moving, x_new, y_new = random_neighbor(system, grid)
 			print ('moving chiplet', chiplet_moving + 2, 'from (', system.x[chiplet_moving], system.y[chiplet_moving], ') to (', x_new, y_new, ')')
-
+			system_new = deepcopy(system)
 			system_new.x[chiplet_moving], system_new.y[chiplet_moving] = x_new, y_new
 			system_new.gen_flp('step_' + str(step))
 			system_new.gen_ptrace('step_'+str(step))
