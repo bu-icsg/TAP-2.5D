@@ -115,7 +115,7 @@ def anneal():
 	T = 1.0
 	T_min = 0.01
 	alpha = 0.8
-	while T>T_min:
+	while T > T_min:
 		i = 1
 		while i <= intp_size:
 			step += 1
@@ -141,6 +141,7 @@ def anneal():
 				print ('AP = ', ap, ' > ', r, ' Accept!')				
 			else:
 				print ('AP = ', ap, ' < ', r, ' Reject!')	
+			i += 1
 		T *= alpha
 	return system_best
 
