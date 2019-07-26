@@ -106,12 +106,12 @@ class PassiveInterposer(System_25D):
 						L3_UbumpLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(x_offset1 + self.ubump / 1000)+"\t"+str(y_offset1+self.ubump / 1000)+mat_ubump)
 						L4_ChipLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(x_offset1 + self.ubump / 1000)+"\t"+str(y_offset1+self.ubump / 1000)+Silicon)
 						SIMP.write("Unit_"+str(i)+"\t"+str(self.width[i] / 1000)+"\t"+str(self.height[i] / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+"\n")
-		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3.pdf")
+		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3.pdf")
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L4.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L4.pdf")
 
 		util.fill_space.fill_space(x_offset0, self.intp_size / 1000 - x_offset0, y_offset0, self.intp_size / 1000 - y_offset0, self.path+filename+'sim', self.path+filename+'L3', self.path+filename+'L3_UbumpLayer')
 		util.fill_space.fill_space(x_offset0, self.intp_size / 1000 - x_offset0, y_offset0, self.intp_size / 1000 - y_offset0, self.path+filename+'sim', self.path+filename+'L4', self.path+filename+'L4_ChipLayer')
-		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3_UbumpLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3_UbumpLayer.pdf")
+		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3_UbumpLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3_UbumpLayer.pdf")
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L4_ChipLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L4_ChipLayer.pdf")
 
 		with open(self.path+filename +'L5_TIM.flp','w') as L5_TIM:
