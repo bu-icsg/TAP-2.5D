@@ -78,12 +78,20 @@ class PassiveInterposer(System_25D):
 					L4_ChipLayer.write("# all dimensions are in meters\n")
 					L4_ChipLayer.write("# comment lines begin with a '#' \n")
 					L4_ChipLayer.write("# comments and empty lines are ignored\n\n")
-
-					x_offset0, y_offset0 = 0, 0
+					L3_UbumpLayer.write('Edge_0\t' + str(self.intp_size / 1000 - self.granularity / 1000) + '\t' + str(self.granularity / 2 / 1000) + '\t'+str(self.granularity/2/1000)+'\t0\t' + mat_ubump)
+					L3_UbumpLayer.write('Edge_1\t' + str(self.intp_size / 1000 - self.granularity / 1000) + '\t' + str(self.granularity / 2 / 1000) + '\t'+str(self.granularity/2/1000)+'\t'+ str(self.intp_size / 1000 - self.granularity / 2 / 1000)+'\t' + mat_ubump)
+					L3_UbumpLayer.write('Edge_2\t' + str(self.granularity / 2 / 1000) + '\t' + str(self.intp_size / 1000) + '\t0\t0\t' + mat_ubump)
+					L3_UbumpLayer.write('Edge_3\t' + str(self.granularity / 2 / 1000) + '\t' + str(self.intp_size / 1000) + '\t'+str(self.intp_size/1000-self.granularity / 2/1000)+'\t0\t' + mat_ubump)
+					L4_ChipLayer.write('Edge_0\t' + str(self.intp_size / 1000 - self.granularity / 1000) + '\t' + str(self.granularity / 2 / 1000) + '\t'+str(self.granularity/2/1000)+'\t0\t' + mat_ubump)
+					L4_ChipLayer.write('Edge_1\t' + str(self.intp_size / 1000 - self.granularity / 1000) + '\t' + str(self.granularity / 2 / 1000) + '\t'+str(self.granularity/2/1000)+'\t'+ str(self.intp_size / 1000 - self.granularity / 2 / 1000)+'\t' + mat_ubump)
+					L4_ChipLayer.write('Edge_2\t' + str(self.granularity / 2 / 1000) + '\t' + str(self.intp_size / 1000) + '\t0\t0\t' + mat_ubump)
+					L4_ChipLayer.write('Edge_3\t' + str(self.granularity / 2 / 1000) + '\t' + str(self.intp_size / 1000) + '\t'+str(self.intp_size/1000-self.granularity / 2/1000)+'\t0\t' + mat_ubump)
+					
+					x_offset0, y_offset0 = self.granularity / 2 / 1000, self.granularity / 2 / 1000
 					index_ubump = 0
 					for i in range(0, self.chiplet_count):
-						x_offset1 = x_offset0 + self.x[i] / 1000 - self.width[i] / 1000 * 0.5
-						y_offset1 = y_offset0 + self.y[i] / 1000 - self.height[i] / 1000 * 0.5
+						x_offset1 = self.x[i] / 1000 - self.width[i] / 1000 * 0.5
+						y_offset1 = self.y[i] / 1000 - self.height[i] / 1000 * 0.5
 						if self.ubump > 0:
 							L3_UbumpLayer.write("Ubump_"+str(index_ubump)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(self.ubump / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+mat_ubump)
 							L3_UbumpLayer.write("Ubump_"+str(index_ubump+1)+"\t"+str(self.ubump / 1000)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1+self.ubump / 1000)+mat_ubump)
@@ -98,12 +106,12 @@ class PassiveInterposer(System_25D):
 						L3_UbumpLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(x_offset1 + self.ubump / 1000)+"\t"+str(y_offset1+self.ubump / 1000)+mat_ubump)
 						L4_ChipLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(x_offset1 + self.ubump / 1000)+"\t"+str(y_offset1+self.ubump / 1000)+Silicon)
 						SIMP.write("Unit_"+str(i)+"\t"+str(self.width[i] / 1000)+"\t"+str(self.height[i] / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+"\n")
-		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3.pdf")
+		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3.pdf")
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L4.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L4.pdf")
 
-		util.fill_space.fill_space(x_offset0,x_offset0+self.intp_size / 1000, y_offset0, y_offset0+self.intp_size / 1000, self.path+filename+'sim', self.path+filename+'L3', self.path+filename+'L3_UbumpLayer')
-		util.fill_space.fill_space(x_offset0,x_offset0+self.intp_size / 1000, y_offset0, y_offset0+self.intp_size / 1000, self.path+filename+'sim', self.path+filename+'L4', self.path+filename+'L4_ChipLayer')
-		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3_UbumpLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3_UbumpLayer.pdf")
+		util.fill_space.fill_space(x_offset0, self.intp_size / 1000 - x_offset0, y_offset0, self.intp_size / 1000 - y_offset0, self.path+filename+'sim', self.path+filename+'L3', self.path+filename+'L3_UbumpLayer')
+		util.fill_space.fill_space(x_offset0, self.intp_size / 1000 - x_offset0, y_offset0, self.intp_size / 1000 - y_offset0, self.path+filename+'sim', self.path+filename+'L4', self.path+filename+'L4_ChipLayer')
+		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3_UbumpLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3_UbumpLayer.pdf")
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L4_ChipLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L4_ChipLayer.pdf")
 
 		with open(self.path+filename +'L5_TIM.flp','w') as L5_TIM:
@@ -176,8 +184,6 @@ class PassiveInterposer(System_25D):
 				else:
 					Ptrace.write('0\t')
 			Ptrace.write('\n')
-
-
 
 	def run_hotspot(self, filename):
 		proc = subprocess.Popen(["./util/hotspot",
