@@ -79,9 +79,9 @@ def clear_block_occupation(grid, granularity, xx, yy, width, height, chiplet_ind
 			grid[i][j] = 0
 	return grid
 
-def replace_block_occupation(grid, granularity, xx, yy, xx_new, yy_new, width, height, chiplet_index):
-	for i in range(int(xx/granularity)-int(width/2/granularity+0.49), int(xx/granularity)+int(width/2/granularity+0.49)+1):
-		for j in range(int(yy/granularity)-int(height/2/granularity+0.49), int(yy/granularity)+int(height/2/granularity+0.49)+1):
-			if (grid[i][j] != chiplet_index + 2) or (grid[i][j] != 0):
+def replace_block_occupation(grid, granularity, xx_new, yy_new, width, height, chiplet_index):
+	for i in range(int(xx_new/granularity)-int(width/2/granularity+0.49), int(xx_new/granularity)+int(width/2/granularity+0.49)+1):
+		for j in range(int(yy_new/granularity)-int(height/2/granularity+0.49), int(yy_new/granularity)+int(height/2/granularity+0.49)+1):
+			if (grid[i][j] != chiplet_index + 2) and (grid[i][j] != 0):
 				return False
 	return True
