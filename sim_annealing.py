@@ -58,7 +58,11 @@ def random_neighbor(system, grid):
 		pick_chiplet = random.randint(0, n - 1)
 		x_new = random.randint(1, system.intp_size / granularity - 1) * granularity
 		y_new = random.randint(1, system.intp_size / granularity - 1) * granularity
-		if boundary_check(system, pick_chiplet, x_new, y_new) and block_occupation.replace_block_occupation(grid, granularity, system.x[pick_chiplet], system.y[pick_chiplet], x_new, y_new, system.width[pick_chiplet], system.height[pick_chiplet], pick_chiplet):
+		print (count, 'moving chiplet', pick_chiplet + 2, 'from (', system.x[pick_chiplet], system.y[pick_chiplet], ') to (', x_new, y_new, ')')
+		print ('boundary_check', boundary_check(system, pick_chiplet, x_new, y_new))
+		print ('occupation check', block_occupation.replace_block_occupation(grid, granularity, x_new, y_new, system.width[pick_chiplet], system.height[pick_chiplet], pick_chiplet))
+		if boundary_check(system, pick_chiplet, x_new, y_new) and block_occupation.replace_block_occupation(grid, granularity, x_new, y_new, system.width[pick_chiplet], system.height[pick_chiplet], pick_chiplet):
+			print ('found a random placement')
 			break
 		count += 1
 		if count > 10000:
