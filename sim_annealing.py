@@ -1,5 +1,4 @@
-import random
-import math
+import random, os, math
 import numpy as np
 import config
 import block_occupation
@@ -58,9 +57,9 @@ def random_neighbor(system, grid):
 		pick_chiplet = random.randint(0, n - 1)
 		x_new = random.randint(1, system.intp_size / granularity - 1) * granularity
 		y_new = random.randint(1, system.intp_size / granularity - 1) * granularity
-		print (count, 'moving chiplet', pick_chiplet + 2, 'from (', system.x[pick_chiplet], system.y[pick_chiplet], ') to (', x_new, y_new, ')')
-		print ('boundary_check', boundary_check(system, pick_chiplet, x_new, y_new))
-		print ('occupation check', block_occupation.replace_block_occupation(grid, granularity, x_new, y_new, system.width[pick_chiplet], system.height[pick_chiplet], pick_chiplet))
+		# print (count, 'moving chiplet', pick_chiplet + 2, 'from (', system.x[pick_chiplet], system.y[pick_chiplet], ') to (', x_new, y_new, ')')
+		# print ('boundary_check', boundary_check(system, pick_chiplet, x_new, y_new))
+		# print ('occupation check', block_occupation.replace_block_occupation(grid, granularity, x_new, y_new, system.width[pick_chiplet], system.height[pick_chiplet], pick_chiplet))
 		if boundary_check(system, pick_chiplet, x_new, y_new) and block_occupation.replace_block_occupation(grid, granularity, x_new, y_new, system.width[pick_chiplet], system.height[pick_chiplet], pick_chiplet):
 			print ('found a random placement')
 			break
@@ -131,18 +130,19 @@ def anneal():
 			system_new.gen_flp('step_' + str(step))
 			system_new.gen_ptrace('step_'+str(step))
 			temp_new = system_new.run_hotspot('step_'+str(step))
+			print ('Temp = ', temp_new)
 			ap = accept_probability(temp_current, temp_new, T)
 			r = random.random()
 			if ap > r:
 				grid = block_occupation.clear_block_occupation(grid, granularity, system.x[chiplet_moving], system.y[chiplet_moving], system.width[chiplet_moving], system.height[chiplet_moving], chiplet_moving)
 				grid = block_occupation.set_block_occupation(grid, granularity, x_new, y_new, system.width[chiplet_moving], system.height[chiplet_moving], chiplet_moving)
-				block_occupation.print_grid(grid)
 				system = deepcopy(system_new)
 				temp_current = temp_new
 				if temp_new < temp_best:
 					temp_best = temp_new
 					system_best = deepcopy(system_new)
 				print ('AP = ', ap, ' > ', r, ' Accept!')				
+				block_occupation.print_grid(grid)
 			else:
 				print ('AP = ', ap, ' < ', r, ' Reject!')	
 			i += 1
