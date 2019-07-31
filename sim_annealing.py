@@ -61,7 +61,7 @@ def random_neighbor(system, grid):
 		# print ('boundary_check', boundary_check(system, pick_chiplet, x_new, y_new))
 		# print ('occupation check', block_occupation.replace_block_occupation(grid, granularity, x_new, y_new, system.width[pick_chiplet], system.height[pick_chiplet], pick_chiplet))
 		if boundary_check(system, pick_chiplet, x_new, y_new) and block_occupation.replace_block_occupation(grid, granularity, x_new, y_new, system.width[pick_chiplet], system.height[pick_chiplet], pick_chiplet):
-			print ('found a random placement')
+			print ('found a random placement at', count, 'th trial')
 			break
 		count += 1
 		if count > 10000:
