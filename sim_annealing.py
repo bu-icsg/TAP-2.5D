@@ -147,7 +147,7 @@ def anneal():
 				print ('AP = ', ap, ' < ', r, ' Reject!')	
 			i += 1
 		T *= alpha
-	os.system('rm '+ system.path + '{*.flp, *.lcf, *.ptrace, *.steady}')
+	os.system('rm '+ system.path + '{*.flp,*.lcf,*.ptrace,*.steady}')
 	return system_best
 
 if __name__ == "__main__":
