@@ -141,6 +141,7 @@ def anneal():
 				if temp_new < temp_best:
 					temp_best = temp_new
 					system_best = deepcopy(system_new)
+					step_best = step
 				print ('AP = ', ap, ' > ', r, ' Accept!')				
 				block_occupation.print_grid(grid)
 			else:
@@ -152,4 +153,6 @@ def anneal():
 
 if __name__ == "__main__":
 	solution = anneal()
+	print (step_best)
+	print (temp_best)
 
