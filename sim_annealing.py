@@ -45,7 +45,7 @@ def close_neighbor(system, grid):
 	print ('No chiplet can be moved.')
 	exit()
 
-def random_neighbor(system, grid):
+def jumping_neighbor(system, grid):
 	'''define a neighbor placement as move one chiplet to anywhere can be located. 
 	rotate if needed. We do not consider swapping, since can't gaurantee the placement
 	is still legal (no overlap) after swapping'''
@@ -123,7 +123,11 @@ def anneal():
 		while i <= intp_size:
 			step += 1
 			print ('step_'+str(step), ' T = ',T, ' i = ', i)
-			chiplet_moving, x_new, y_new = random_neighbor(system, grid)
+			jump_or_close = random.random()
+			if T > jump_or_close:
+				chiplet_moving, x_new, y_new = jumping_neighbor(system, grid)
+			else:
+				chiplet_moving, x_new, y_new = close_neighbor(system, grid)
 			print ('moving chiplet', chiplet_moving + 2, 'from (', system.x[chiplet_moving], system.y[chiplet_moving], ') to (', x_new, y_new, ')')
 			system_new = deepcopy(system)
 			system_new.x[chiplet_moving], system_new.y[chiplet_moving] = x_new, y_new
