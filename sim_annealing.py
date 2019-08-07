@@ -118,13 +118,14 @@ def anneal():
 	T = 1.0
 	T_min = 0.01
 	alpha = 0.8
+	jumping_ratio = T_min / alpha
 	while T > T_min:
 		i = 1
 		while i <= intp_size:
 			step += 1
 			print ('step_'+str(step), ' T = ',T, ' i = ', i)
 			jump_or_close = random.random()
-			if T > jump_or_close:
+			if 1 - jumping_ratio > jump_or_close:
 				chiplet_moving, x_new, y_new = jumping_neighbor(system, grid)
 			else:
 				chiplet_moving, x_new, y_new = close_neighbor(system, grid)
@@ -152,6 +153,7 @@ def anneal():
 				print ('AP = ', ap, ' < ', r, ' Reject!')	
 			i += 1
 		T *= alpha
+		jumping_ratio /= alpha
 	os.system('rm '+ system.path + '{*.flp,*.lcf,*.ptrace,*.steady}')
 	return system_best
 
