@@ -155,10 +155,10 @@ def anneal():
 		T *= alpha
 		jumping_ratio /= alpha
 	os.system('rm '+ system.path + '{*.flp,*.lcf,*.ptrace,*.steady}')
-	return system_best
+	return system_best, step_best, temp_best
 
 if __name__ == "__main__":
-	solution = anneal()
+	solution, step_best, temp_best = anneal()
 	print (step_best)
 	print (temp_best)
 
