@@ -43,12 +43,18 @@ class System_25D:
 	def set_granularity(self, granularity):
 		self.granularity = granularity
 
-	def initial_placement(self, init_place_option):
+	def rotate(self, i):
+		self.width[i], self.height[i] = self.height[i], self.width[i]
+
+	def initial_placement(self, init_place_option, xx, yy):
 		if init_place_option == 'tight':
 			x, y, rotation = init_placement.init_place_tight(self.intp_size, self.granularity, self.chiplet_count, self.width, self.height)
 			self.x = x
 			self.y = y
 			self.rotation = rotation
+		elif init_place_option == 'given':
+			self.x = xx
+			self.y = yy
 
 	def gen_flp(self):
 		pass

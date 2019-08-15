@@ -53,6 +53,11 @@ def read_config():
 		init_place_option = config.get('general', 'initial_placement')
 	except:
 		init_place_option = 'tight'
+	if init_place_option == 'given':
+		chiplet_x = get_list(config.get('chiplets', 'x'))
+		chiplet_y = get_list(config.get('chiplets', 'y'))
+	else:
+		chiplet_x, chiplet_y = [], []
 
 	interposer_type = config.get('interposer', 'intp_type')
 	assert interposer_type in get_intp_types(), 'only support for passive interposer so far (to update with active, photonic, and EMIB options)'
@@ -77,7 +82,7 @@ def read_config():
 		system.set_chiplet_size(chiplet_width, chiplet_height)
 		system.set_connection_matrix(chiplet_connection)
 		system.set_granularity(granularity)
-		system.initial_placement(init_place_option)
+		system.initial_placement(init_place_option, chiplet_x, chiplet_y)
 
 	return system
 
@@ -97,3 +102,10 @@ def parse_command():
 if __name__ == "__main__":
 	system = read_config()
 	print (system.chiplet_count, system.intp_size, system.power, system.x)
+	filename = 'given_50'
+	system.gen_flp(filename)
+	system.gen_ptrace(filename)
+	temp = system.run_hotspot(filename)
+	print (temp)
+	os.system('perl util/grid_thermal_map.pl ' + system.path+filename+'L4_ChipLayer.flp '+system.path + filename + '.grid.steady > '+system.path+filename+'.svg')
+	os.system('convert '+system.path + filename + '.svg '+system.path + filename + '.pdf')
