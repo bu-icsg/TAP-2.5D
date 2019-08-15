@@ -119,6 +119,7 @@ def anneal():
 	T_min = 0.01
 	alpha = 0.8
 	jumping_ratio = T_min / alpha
+	# start simulated annealing
 	while T > T_min:
 		i = 1
 		while i <= intp_size:
