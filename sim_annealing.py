@@ -4,19 +4,19 @@ import config
 import block_occupation
 from copy import deepcopy
 
-def boundary_check(system, p, x, y):
-	if (x - system.width[p] / 2) < 0:
+def boundary_check(system, x, y, w, h):
+	if (x - w / 2) < 0:
 		return False
-	if (x + system.width[p] / 2) > system.intp_size:
+	if (x + w / 2) > system.intp_size:
 		return False
-	if (y - system.height[p] / 2) < 0:
+	if (y - h / 2) < 0:
 		return False
-	if (y + system.height[p] / 2) > system.intp_size:
+	if (y + h / 2) > system.intp_size:
 		return False
 	return True
 
 def close_neighbor(system, grid):
-	''' slightly moving chiplets'''
+	''' slightly moving chiplets, do not consider rotation'''
 	chiplet_order = np.random.permutation(range(system.chiplet_count))
 	granularity = system.granularity
 	for p in chiplet_order:
@@ -57,10 +57,12 @@ def jumping_neighbor(system, grid):
 		pick_chiplet = random.randint(0, n - 1)
 		x_new = random.randint(1, system.intp_size / granularity - 1) * granularity
 		y_new = random.randint(1, system.intp_size / granularity - 1) * granularity
-		# print (count, 'moving chiplet', pick_chiplet + 2, 'from (', system.x[pick_chiplet], system.y[pick_chiplet], ') to (', x_new, y_new, ')')
-		# print ('boundary_check', boundary_check(system, pick_chiplet, x_new, y_new))
-		# print ('occupation check', block_occupation.replace_block_occupation(grid, granularity, x_new, y_new, system.width[pick_chiplet], system.height[pick_chiplet], pick_chiplet))
-		if boundary_check(system, pick_chiplet, x_new, y_new) and block_occupation.replace_block_occupation(grid, granularity, x_new, y_new, system.width[pick_chiplet], system.height[pick_chiplet], pick_chiplet):
+		rotation = random.randint(0,1)
+		if rotation == 1:
+			chiplet_width, chiplet_height = system.height[pick_chiplet], system.width[pick_chiplet]
+		else:
+			chiplet_height, chiplet_width = system.height[pick_chiplet], system.width[pick_chiplet]
+		if boundary_check(system, x_new, y_new, chiplet_width, chiplet_height) and block_occupation.replace_block_occupation(grid, granularity, x_new, y_new, chiplet_width, chiplet_height, pick_chiplet):
 			print ('found a random placement at', count, 'th trial')
 			break
 		count += 1
@@ -68,7 +70,7 @@ def jumping_neighbor(system, grid):
 			# it's not easy to find a legal placement using random method. try move each chiplet (in random order) slightly until find a legal solution
 			print ('cannot find a legal random placement, go with close_neighbor')
 			return close_neighbor(system, grid)
-	return pick_chiplet, x_new, y_new
+	return pick_chiplet, x_new, y_new, rotation
 
 # def accept_probability(old_temp, new_temp, old_length, new_length, T):
 # 	if new_length <= length_threshold and old_length <= length_threshold:
@@ -127,12 +129,16 @@ def anneal():
 			print ('step_'+str(step), ' T = ',T, ' i = ', i)
 			jump_or_close = random.random()
 			if 1 - jumping_ratio > jump_or_close:
-				chiplet_moving, x_new, y_new = jumping_neighbor(system, grid)
+				chiplet_moving, x_new, y_new, rotation = jumping_neighbor(system, grid)
 			else:
 				chiplet_moving, x_new, y_new = close_neighbor(system, grid)
-			print ('moving chiplet', chiplet_moving + 2, 'from (', system.x[chiplet_moving], system.y[chiplet_moving], ') to (', x_new, y_new, ')')
+				rotation = 0
+			print ('moving chiplet', chiplet_moving + 2, 'from (', system.x[chiplet_moving], system.y[chiplet_moving], ') to (', x_new, y_new, '), rotation = ', rotation)
 			system_new = deepcopy(system)
 			system_new.x[chiplet_moving], system_new.y[chiplet_moving] = x_new, y_new
+			if rotation == 1:
+				system_new.rotate(chiplet_moving)
+				# system_new.height[chiplet_moving], system_new.width[chiplet_moving] = system_new.width[chiplet_moving], system_new.height[chiplet_moving]
 			system_new.gen_flp('step_' + str(step))
 			system_new.gen_ptrace('step_'+str(step))
 			temp_new = system_new.run_hotspot('step_'+str(step))
@@ -140,8 +146,11 @@ def anneal():
 			ap = accept_probability(temp_current, temp_new, T)
 			r = random.random()
 			if ap > r:
+				# clear last step's occupation of chiplet_moving (system)
 				grid = block_occupation.clear_block_occupation(grid, granularity, system.x[chiplet_moving], system.y[chiplet_moving], system.width[chiplet_moving], system.height[chiplet_moving], chiplet_moving)
-				grid = block_occupation.set_block_occupation(grid, granularity, x_new, y_new, system.width[chiplet_moving], system.height[chiplet_moving], chiplet_moving)
+				# set new occupation with rotation (system_new)
+				grid = block_occupation.set_block_occupation(grid, granularity, x_new, y_new, system_new.width[chiplet_moving], system_new.height[chiplet_moving], chiplet_moving)
+				# update system
 				system = deepcopy(system_new)
 				temp_current = temp_new
 				if temp_new < temp_best:
