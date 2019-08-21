@@ -169,6 +169,7 @@ def anneal():
 
 if __name__ == "__main__":
 	solution, step_best, temp_best = anneal()
+	print ('final solution: step, temp')
 	print (step_best)
 	print (temp_best)
 
