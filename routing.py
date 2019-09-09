@@ -1,5 +1,5 @@
 import cplex
-
+import sys
 
 def read_input():
 	'''
@@ -7,21 +7,25 @@ def read_input():
 	For testing purpose only.
 	To interface with the rest of the tool, need to use config function
 	'''
+	if len(sys.argv) > 1:
+		path = sys.argv[1]
+	else:
+		path = ''
 	xl, xc, yl, yc = [0] * 16, [0] * 4, [0] * 16, [0] * 4
 	R = [[0 for i in range(16)] for j in range(16)]
-	with open('Xl.txt', 'r') as Xchiplet:
+	with open(path + 'Xl.txt', 'r') as Xchiplet:
 		for i in range(16):
 			xl[i] = float(Xchiplet.readline())
-	with open('Xc.txt', 'r') as Xclump:
+	with open(path + 'Xc.txt', 'r') as Xclump:
 		for i in range(4):
 			xc[i] = float(Xclump.readline())
-	with open('Yl.txt', 'r') as Ychiplet:
+	with open(path + 'Yl.txt', 'r') as Ychiplet:
 		for i in range(16):
 			yl[i] = float(Ychiplet.readline())
-	with open('Yc.txt', 'r') as Yclump:
+	with open(path + 'Yc.txt', 'r') as Yclump:
 		for i in range(4):
 			yc[i] = float(Yclump.readline())
-	with open('R.txt', 'r') as Connection:
+	with open(path + 'R.txt', 'r') as Connection:
 		for i in range(16):
 			R[i] = list(map(int,Connection.readline().split()))
 	print (R)
