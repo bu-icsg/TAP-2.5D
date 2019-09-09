@@ -154,7 +154,7 @@ def solve_Cplex():
 					for n in range(Nmax):
 						f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
 						# problem.indicator_constraints.add(indvar=f_index+1, rhs = 1.0, sense = "G", lin_expr=[f_index, 1.0], indtype=problem.indicator_constraints.type_.if_)
-						problem.indicator_constraints.add(indvar = f_index + 1, rhs = 1.0, sense = "G", lin_expr = [[f_index], [1.0]], indtype = problem.indicator_constraints.type_.if_)
+						problem.indicator_constraints.add(indvar = f_index + 1, rhs = 1.0, sense = "G", lin_expr = [[f_index], [1.0]], indtype = 3)
 	print (problem.indicator_constraints.get_num())
 
 	# Eq. 17
