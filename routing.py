@@ -11,31 +11,42 @@ def read_input():
 		path = sys.argv[1]
 	else:
 		path = ''
-	xl, xc, yl, yc = [0] * 16, [0] * 4, [0] * 16, [0] * 4
-	R = [[0 for i in range(16)] for j in range(16)]
+
+	with open(path + 'OptPlaceRoute.cfg', 'r') as Conf:
+		Conf.readline()
+		Conf.readline()
+		Conf.readline()
+		Nclump = int(Conf.readline().split()[1])
+		Nchiplet = int(Conf.readline().split()[1])
+		pmax = int(Conf.readline().split()[1])
+		Hopmax = int(Conf.readline().split()[1])
+
+	xl, xc, yl, yc = [0] * Nchiplet, [0] * Nclump, [0] * Nchiplet, [0] * Nclump
+	R = [[0 for i in range(Nchiplet)] for j in range(Nchiplet)]
 	with open(path + 'Xl.txt', 'r') as Xchiplet:
-		for i in range(16):
+		for i in range(Nchiplet):
 			xl[i] = float(Xchiplet.readline())
 	with open(path + 'Xc.txt', 'r') as Xclump:
-		for i in range(4):
+		for i in range(Nclump):
 			xc[i] = float(Xclump.readline())
 	with open(path + 'Yl.txt', 'r') as Ychiplet:
-		for i in range(16):
+		for i in range(Nchiplet):
 			yl[i] = float(Ychiplet.readline())
 	with open(path + 'Yc.txt', 'r') as Yclump:
-		for i in range(4):
+		for i in range(Nclump):
 			yc[i] = float(Yclump.readline())
 	with open(path + 'R.txt', 'r') as Connection:
-		for i in range(16):
+		for i in range(Nchiplet):
 			R[i] = list(map(int,Connection.readline().split()))
+
 	print (R)
-	return xl, xc, yl, yc, R
+	return xl, xc, yl, yc, R, Nchiplet, Nclump, pmax, Hopmax
 
 
 def solve_Cplex():
-	xl, xc, yl, yc, R = read_input()
+	xl, xc, yl, yc, R, Nchiplet, Nclump, pmax, Hopmax = read_input()
 	# hard code for now, later we read from system class
-	Nchiplet, Nclump = 16, 4
+	
 
 	problem = cplex.Cplex()
 	problem.objective.set_sense(problem.objective.sense.minimize)
@@ -134,7 +145,6 @@ def solve_Cplex():
 		problem.linear_constraints.add(lin_expr = [[trow_index, trow_coeff]], senses = ["E"], rhs = [0])
 
 	# Eq.15
-	pmax = 300
 	for i in range(Nchiplet):
 		for h in range(Nclump):
 			row_index, row_coeff = [], []
