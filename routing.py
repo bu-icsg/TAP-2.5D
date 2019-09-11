@@ -184,21 +184,27 @@ def solve_Cplex():
 	# Eq. 18
 	for n in range(Nmax):
 		row_index, row_coeff = [], []
-		for i in range(Nchiplet):
-			for h in range(Nclump):
-				for j in range(Nchiplet):
-					for k in range(Nclump):
-						f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
-						row_index.append(f_index)
-						row_coeff.append(1)
 		if Hopmax == 1:
+			for i in range(Nchiplet):
+				for h in range(Nclump):
+					for j in range(Nchiplet):
+						for k in range(Nclump):
+							f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+							row_index.append(f_index)
+							row_coeff.append(1)
 			problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["L"], rhs = [R[s[n]][t[n]]])
 		elif Hopmax == 2:
 			for h in range(Nclump):
 				for k in range(Nclump):
 					f_index = (s[n] * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + t[n] * Nclump * Nmax + k * Nmax + n) * 2
 					row_index.append(f_index)
-					row_coeff.append(1)
+					row_coeff.append(2)
+					for i in range(Nchiplet):
+						for j in range(Nchiplet):
+							if i!=s[n] or j!=t[n]:
+								f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+								row_index.append(f_index)
+								row_coeff.append(1)
 			problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["L"], rhs = [2 * R[s[n]][t[n]]])
 		# elif Hopmax == 3:
 		# 	for h in range(Nclump):
