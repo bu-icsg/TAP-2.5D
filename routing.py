@@ -191,7 +191,25 @@ def solve_Cplex():
 						f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
 						row_index.append(f_index)
 						row_coeff.append(1)
-		problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["L"], rhs = [R[s[n]][t[n]]])
+		if Hopmax == 1:
+			problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["L"], rhs = [R[s[n]][t[n]]])
+		elif Hopmax == 2:
+			for h in range(Nclump):
+				for k in range(Nclump):
+					f_index = (s[n] * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + t[n] * Nclump * Nmax + k * Nmax + n) * 2
+					row_index.append(f_index)
+					row_coeff.append(1)
+			problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["L"], rhs = [2 * R[s[n]][t[n]]])
+		# elif Hopmax == 3:
+		# 	for h in range(Nclump):
+		# 		for k in range(Nclump):
+		# 			f_index = (s[n] * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + t[n] * Nclump * Nmax + k * Nmax + n) * 2
+		# 			row_index.append(f_index)
+		# 			row_coeff.append(2)
+		# 	problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["L"], rhs = [3 * R[s[n]][t[n]]])
+
+
+
 
 	problem.objective.set_linear(num_val, 1.0)
 	# print (problem.objective.get_linear())
