@@ -1,5 +1,5 @@
 import cplex
-import sys
+import sys, time
 
 def read_input():
 	'''
@@ -43,11 +43,15 @@ def read_input():
 	return xl, xc, yl, yc, R, Nchiplet, Nclump, pmax, Hopmax
 
 
-def solve_Cplex():
-	xl, xc, yl, yc, R, Nchiplet, Nclump, pmax, Hopmax = read_input()
-	# hard code for now, later we read from system class
-	
 
+
+def solve_Cplex():
+	start_time = time.time()
+	# read from previous inout files for testing purpose, later we read from system class
+	xl, xc, yl, yc, R, Nchiplet, Nclump, pmax, Hopmax = read_input()
+	print('time to read input:', time.time() - start_time)
+
+	start_time = time.time()
 	problem = cplex.Cplex()
 	problem.objective.set_sense(problem.objective.sense.minimize)
 	# problem.parameters.tuning.timelimit.set(300.0)
@@ -219,8 +223,11 @@ def solve_Cplex():
 
 	problem.objective.set_linear(num_val, 1.0)
 	# print (problem.objective.get_linear())
+	print('time to formulate the problem:', time.time() - start_time)
 
+	start_time = time.time()
 	problem.solve()	
+	print('time to solve cplex:', time.time() - start_time)
 
 	for i,x in enumerate(problem.solution.get_values()):
 		if x!=0:
