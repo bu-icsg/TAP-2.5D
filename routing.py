@@ -42,8 +42,21 @@ def read_input():
 	print (R)
 	return xl, xc, yl, yc, R, Nchiplet, Nclump, pmax, Hopmax
 
+def translate_index(f_index, Nchiplet, Nclump, Nmax):
+	index = int(f_index / 2)
+	n = index % Nmax
+	index = int((index - n) / Nmax)
+	k = index % Nclump
+	index = int((index - k) / Nclump)
+	j = index % Nchiplet
+	index = int((index - j) / Nchiplet)
+	h = index % Nclump
+	i = int((index - h) / Nclump)
+	return i, h, j, k, n
 
-
+def get_index(i, h, j, k, n, Nchiplet, Nclump, Nmax):
+	f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+	return f_index
 
 def solve_Cplex():
 	start_time = time.time()
@@ -74,9 +87,6 @@ def solve_Cplex():
 				n += 1
 	Nmax = n
 
-	# f = [[[[[0 for _ in range(Nmax)] for _ in range(Nclump)] for _ in range(Nchiplet)] for _ in range(Nclump)] for _ in range(Nchiplet)]
-	# lbd = [[[[[0 for _ in range(Nmax)] for _ in range(Nclump)] for _ in range(Nchiplet)] for _ in range(Nclump)] for _ in range(Nchiplet)]
-
 	# Eq. 11. initialize f[i][h][j][k][n] and set lower bound 0
 	for i in range(Nchiplet):
 		for h in range(Nclump):
@@ -84,7 +94,7 @@ def solve_Cplex():
 				for k in range(Nclump):
 					for n in range(Nmax):
 						if (i!=j) or (h!=k):
-							problem.variables.add(lb = [0.0, 0.0], ub = [10000.0, 1.0], types = [problem.variables.type.integer]*2)
+							problem.variables.add(lb = [0.0, 0.0], ub = [pmax, 1.0], types = [problem.variables.type.integer]*2)
 						else:
 							problem.variables.add(lb = [0.0, 0.0], ub = [0.0, 0.0], types = [problem.variables.type.integer]*2)
 	num_val = problem.variables.get_num()
@@ -229,10 +239,14 @@ def solve_Cplex():
 	problem.solve()	
 	print('time to solve cplex:', time.time() - start_time)
 
-	for i,x in enumerate(problem.solution.get_values()):
-		if x!=0:
-			print (i,x)
+	for f_index,x in enumerate(problem.solution.get_values()[:-1]):
+		if x!=0 and f_index % 2 == 0:
+			i, h, j, k, n = translate_index(f_index, Nchiplet, Nclump, Nmax)
+			print (f_index, i, h, j, k, n, x, d[i][h][j][k])
+	print ('Maximum wire Length: ', problem.solution.get_values()[-1])
 
+	for n in range(Nmax):
+		print (n, s[n], t[n])
 
 if __name__ == "__main__":
 	solve_Cplex()
