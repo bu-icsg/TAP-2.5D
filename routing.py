@@ -93,10 +93,10 @@ def solve_Cplex():
 			for j in range(Nchiplet):
 				for k in range(Nclump):
 					for n in range(Nmax):
-						if (i!=j) or (h!=k):
-							problem.variables.add(lb = [0.0, 0.0], ub = [pmax, 1.0], types = [problem.variables.type.integer]*2)
-						else:
+						if (i==j) and (h==k):
 							problem.variables.add(lb = [0.0, 0.0], ub = [0.0, 0.0], types = [problem.variables.type.integer]*2)
+						else:
+							problem.variables.add(lb = [0.0, 0.0], ub = [pmax, 1.0], types = [problem.variables.type.integer]*2)
 	num_val = problem.variables.get_num()
 	print (num_val)
 
