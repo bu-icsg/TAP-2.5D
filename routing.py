@@ -139,10 +139,12 @@ def solve_Cplex():
 					for j in range(Nchiplet):
 						if j != i: # This is to make sure there is no duplicate indices which raises an exception.
 							for k in range(Nclump):
-								fij_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+								# fij_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+								fij_index = get_index(i, h, j, k, n, Nchiplet, Nclump, Nmax)
 								row_index.append(fij_index)
 								row_coeff.append(1)
-								fji_index = (j * Nclump * Nchiplet * Nclump * Nmax + k * Nchiplet * Nclump * Nmax + i * Nclump * Nmax + h * Nmax + n) * 2
+								# fji_index = (j * Nclump * Nchiplet * Nclump * Nmax + k * Nchiplet * Nclump * Nmax + i * Nclump * Nmax + h * Nmax + n) * 2
+								fji_index = get_index(j, k, i, h, n, Nchiplet, Nclump, Nmax)
 								row_index.append(fji_index)
 								row_coeff.append(-1)
 				problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["E"], rhs = [0])
@@ -154,10 +156,12 @@ def solve_Cplex():
 		for h in range(Nclump):
 			for j in range(Nchiplet):
 				for k in range(Nclump):
-					fs_index = (j * Nclump * Nchiplet * Nclump * Nmax + k * Nchiplet * Nclump * Nmax + s[n] * Nclump * Nmax + h * Nmax + n) * 2
+					# fs_index = (j * Nclump * Nchiplet * Nclump * Nmax + k * Nchiplet * Nclump * Nmax + s[n] * Nclump * Nmax + h * Nmax + n) * 2
+					fs_index = get_index(j, k, s[n], h, n, Nchiplet, Nclump, Nmax)
 					srow_index.append(fs_index)
 					srow_coeff.append(1)
-					ft_index = (t[n] * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+					# ft_index = (t[n] * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+					ft_index = get_index(t[n], h, j, k, n, Nchiplet, Nclump, Nmax)
 					trow_index.append(ft_index)
 					trow_coeff.append(1)
 		problem.linear_constraints.add(lin_expr = [[srow_index, srow_coeff]], senses = ["E"], rhs = [0])
@@ -171,10 +175,12 @@ def solve_Cplex():
 				if i != j:
 					for k in range(Nclump):
 						for n in range(Nmax):
-							fij_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+							# fij_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+							fij_index = get_index(i, h, j, k, n, Nchiplet, Nclump, Nmax)
 							row_index.append(fij_index)
 							row_coeff.append(1)
-							fji_index = (j * Nclump * Nchiplet * Nclump * Nmax + k * Nchiplet * Nclump * Nmax + i * Nclump * Nmax + h * Nmax + n) * 2
+							# fji_index = (j * Nclump * Nchiplet * Nclump * Nmax + k * Nchiplet * Nclump * Nmax + i * Nclump * Nmax + h * Nmax + n) * 2
+							fji_index = get_index(j, k, i, h, n, Nchiplet, Nclump, Nmax)
 							row_index.append(fji_index)
 							row_coeff.append(1)
 			problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["L"], rhs = [pmax])
@@ -185,7 +191,8 @@ def solve_Cplex():
 			for j in range(Nchiplet):
 				for k in range(Nclump):
 					for n in range(Nmax):
-						f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+						# f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+						f_index = get_index(i, h, j, k, n, Nchiplet, Nclump, Nmax)
 						# problem.indicator_constraints.add(indvar=f_index+1, rhs = 1.0, sense = "G", lin_expr=[f_index, 1.0], indtype=problem.indicator_constraints.type_.if_)
 						problem.indicator_constraints.add(indvar = f_index + 1, rhs = 1.0, sense = "G", lin_expr = [[f_index], [1.0]], indtype = 3)
 	print (problem.indicator_constraints.get_num())
@@ -197,7 +204,8 @@ def solve_Cplex():
 			for j in range(Nchiplet):
 				for k in range(Nclump):
 					for n in range(Nmax):
-						f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2 + 1
+						# f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2 + 1
+						f_index = get_index(i, h, j, k, n, Nchiplet, Nclump, Nmax) + 1
 						problem.linear_constraints.add(lin_expr=[[[f_index, num_val],[-d[i][h][j][k], 1]]], senses = ["G"], rhs = [0.0])
 
 	# Eq. 18
@@ -208,20 +216,23 @@ def solve_Cplex():
 				for h in range(Nclump):
 					for j in range(Nchiplet):
 						for k in range(Nclump):
-							f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+							# f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+							f_index = get_index(i, h, j, k, n, Nchiplet, Nclump, Nmax)
 							row_index.append(f_index)
 							row_coeff.append(1)
 			problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["L"], rhs = [R[s[n]][t[n]]])
 		elif Hopmax == 2:
 			for h in range(Nclump):
 				for k in range(Nclump):
-					f_index = (s[n] * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + t[n] * Nclump * Nmax + k * Nmax + n) * 2
+					# f_index = (s[n] * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + t[n] * Nclump * Nmax + k * Nmax + n) * 2
+					f_index = get_index(s[n], h, t[n], k, n, Nchiplet, Nclump, Nmax)
 					row_index.append(f_index)
 					row_coeff.append(2)
 					for i in range(Nchiplet):
 						for j in range(Nchiplet):
 							if i!=s[n] or j!=t[n]:
-								f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+								# f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+								f_index = get_index(i, h, j, k, n, Nchiplet, Nclump, Nmax)
 								row_index.append(f_index)
 								row_coeff.append(1)
 			problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["L"], rhs = [2 * R[s[n]][t[n]]])
@@ -244,14 +255,15 @@ def solve_Cplex():
 	problem.solve()	
 	print('time to solve cplex:', time.time() - start_time)
 
-	for f_index,x in enumerate(problem.solution.get_values()[:-1]):
-		if x!=0 and f_index % 2 == 0:
-			i, h, j, k, n = translate_index(f_index, Nchiplet, Nclump, Nmax)
-			print (f_index, i, h, j, k, n, x, d[i][h][j][k])
-	print ('Maximum wire Length: ', problem.solution.get_values()[-1])
+	# for f_index,x in enumerate(problem.solution.get_values()[:-1]):
+	# 	if x!=0 and f_index % 2 == 0:
+	# 		i, h, j, k, n = translate_index(f_index, Nchiplet, Nclump, Nmax)
+	# 		print (f_index, i, h, j, k, n, x, d[i][h][j][k])
 
-	for n in range(Nmax):
-		print (n, s[n], t[n])
+	# for n in range(Nmax):
+	# 	print (n, s[n], t[n])
+		
+	print ('Maximum wire Length: ', problem.solution.get_values()[-1])
 
 if __name__ == "__main__":
 	solve_Cplex()
