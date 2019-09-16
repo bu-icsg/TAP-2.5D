@@ -131,20 +131,21 @@ def solve_Cplex():
 						row_index.append(fji_index)
 						row_coeff.append(-1)
 		problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["E"], rhs = [-R[s[n]][t[n]]])
-	for i in range(Nchiplet):
-		if i not in s and i not in t:
-			row_index, row_coeff = [], []
-			for h in range(Nclump):
-				for j in range(Nchiplet):
-					if j != i: # This is to make sure there is no duplicate indices which raises an exception.
-						for k in range(Nclump):
-							fij_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
-							row_index.append(fij_index)
-							row_coeff.append(1)
-							fji_index = (j * Nclump * Nchiplet * Nclump * Nmax + k * Nchiplet * Nclump * Nmax + i * Nclump * Nmax + h * Nmax + n) * 2
-							row_index.append(fji_index)
-							row_coeff.append(-1)
-			problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["E"], rhs = [0])
+	
+		for i in range(Nchiplet):
+			if (i != s[n]) and (i != t[n]):
+				row_index, row_coeff = [], []
+				for h in range(Nclump):
+					for j in range(Nchiplet):
+						if j != i: # This is to make sure there is no duplicate indices which raises an exception.
+							for k in range(Nclump):
+								fij_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+								row_index.append(fij_index)
+								row_coeff.append(1)
+								fji_index = (j * Nclump * Nchiplet * Nclump * Nmax + k * Nchiplet * Nclump * Nmax + i * Nclump * Nmax + h * Nmax + n) * 2
+								row_index.append(fji_index)
+								row_coeff.append(-1)
+				problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["E"], rhs = [0])
 
 	# Eq.13 and Eq. 14
 	for n in range(Nmax):
