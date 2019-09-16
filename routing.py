@@ -107,10 +107,12 @@ def solve_Cplex():
 			for j in range(Nchiplet):
 				if j != s[n]: # This is to make sure there is no duplicate indices which raises an exception.
 					for k in range(Nclump):
-						fij_index = (s[n] * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+						# fij_index = (s[n] * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+						fij_index = get_index(s[n], h, j, k, n, Nchiplet, Nclump, Nmax)
 						row_index.append(fij_index)
 						row_coeff.append(1)
-						fji_index = (j * Nclump * Nchiplet * Nclump * Nmax + k * Nchiplet * Nclump * Nmax + s[n] * Nclump * Nmax + h * Nmax + n) * 2
+						# fji_index = (j * Nclump * Nchiplet * Nclump * Nmax + k * Nchiplet * Nclump * Nmax + s[n] * Nclump * Nmax + h * Nmax + n) * 2
+						fji_index = get_index(j, k, s[n], h, n, Nchiplet, Nclump, Nmax)
 						row_index.append(fji_index)
 						row_coeff.append(-1)
 		problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["E"], rhs = [R[s[n]][t[n]]])
@@ -120,10 +122,12 @@ def solve_Cplex():
 			for j in range(Nchiplet):
 				if j != t[n]: # This is to make sure there is no duplicate indices which raises an exception.
 					for k in range(Nclump):
-						fij_index = (t[n] * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+						# fij_index = (t[n] * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
+						fij_index = get_index(t[n], h, j, k, n, Nchiplet, Nclump, Nmax)
 						row_index.append(fij_index)
 						row_coeff.append(1)
-						fji_index = (j * Nclump * Nchiplet * Nclump * Nmax + k * Nchiplet * Nclump * Nmax + t[n] * Nclump * Nmax + h * Nmax + n) * 2
+						# fji_index = (j * Nclump * Nchiplet * Nclump * Nmax + k * Nchiplet * Nclump * Nmax + t[n] * Nclump * Nmax + h * Nmax + n) * 2
+						fji_index = get_index(j, k, t[n], h, n, Nchiplet, Nclump, Nmax)
 						row_index.append(fji_index)
 						row_coeff.append(-1)
 		problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["E"], rhs = [-R[s[n]][t[n]]])
