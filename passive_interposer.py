@@ -24,7 +24,7 @@ class PassiveInterposer(System_25D):
 		TSV_diameter 	= 0.000010		#10um  
 		TSV_edge		= 0.000050		#50um  
 		ubump_diameter 	= 0.000025		#25um
-		ubump_edge 		= 0.000045		#45um  		
+		ubump_edge 		= 0.000045		#45um
 		Aratio_C4 = (C4_edge/C4_diameter)*(C4_edge/C4_diameter)-1			# ratio of white area and C4 area
 		Aratio_TSV= (TSV_edge/TSV_diameter)*(TSV_edge/TSV_diameter)-1
 		Aratio_ubump=(ubump_edge/ubump_diameter)*(ubump_edge/ubump_diameter)-1
@@ -90,22 +90,22 @@ class PassiveInterposer(System_25D):
 					x_offset0, y_offset0 = self.granularity / 2 / 1000, self.granularity / 2 / 1000
 					index_ubump = 0
 					for i in range(0, self.chiplet_count):
-						x_offset1 = self.x[i] / 1000 - self.width[i] / 1000 * 0.5
-						y_offset1 = self.y[i] / 1000 - self.height[i] / 1000 * 0.5
-						if self.ubump > 0:
-							L3_UbumpLayer.write("Ubump_"+str(index_ubump)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(self.ubump / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+mat_ubump)
-							L3_UbumpLayer.write("Ubump_"+str(index_ubump+1)+"\t"+str(self.ubump / 1000)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1+self.ubump / 1000)+mat_ubump)
-							L3_UbumpLayer.write("Ubump_"+str(index_ubump+2)+"\t"+str(self.ubump / 1000)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000)+"\t"+str(x_offset1+self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(y_offset1)+mat_ubump)
-							L3_UbumpLayer.write("Ubump_"+str(index_ubump+3)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(self.ubump / 1000)+"\t"+str(x_offset1+self.ubump / 1000)+"\t"+str(y_offset1+self.height[i] / 1000 - self.ubump / 1000)+mat_ubump)
-							L4_ChipLayer.write("Ubump_"+str(index_ubump)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(self.ubump / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+Silicon)
-							L4_ChipLayer.write("Ubump_"+str(index_ubump+1)+"\t"+str(self.ubump / 1000)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1+self.ubump / 1000)+Silicon)
-							L4_ChipLayer.write("Ubump_"+str(index_ubump+2)+"\t"+str(self.ubump / 1000)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000)+"\t"+str(x_offset1+self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(y_offset1)+Silicon)
-							L4_ChipLayer.write("Ubump_"+str(index_ubump+3)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000)+"\t"+str(self.ubump / 1000)+"\t"+str(x_offset1+self.ubump / 1000)+"\t"+str(y_offset1+self.height[i] / 1000 - self.ubump / 1000)+Silicon)
-						index_ubump += 4
+						x_offset1 = self.x[i] / 1000 - self.width[i] / 1000 * 0.5 - self.hubump[i] / 1000
+						y_offset1 = self.y[i] / 1000 - self.height[i] / 1000 * 0.5 - self.hubump[i] / 1000
+						if self.hubump[i] > 0:
+							L3_UbumpLayer.write("Ubump_"+str(index_ubump)+"\t"+str(self.width[i] / 1000 + self.hubump[i] / 1000)+"\t"+str(self.hubump[i] / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+mat_ubump)
+							L3_UbumpLayer.write("Ubump_"+str(index_ubump+1)+"\t"+str(self.hubump[i] / 1000)+"\t"+str(self.height[i] / 1000 + self.hubump[i] / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1+self.hubump[i] / 1000)+mat_ubump)
+							L3_UbumpLayer.write("Ubump_"+str(index_ubump+2)+"\t"+str(self.hubump[i] / 1000)+"\t"+str(self.height[i] / 1000 + self.hubump[i] / 1000)+"\t"+str(x_offset1+self.width[i] / 1000 + self.hubump[i] / 1000)+"\t"+str(y_offset1)+mat_ubump)
+							L3_UbumpLayer.write("Ubump_"+str(index_ubump+3)+"\t"+str(self.width[i] / 1000 + self.hubump[i] / 1000)+"\t"+str(self.hubump[i] / 1000)+"\t"+str(x_offset1+self.hubump[i] / 1000)+"\t"+str(y_offset1+self.height[i] / 1000 + self.hubump[i] / 1000)+mat_ubump)
+							L4_ChipLayer.write("Ubump_"+str(index_ubump)+"\t"+str(self.width[i] / 1000 + self.hubump[i] / 1000)+"\t"+str(self.hubump[i] / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+Silicon)
+							L4_ChipLayer.write("Ubump_"+str(index_ubump+1)+"\t"+str(self.hubump[i] / 1000)+"\t"+str(self.height[i] / 1000 + self.hubump[i] / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1+self.hubump[i] / 1000)+Silicon)
+							L4_ChipLayer.write("Ubump_"+str(index_ubump+2)+"\t"+str(self.hubump[i] / 1000)+"\t"+str(self.height[i] / 1000 + self.hubump[i] / 1000)+"\t"+str(x_offset1+self.width[i] / 1000 + self.hubump[i] / 1000)+"\t"+str(y_offset1)+Silicon)
+							L4_ChipLayer.write("Ubump_"+str(index_ubump+3)+"\t"+str(self.width[i] / 1000 + self.hubump[i] / 1000)+"\t"+str(self.hubump[i] / 1000)+"\t"+str(x_offset1+self.hubump[i] / 1000)+"\t"+str(y_offset1+self.height[i] / 1000 + self.hubump[i] / 1000)+Silicon)
+							index_ubump += 4
 						# not sure about the microbump density for the center region. Assume the same as the edge area so far. Need to be updated if the microbump pitch for center power/gnd clk is found
-						L3_UbumpLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(x_offset1 + self.ubump / 1000)+"\t"+str(y_offset1+self.ubump / 1000)+mat_ubump)
-						L4_ChipLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(self.height[i] / 1000 - self.ubump / 1000 * 2)+"\t"+str(x_offset1 + self.ubump / 1000)+"\t"+str(y_offset1+self.ubump / 1000)+Silicon)
-						SIMP.write("Unit_"+str(i)+"\t"+str(self.width[i] / 1000)+"\t"+str(self.height[i] / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+"\n")
+						L3_UbumpLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000)+"\t"+str(self.height[i] / 1000)+"\t"+str(x_offset1 + self.hubump[i] / 1000)+"\t"+str(y_offset1+self.hubump[i] / 1000)+mat_ubump)
+						L4_ChipLayer.write("Chiplet_"+str(i)+"\t"+str(self.width[i] / 1000)+"\t"+str(self.height[i] / 1000)+"\t"+str(x_offset1 + self.hubump[i] / 1000)+"\t"+str(y_offset1+self.hubump[i] / 1000)+Silicon)
+						SIMP.write("Unit_"+str(i)+"\t"+str(self.width[i] / 1000 + 2 * self.hubump[i] / 1000)+"\t"+str(self.height[i] / 1000 + 2 * self.hubump[i] / 1000)+"\t"+str(x_offset1)+"\t"+str(y_offset1)+"\n")
 		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3.pdf")
 		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L4.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L4.pdf")
 
