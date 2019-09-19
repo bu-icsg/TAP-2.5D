@@ -13,6 +13,7 @@ def initialize_grid(mi):
 		grid[i][mi] = 1
 	return grid
 
+# width and height here are parameters passed in. We consider it is including microbump overhead. The addition should be handled before this module.
 def check_block_occupation(grid, granularity, xx, yy, width, height):
 	# print (int(xx/granularity)-int(width/2/granularity+0.49), int(xx/granularity)+int(width/2/granularity+0.49)+1)
 	for i in range(int(xx/granularity)-int(width/2/granularity+0.49), int(xx/granularity)+int(width/2/granularity+0.49)+1):

@@ -10,6 +10,7 @@ if it is already occupied. The grid (x, y) represent a unit square centered at (
 (area from [x-0.5, x+0.5] * [y-0.5, y+0.5])
 '''
 
+# width and height here include microbump overhead. We did addition before calling this module
 def slide_x_direction(grid, granularity, xx, yy, width, height):
 	while block_occupation.check_left_occupation(grid, granularity, xx-granularity, yy, width, height):
 		xx -= granularity
