@@ -81,6 +81,7 @@ def read_config():
 		system.set_chiplet_power(chiplet_power)
 		system.set_chiplet_size(chiplet_width, chiplet_height)
 		system.set_connection_matrix(chiplet_connection)
+		system.compute_ubump_overhead()
 		system.set_granularity(granularity)
 		system.initial_placement(init_place_option, chiplet_x, chiplet_y)
 
