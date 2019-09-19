@@ -24,7 +24,7 @@ class PassiveInterposer(System_25D):
 		TSV_diameter 	= 0.000010		#10um  
 		TSV_edge		= 0.000050		#50um  
 		ubump_diameter 	= 0.000025		#25um
-		ubump_edge 		= 0.000050		#50um  		
+		ubump_edge 		= 0.000045		#45um  		
 		Aratio_C4 = (C4_edge/C4_diameter)*(C4_edge/C4_diameter)-1			# ratio of white area and C4 area
 		Aratio_TSV= (TSV_edge/TSV_diameter)*(TSV_edge/TSV_diameter)-1
 		Aratio_ubump=(ubump_edge/ubump_diameter)*(ubump_edge/ubump_diameter)-1
