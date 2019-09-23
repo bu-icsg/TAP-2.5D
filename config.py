@@ -69,6 +69,10 @@ def read_config():
 	chiplet_connection = get_matrix(config.get('chiplets', 'connections'))
 
 	if interposer_type == 'passive':
+		try:
+			link_type = config.get('interposer', 'link_type')
+		except:
+			link_type = 'nppl'
 		if interposer_size == 0:
 			interposer_size = config.getfloat('interposer', 'intp_size')
 		system = PassiveInterposer()
@@ -77,6 +81,7 @@ def read_config():
 			os.system('mkdir -p ' + path)
 		system.set_chiplet_count(chiplet_count)
 		system.initialize()
+		system.set_link_type(link_type)
 		system.set_interposer_size(interposer_size)
 		system.set_chiplet_power(chiplet_power)
 		system.set_chiplet_size(chiplet_width, chiplet_height)
