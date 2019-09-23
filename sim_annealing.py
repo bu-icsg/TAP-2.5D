@@ -2,9 +2,11 @@ import random, os, math
 import numpy as np
 import config
 import block_occupation
+import routing
 from copy import deepcopy
 
 def boundary_check(system, x, y, w, h):
+	# w and h here includes microbump overhead
 	if (x - w / 2) < 0:
 		return False
 	if (x + w / 2) > system.intp_size:
@@ -21,7 +23,7 @@ def close_neighbor(system, grid):
 	granularity = system.granularity
 	for p in chiplet_order:
 		direction_order = np.random.permutation(['up', 'down', 'left', 'right'])
-		xx, yy, width, height = system.x[p], system.y[p], system.width[p], system.height[p]
+		xx, yy, width, height = system.x[p], system.y[p], system.width[p] + 2 * system.hubump[p], system.height[p] + 2 * system.hubump[p]
 		# print ('chiplet ', p + 2)
 		for d in direction_order:
 			# print (d)
@@ -61,8 +63,8 @@ def jumping_neighbor(system, grid):
 		if rotation == 1:
 			chiplet_width, chiplet_height = system.height[pick_chiplet], system.width[pick_chiplet]
 		else:
-			chiplet_height, chiplet_width = system.height[pick_chiplet], system.width[pick_chiplet]
-		if boundary_check(system, x_new, y_new, chiplet_width, chiplet_height) and block_occupation.replace_block_occupation(grid, granularity, x_new, y_new, chiplet_width, chiplet_height, pick_chiplet):
+			chiplet_height, chiplet_width = system.height[pick_chiplet], system.width[pick_chiplet]			
+		if boundary_check(system, x_new, y_new, chiplet_width + 2 * system.hubump[pick_chiplet], chiplet_height + 2 * system.hubump[pick_chiplet]) and block_occupation.replace_block_occupation(grid, granularity, x_new, y_new, chiplet_width + 2 * system.hubump[pick_chiplet], chiplet_height + 2 * system.hubump[pick_chiplet], pick_chiplet):
 			print ('found a random placement at', count, 'th trial')
 			break
 		count += 1
@@ -114,7 +116,7 @@ def anneal():
 	granularity = system.granularity
 	grid = block_occupation.initialize_grid(int(intp_size/granularity))
 	for i in range(system.chiplet_count):
-		grid = block_occupation.set_block_occupation(grid, granularity, system.x[i], system.y[i], system.width[i], system.height[i], i)
+		grid = block_occupation.set_block_occupation(grid, granularity, system.x[i], system.y[i], system.width[i] + 2 * system.hubump[i], system.height[i] + 2 * system.hubump[i], i)
 	block_occupation.print_grid(grid)
 	# set annealing parameters
 	T = 1.0
@@ -147,9 +149,9 @@ def anneal():
 			r = random.random()
 			if ap > r:
 				# clear last step's occupation of chiplet_moving (system)
-				grid = block_occupation.clear_block_occupation(grid, granularity, system.x[chiplet_moving], system.y[chiplet_moving], system.width[chiplet_moving], system.height[chiplet_moving], chiplet_moving)
+				grid = block_occupation.clear_block_occupation(grid, granularity, system.x[chiplet_moving], system.y[chiplet_moving], system.width[chiplet_moving] + 2 * system.hubump[chiplet_moving], system.height[chiplet_moving] + 2 * system.hubump[chiplet_moving], chiplet_moving)
 				# set new occupation with rotation (system_new)
-				grid = block_occupation.set_block_occupation(grid, granularity, x_new, y_new, system_new.width[chiplet_moving], system_new.height[chiplet_moving], chiplet_moving)
+				grid = block_occupation.set_block_occupation(grid, granularity, x_new, y_new, system_new.width[chiplet_moving] + 2 * system.hubump[chiplet_moving], system_new.height[chiplet_moving] + 2 * system.hubump[chiplet_moving], chiplet_moving)
 				# update system
 				system = deepcopy(system_new)
 				temp_current = temp_new
@@ -158,7 +160,7 @@ def anneal():
 					system_best = deepcopy(system_new)
 					step_best = step
 				print ('AP = ', ap, ' > ', r, ' Accept!')				
-				block_occupation.print_grid(grid)
+				# block_occupation.print_grid(grid)
 			else:
 				print ('AP = ', ap, ' < ', r, ' Reject!')	
 			i += 1
