@@ -72,21 +72,5 @@ class System_25D:
 		pass
 
 	def compute_ubump_overhead(self):
-		connection = self.connection_matrix
-		for i in range(self.chiplet_count):
-			assert connection[i][i] == 0, 'a link from and to the same chiplet is not allowed'
-			s = 0
-			for j in range(self.chiplet_count):
-				s += connection[i][j] + connection[j][i]
-			h = 1
-			w_stretch = 0.045 * h
-			while ((self.width[i] + self.height[i]) * 2 * w_stretch + 4 * w_stretch * w_stretch) / 0.045 / 0.045 < s:
-				h += 1
-				w_stretch = 0.045 * h
-				if h > 1000:
-					print ('microbump is too high to be a feasible case')
-					exit()
-			# print (i, s, self.width[i], self.height[i], h, w_stretch)
-			self.hubump[i] = w_stretch
-		print (self.hubump)
+		pass
 

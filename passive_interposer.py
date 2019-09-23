@@ -6,7 +6,15 @@ import subprocess
 class PassiveInterposer(System_25D):
 	"""docstring for Passive"""
 	def __init__(self):
-		super().__init__()
+		self.chiplet_count = 0
+		self.width = [None] * self.chiplet_count
+		self.height = [None] * self.chiplet_count
+		self.hubump = [None] * self.chiplet_count
+		self.power = [None] * self.chiplet_count
+		self.rotation = [None] * self.chiplet_count
+		self.x = [None] * self.chiplet_count
+		self.y = [None] * self.chiplet_count
+		self.link_type = 'nppl'
 
 	def gen_flp(self, filename):
 		# material properties
@@ -199,3 +207,28 @@ class PassiveInterposer(System_25D):
 		stdout, stderr = proc.communicate()
 		outlist = stdout.split()
 		return (max(list(map(float,outlist[3::2])))-273.15)
+
+	def compute_ubump_overhead(self):
+		print (self.link_type)
+		connection = self.connection_matrix
+		for i in range(self.chiplet_count):
+			assert connection[i][i] == 0, 'a link from and to the same chiplet is not allowed'
+			s = 0
+			for j in range(self.chiplet_count):
+				s += connection[i][j] + connection[j][i]
+			if self.link_type == 'ppl':
+				s *= 2
+			h = 1
+			w_stretch = 0.045 * h
+			while ((self.width[i] + self.height[i]) * 2 * w_stretch + 4 * w_stretch * w_stretch) / 0.045 / 0.045 < s:
+				h += 1
+				w_stretch = 0.045 * h
+				if h > 1000:
+					print ('microbump is too high to be a feasible case')
+					exit()
+			# print (i, s, self.width[i], self.height[i], h, w_stretch)
+			self.hubump[i] = w_stretch
+		print (self.hubump)
+
+	def set_link_type(self, link_type):
+		self.link_type = link_type
