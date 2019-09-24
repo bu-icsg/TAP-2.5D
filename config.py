@@ -23,6 +23,7 @@ def read_config():
 	path = None
 	overwrite = []
 	interposer_size = 0
+	link_type = None
 	for o, a in opts:
 		if o == '-h':
 			usage()
@@ -37,6 +38,8 @@ def read_config():
 		# for -g right now I only expected to change intp_size, will add more options later if necessary
 		if o == 'intp_size':
 			interposer_size = float(a)
+		if o == 'link_type':
+			link_type = a
 
 	config = configparser.ConfigParser()
 	config.read(filename)
@@ -69,10 +72,11 @@ def read_config():
 	chiplet_connection = get_matrix(config.get('chiplets', 'connections'))
 
 	if interposer_type == 'passive':
-		try:
-			link_type = config.get('interposer', 'link_type')
-		except:
-			link_type = 'nppl'
+		if link_type == None:
+			try:
+				link_type = config.get('interposer', 'link_type')
+			except:
+				link_type = 'nppl'
 		if interposer_size == 0:
 			interposer_size = config.getfloat('interposer', 'intp_size')
 		system = PassiveInterposer()
