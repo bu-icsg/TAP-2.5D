@@ -74,42 +74,44 @@ def jumping_neighbor(system, grid):
 			return close_neighbor(system, grid)
 	return pick_chiplet, x_new, y_new, rotation
 
-# def accept_probability(old_temp, new_temp, old_length, new_length, T):
-# 	if new_length <= length_threshold and old_length <= length_threshold:
-# 		# already meet length threshold, highlight temperature term
-# 		delta = 0.9 * (old_temp - new_temp) * 4.0 + 0.1 * (old_length - new_length)
-# 	else:
-# 		# not meet length threshold, highlight length term
-# 		delta = 0.1 * (old_temp - new_temp) * 4.0 + 0.9 * (old_length - new_length)
-# 	# delta = (old_temp - new_temp) * 4.0 + min(0, length_threshold - new_length)
-# 	print old_temp, new_temp, old_length, new_length, T, delta
-# 	if delta > 0:
-# 		ap = 1
-# 	else:
-# 		ap = math.exp( delta / T )
-# 	return ap
-
-def accept_probability(old_temp, new_temp, T):
-	delta = (old_temp - new_temp)
+def accept_probability(old_temp, new_temp, old_length, new_length, T, length_threshold):
+	if new_length <= length_threshold and old_length <= length_threshold:
+		# already meet length threshold, highlight temperature term
+		delta = 0.9 * (old_temp - new_temp) * 4.0 + 0.1 * (old_length - new_length)
+	else:
+		# not meet length threshold, highlight length term
+		delta = 0.1 * (old_temp - new_temp) * 4.0 + 0.9 * (old_length - new_length)
 	# delta = (old_temp - new_temp) * 4.0 + min(0, length_threshold - new_length)
-	# print (old_temp, new_temp, T, delta)
+	print (old_temp, new_temp, old_length, new_length, T, delta)
 	if delta > 0:
 		ap = 1
 	else:
 		ap = math.exp( delta / T )
 	return ap
 
+# def accept_probability(old_temp, new_temp, T):
+# 	delta = (old_temp - new_temp)
+# 	# delta = (old_temp - new_temp) * 4.0 + min(0, length_threshold - new_length)
+# 	# print (old_temp, new_temp, T, delta)
+# 	if delta > 0:
+# 		ap = 1
+# 	else:
+# 		ap = math.exp( delta / T )
+# 	return ap
+
 def anneal():
 	# first step: read config and generate initial placement
 	system = config.read_config()
 	system_new = deepcopy(system)
 	system_best = deepcopy(system)
+	length_threshold = system.length_threshold
 	step = 0
 	system.gen_flp('step_'+str(step))
 	system.gen_ptrace('step_'+str(step))
 	temp_current = system.run_hotspot('step_'+str(step))
-	temp_best = temp_current
-	print ('step_'+str(step), temp_current)
+	length_current = routing.solve_Cplex(system)
+	temp_best, length_best = temp_current, length_current
+	print ('step_'+str(step), 'temp =', temp_current, 'length =', length_current)
 	step_best = 0
 	x_best, y_best = system.x[:], system.y[:]
 	intp_size = system.intp_size
@@ -144,8 +146,10 @@ def anneal():
 			system_new.gen_flp('step_' + str(step))
 			system_new.gen_ptrace('step_'+str(step))
 			temp_new = system_new.run_hotspot('step_'+str(step))
-			print ('Temp = ', temp_new)
-			ap = accept_probability(temp_current, temp_new, T)
+			length_new = routing.solve_Cplex(system_new)
+			print ('Temp =', temp_new, 'Length =', length_new)
+			# ap = accept_probability(temp_current, temp_new, T)
+			ap = accept_probability(temp_current, temp_new, length_current, length_new, T, length_threshold)
 			r = random.random()
 			if ap > r:
 				# clear last step's occupation of chiplet_moving (system)
@@ -155,23 +159,28 @@ def anneal():
 				# update system
 				system = deepcopy(system_new)
 				temp_current = temp_new
-				if temp_new < temp_best:
+				length_current = length_new
+				bap = accept_probability(temp_best, temp_current, length_best, length_current, T, length_threshold)
+				if bap >=1:
+				# if temp_new < temp_best:
 					temp_best = temp_new
+					length_best = length_new
 					system_best = deepcopy(system_new)
 					step_best = step
 				print ('AP = ', ap, ' > ', r, ' Accept!')				
 				# block_occupation.print_grid(grid)
 			else:
-				print ('AP = ', ap, ' < ', r, ' Reject!')	
+				print ('AP = ', ap, ' < ', r, ' Reject!')
 			i += 1
 		T *= alpha
 		jumping_ratio /= alpha
 	os.system('rm '+ system.path + '{*.flp,*.lcf,*.ptrace,*.steady}')
-	return system_best, step_best, temp_best
+	return system_best, step_best, temp_best, length_best
 
 if __name__ == "__main__":
-	solution, step_best, temp_best = anneal()
+	solution, step_best, temp_best, length_best = anneal()
 	print ('final solution: step, temp')
 	print (step_best)
 	print (temp_best)
+	print (length_best)
 
