@@ -89,7 +89,7 @@ def get_index(i, h, j, k, n, Nchiplet, Nclump, Nmax):
 
 def solve_Cplex(system):
 	# read from previous inout files for testing purpose, later we read from system class
-	xl, xc, yl, yc, R, Nchiplet, Nclump, pmax, Hopmax = read_input()
+	# xl, xc, yl, yc, R, Nchiplet, Nclump, pmax, Hopmax = read_input()
 	xl, xc, yl, yc, R, Nchiplet, Nclump, pmax, Hopmax = get_input(system)
 
 	problem = cplex.Cplex()
