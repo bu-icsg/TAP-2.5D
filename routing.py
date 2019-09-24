@@ -104,7 +104,7 @@ def solve_Cplex(system):
 			for j in range(Nchiplet):
 				for k in range(Nclump):
 					d[i][h][j][k] = abs(xl[i] + xc[i][h] - xl[j] - xc[j][k]) + abs(yl[i] + yc[i][h] - yl[j] - yc[j][k])
-	print ('time to initialize d', time.time() - start_time)
+	# print ('time to initialize d', time.time() - start_time)
 	start_time = time.time()
 	# get sn, tn pair
 	s, t = [], []
@@ -116,7 +116,7 @@ def solve_Cplex(system):
 				t.append(j)
 				n += 1
 	Nmax = n
-	print ('time to initialize s,t', time.time() - start_time)
+	# print ('time to initialize s,t', time.time() - start_time)
 	start_time = time.time()
 
 	# Eq. 11. initialize f[i][h][j][k][n] and set lower bound 0
@@ -129,13 +129,13 @@ def solve_Cplex(system):
 							problem.variables.add(lb = [0.0, 0.0], ub = [0.0, 0.0], types = [problem.variables.type.integer]*2)
 						else:
 							problem.variables.add(lb = [0.0, 0.0], ub = [pmax[i][h], 1.0], types = [problem.variables.type.integer]*2)
-	print ('time to initialize decision variables f and lambda', time.time() - start_time)
+	# print ('time to initialize decision variables f and lambda', time.time() - start_time)
 	start_time = time.time()
 
 	num_val = problem.variables.get_num()
 	# print (num_val)
 
-	print ('time to get variable count', time.time() - start_time)
+	# print ('time to get variable count', time.time() - start_time)
 	start_time = time.time()
 
 	# Eq. 12
@@ -187,7 +187,7 @@ def solve_Cplex(system):
 								row_coeff.append(-1)
 				problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["E"], rhs = [0])
 
-	print ('time to Formulate Eq.12:', time.time() - start_time)
+	# print ('time to Formulate Eq.12:', time.time() - start_time)
 	start_time = time.time()
 
 	# Eq.13 and Eq. 14
@@ -208,7 +208,7 @@ def solve_Cplex(system):
 		problem.linear_constraints.add(lin_expr = [[srow_index, srow_coeff]], senses = ["E"], rhs = [0])
 		problem.linear_constraints.add(lin_expr = [[trow_index, trow_coeff]], senses = ["E"], rhs = [0])
 
-	print ('time to formulate 13 and 14:', time.time() - start_time)
+	# print ('time to formulate 13 and 14:', time.time() - start_time)
 	start_time = time.time()
 
 	# Eq.15
@@ -228,7 +228,7 @@ def solve_Cplex(system):
 							row_index.append(fji_index)
 							row_coeff.append(1)
 			problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["L"], rhs = [pmax[i][h]])
-	print ('time to Formulate Eq.15:', time.time() - start_time)
+	# print ('time to Formulate Eq.15:', time.time() - start_time)
 	start_time = time.time()
 
 	# Eq. 16
@@ -241,7 +241,7 @@ def solve_Cplex(system):
 						f_index = get_index(i, h, j, k, n, Nchiplet, Nclump, Nmax)
 						problem.indicator_constraints.add(indvar = f_index + 1, rhs = 1.0, sense = "G", lin_expr = [[f_index], [1.0]], indtype = 3)
 	# print (problem.indicator_constraints.get_num())
-	print ('time to Formulate Eq.16:', time.time() - start_time)
+	# print ('time to Formulate Eq.16:', time.time() - start_time)
 	start_time = time.time()
 
 	# Eq. 17
@@ -254,7 +254,7 @@ def solve_Cplex(system):
 						# f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2 + 1
 						f_index = get_index(i, h, j, k, n, Nchiplet, Nclump, Nmax) + 1
 						problem.linear_constraints.add(lin_expr=[[[f_index, num_val],[-d[i][h][j][k], 1]]], senses = ["G"], rhs = [0.0])
-	print ('time to Formulate Eq.17:', time.time() - start_time)
+	# print ('time to Formulate Eq.17:', time.time() - start_time)
 	start_time = time.time()
 
 	# Eq. 18
@@ -293,22 +293,22 @@ def solve_Cplex(system):
 		# 			row_coeff.append(2)
 		# 	problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["L"], rhs = [3 * R[s[n]][t[n]]])
 
-	print ('time to Formulate Eq.18:', time.time() - start_time)
+	# print ('time to Formulate Eq.18:', time.time() - start_time)
 	start_time = time.time()
 
 	problem.objective.set_linear(num_val, 1.0)
 	# print (problem.objective.get_linear())
 
 	problem.solve()	
-	print('time to solve cplex:', time.time() - start_time)
+	# print('time to solve cplex:', time.time() - start_time)
 
-	for f_index,x in enumerate(problem.solution.get_values()[:-1]):
-		if x!=0 and f_index % 2 == 0:
-			i, h, j, k, n = translate_index(f_index, Nchiplet, Nclump, Nmax)
-			print (f_index, i, h, j, k, n, x, d[i][h][j][k])
+	# for f_index,x in enumerate(problem.solution.get_values()[:-1]):
+	# 	if x!=0 and f_index % 2 == 0:
+	# 		i, h, j, k, n = translate_index(f_index, Nchiplet, Nclump, Nmax)
+	# 		print (f_index, i, h, j, k, n, x, d[i][h][j][k])
 
-	for n in range(Nmax):
-		print (n, s[n], t[n])
+	# for n in range(Nmax):
+	# 	print (n, s[n], t[n])
 		
 	print ('Maximum wire Length: ', problem.solution.get_values()[-1])
 	return problem.solution.get_values()[-1]
