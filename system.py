@@ -16,6 +16,9 @@ class System_25D:
 	def set_path(self, path):
 		self.path = path
 
+	def set_interposer_type(self, intp_type):
+		self.intp_type = intp_type
+		
 	def set_interposer_size(self, intp_size):
 		self.intp_size = intp_size
 
