@@ -15,6 +15,7 @@ class PassiveInterposer(System_25D):
 		self.x = [None] * self.chiplet_count
 		self.y = [None] * self.chiplet_count
 		self.link_type = 'nppl'
+		self.length_threshold = 9
 
 	def gen_flp(self, filename):
 		# material properties
