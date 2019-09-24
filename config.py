@@ -81,6 +81,7 @@ def read_config():
 			os.system('mkdir -p ' + path)
 		system.set_chiplet_count(chiplet_count)
 		system.initialize()
+		system.set_interposer_type(interposer_type)
 		system.set_link_type(link_type)
 		system.set_interposer_size(interposer_size)
 		system.set_chiplet_power(chiplet_power)
