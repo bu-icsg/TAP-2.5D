@@ -1,5 +1,6 @@
 import cplex
 import sys, time
+from copy import deepcopy
 
 def read_input():
 	'''
@@ -18,28 +19,56 @@ def read_input():
 		Conf.readline()
 		Nclump = int(Conf.readline().split()[1])
 		Nchiplet = int(Conf.readline().split()[1])
-		pmax = int(Conf.readline().split()[1])
+		p = int(Conf.readline().split()[1])
 		Hopmax = int(Conf.readline().split()[1])
+	pmax = [[p for h in range(Nclump)] for i in range(Nchiplet)]
 
-	xl, xc, yl, yc = [0] * Nchiplet, [0] * Nclump, [0] * Nchiplet, [0] * Nclump
+	xl, yl = [0] * Nchiplet, [0] * Nchiplet
+	xc, yc = [[0 for h in range(Nclump)] for i in range(Nchiplet)], [[0 for h in range(Nclump)] for i in range(Nchiplet)]
 	R = [[0 for i in range(Nchiplet)] for j in range(Nchiplet)]
 	with open(path + 'Xl.txt', 'r') as Xchiplet:
 		for i in range(Nchiplet):
 			xl[i] = float(Xchiplet.readline())
 	with open(path + 'Xc.txt', 'r') as Xclump:
-		for i in range(Nclump):
-			xc[i] = float(Xclump.readline())
+		for h in range(Nclump):
+			p = float(Xclump.readline())
+			for i in range(Nchiplet):
+				xc[i][h] = p
 	with open(path + 'Yl.txt', 'r') as Ychiplet:
 		for i in range(Nchiplet):
 			yl[i] = float(Ychiplet.readline())
 	with open(path + 'Yc.txt', 'r') as Yclump:
-		for i in range(Nclump):
-			yc[i] = float(Yclump.readline())
+		for h in range(Nclump):
+			p = float(Yclump.readline())
+			for i in range(Nchiplet):
+				yc[i][h] = p
 	with open(path + 'R.txt', 'r') as Connection:
 		for i in range(Nchiplet):
 			R[i] = list(map(int,Connection.readline().split()))
 
 	print (R)
+	return xl, xc, yl, yc, R, Nchiplet, Nclump, pmax, Hopmax
+
+def get_input(system):
+	# to account for heterogeneous chiplet, the xc, yc, pmax are 2d array now. index [i][h] indicates chiplet i pin clump h
+	Nclump = 4
+	Nchiplet = system.chiplet_count
+	Hopmax = 1
+	ubump_pitch = 0.045 # 45um in unit of mm
+	if system.intp_type == 'passive':
+		if system.link_type == 'ppl':
+			Hopmax = 2
+	# xl, yl here are locations of the bottem-left corner of chiplets (this way the offset xc, yc will be positive)
+	xl, yl = [None] * Nchiplet, [None] * Nchiplet
+	# xc, yc are the offset of the pin clump to the center of chiplet
+	xc, yc, pmax = [[None for h in range(Nclump)] for i in range(Nchiplet)],[[None for h in range(Nclump)] for i in range(Nchiplet)],[[None for h in range(Nclump)] for i in range(Nchiplet)]
+	for i in range(Nchiplet):
+		xl[i], yl[i] = system.x[i] - system.width[i] / 2 - system.hubump[i], system.y[i] - system.height[i] / 2 - system.hubump[i]
+		xc[i][0], yc[i][0], pmax[i][0] = system.hubump[i] / 2, system.height[i] / 2 + system.hubump[i], int(system.hubump[i] / ubump_pitch) * int((system.height[i]+system.hubump[i]) / ubump_pitch)
+		xc[i][1], yc[i][1], pmax[i][1] = system.width[i] / 2 + system.hubump[i], system.hubump[i] * 1.5 + system.height[i], int(system.hubump[i] / ubump_pitch) * int((system.width[i] + system.hubump[i]) / ubump_pitch)
+		xc[i][2], yc[i][2], pmax[i][2] = system.width[i] + system.hubump[i] * 1.5, yc[i][0], pmax[i][0]
+		xc[i][3], yc[i][3], pmax[i][3] = xc[i][1], system.hubump[i] / 2, pmax[i][1]
+	R = deepcopy(system.connection_matrix)
 	return xl, xc, yl, yc, R, Nchiplet, Nclump, pmax, Hopmax
 
 def translate_index(f_index, Nchiplet, Nclump, Nmax):
@@ -58,11 +87,10 @@ def get_index(i, h, j, k, n, Nchiplet, Nclump, Nmax):
 	f_index = (i * Nclump * Nchiplet * Nclump * Nmax + h * Nchiplet * Nclump * Nmax + j * Nclump * Nmax + k * Nmax + n) * 2
 	return f_index
 
-def solve_Cplex():
-	start_time = time.time()
+def solve_Cplex(system):
 	# read from previous inout files for testing purpose, later we read from system class
 	xl, xc, yl, yc, R, Nchiplet, Nclump, pmax, Hopmax = read_input()
-	print('time to read input:', time.time() - start_time)
+	xl, xc, yl, yc, R, Nchiplet, Nclump, pmax, Hopmax = get_input(system)
 
 	problem = cplex.Cplex()
 	problem.objective.set_sense(problem.objective.sense.minimize)
@@ -75,7 +103,7 @@ def solve_Cplex():
 		for h in range(Nclump):
 			for j in range(Nchiplet):
 				for k in range(Nclump):
-					d[i][h][j][k] = abs(xl[i] + xc[h] - xl[j] - xc[k]) + abs(yl[i] + yc[h] - yl[j] - yc[k])
+					d[i][h][j][k] = abs(xl[i] + xc[i][h] - xl[j] - xc[j][k]) + abs(yl[i] + yc[i][h] - yl[j] - yc[j][k])
 	print ('time to initialize d', time.time() - start_time)
 	start_time = time.time()
 	# get sn, tn pair
@@ -100,7 +128,7 @@ def solve_Cplex():
 						if (i==j) and (h==k):
 							problem.variables.add(lb = [0.0, 0.0], ub = [0.0, 0.0], types = [problem.variables.type.integer]*2)
 						else:
-							problem.variables.add(lb = [0.0, 0.0], ub = [pmax, 1.0], types = [problem.variables.type.integer]*2)
+							problem.variables.add(lb = [0.0, 0.0], ub = [pmax[i][h], 1.0], types = [problem.variables.type.integer]*2)
 	print ('time to initialize decision variables f and lambda', time.time() - start_time)
 	start_time = time.time()
 
@@ -199,7 +227,7 @@ def solve_Cplex():
 							fji_index = get_index(j, k, i, h, n, Nchiplet, Nclump, Nmax)
 							row_index.append(fji_index)
 							row_coeff.append(1)
-			problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["L"], rhs = [pmax])
+			problem.linear_constraints.add(lin_expr = [[row_index, row_coeff]], senses = ["L"], rhs = [pmax[i][h]])
 	print ('time to Formulate Eq.15:', time.time() - start_time)
 	start_time = time.time()
 
@@ -283,6 +311,7 @@ def solve_Cplex():
 		print (n, s[n], t[n])
 		
 	print ('Maximum wire Length: ', problem.solution.get_values()[-1])
+	return problem.solution.get_values()[-1]
 
 if __name__ == "__main__":
 	solve_Cplex()
