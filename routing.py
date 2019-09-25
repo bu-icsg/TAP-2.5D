@@ -94,6 +94,7 @@ def solve_Cplex(system):
 
 	problem = cplex.Cplex()
 	problem.objective.set_sense(problem.objective.sense.minimize)
+	problem.parameters.threads.set(1)
 	# problem.parameters.tuning.timelimit.set(300.0)
 
 	# calculate d
