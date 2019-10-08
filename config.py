@@ -24,6 +24,7 @@ def read_config():
 	overwrite = []
 	interposer_size = 0
 	link_type = None
+	x, y = None, None
 	for o, a in opts:
 		if o == '-h':
 			usage()
@@ -40,6 +41,10 @@ def read_config():
 			interposer_size = float(a)
 		if o == 'link_type':
 			link_type = a
+		if o == 'x':
+			x = a
+		if o == 'y':
+			y = a
 
 	config = configparser.ConfigParser()
 	config.read(filename)
@@ -57,8 +62,14 @@ def read_config():
 	except:
 		init_place_option = 'tight'
 	if init_place_option == 'given':
-		chiplet_x = get_list(config.get('chiplets', 'x'))
-		chiplet_y = get_list(config.get('chiplets', 'y'))
+		if x == None:
+			chiplet_x = get_list(config.get('chiplets', 'x'))
+		else:
+			chiplet_x = x
+		if y == None:
+			chiplet_y = get_list(config.get('chiplets', 'y'))
+		else:
+			chiplet_y = y
 	else:
 		chiplet_x, chiplet_y = [], []
 
