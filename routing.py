@@ -95,7 +95,7 @@ def solve_Cplex(system):
 	problem = cplex.Cplex()
 	problem.objective.set_sense(problem.objective.sense.minimize)
 	problem.parameters.threads.set(1)
-	# problem.parameters.tuning.timelimit.set(300.0)
+	problem.parameters.timelimit.set(300.0)
 
 	# calculate d
 	start_time = time.time()
@@ -310,9 +310,12 @@ def solve_Cplex(system):
 
 	# for n in range(Nmax):
 	# 	print (n, s[n], t[n])
-		
-	print ('Maximum wire Length: ', problem.solution.get_values()[-1])
-	return problem.solution.get_values()[-1]
+	try:
+		print ('Maximum wire Length: ', problem.solution.get_values()[-1])
+		return problem.solution.get_values()[-1]
+	except:
+		print ('No solution within limited time, return 100')
+		return 100
 
 if __name__ == "__main__":
 	solve_Cplex()
