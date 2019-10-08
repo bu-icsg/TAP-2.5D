@@ -185,7 +185,7 @@ if __name__ == "__main__":
 	print (length_best)
 	print (solution.x)
 	print (solution.y)
-	with open(path+'output.txt','w') as OUTPUT:
+	with open(solution.path+'output.txt','w') as OUTPUT:
 		OUTPUT.write(str(step_best) + '\n' + str(temp_best) + '\n' + str(length_best) + '\n')
 		OUTPUT.write(str(solution.x)+ '\n' + str(solution.y) + '\n')
 
