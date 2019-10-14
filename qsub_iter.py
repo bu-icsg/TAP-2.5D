@@ -1,6 +1,5 @@
 # script for submitting jobs
-import os
-
+import os, time
 
 # cases = ['40', '50', 'small', 'homo_ring']
 cases = ['homo_ring','homo_donut']
@@ -54,6 +53,7 @@ for c in cases:
 					os.system('qsub -l h_rt=24:00:00 -o run_'+c+'_'+ltype+str(i)+'_'+str(intp_size)+'.o run_'+c+'_'+ltype+str(i)+'_'+str(intp_size)+'.sh')
 					# print('qsub -l h_rt=24:00:00 -o run_'+c+'_'+ltype+str(i)+'_'+str(intp_size)+'.o run_'+c+'_'+ltype+str(i)+'_'+str(intp_size)+'.sh')
 
-
-
+print ('sleep')
+time.sleep(600)
+os.system('qsub autosubmit.sh')
 
