@@ -65,11 +65,11 @@ def read_config():
 		if x == None:
 			chiplet_x = get_list(config.get('chiplets', 'x'))
 		else:
-			chiplet_x = x
+			chiplet_x = list(map(float, x.split(',')))
 		if y == None:
 			chiplet_y = get_list(config.get('chiplets', 'y'))
 		else:
-			chiplet_y = y
+			chiplet_y = list(map(float, y.split(',')))
 	else:
 		chiplet_x, chiplet_y = [], []
 
@@ -124,7 +124,7 @@ def parse_command():
 if __name__ == "__main__":
 	system = read_config()
 	print (system.chiplet_count, system.intp_size, system.power, system.x)
-	filename = 'given_50'
+	filename = 'example'
 	system.gen_flp(filename)
 	system.gen_ptrace(filename)
 	temp = system.run_hotspot(filename)
