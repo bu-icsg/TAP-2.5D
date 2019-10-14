@@ -129,7 +129,7 @@ def anneal():
 	# start simulated annealing
 	while T > T_min:
 		i = 1
-		while i <= intp_size * 2:
+		while i <= intp_size:
 			step += 1
 			print ('step_'+str(step), ' T = ',T, ' i = ', i)
 			jump_or_close = random.random()
