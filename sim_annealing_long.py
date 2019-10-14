@@ -122,14 +122,14 @@ def anneal():
 	block_occupation.print_grid(grid)
 	# set annealing parameters
 	T = 1.0
-	T_min = 0.01
-	alpha = 0.8
+	T_min = 0.005
+	alpha = 0.9
 	# jumping_ratio = T_min / alpha
 	jumping_ratio = 0.9 # fixed to 10% chance to jump
 	# start simulated annealing
 	while T > T_min:
 		i = 1
-		while i <= intp_size:
+		while i <= intp_size * 2:
 			step += 1
 			print ('step_'+str(step), ' T = ',T, ' i = ', i)
 			jump_or_close = random.random()
