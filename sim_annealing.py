@@ -124,7 +124,8 @@ def anneal():
 	T = 1.0
 	T_min = 0.01
 	alpha = 0.8
-	jumping_ratio = T_min / alpha
+	# jumping_ratio = T_min / alpha
+	jumping_ratio = 0.9 # fixed to 10% chance to jump
 	# start simulated annealing
 	while T > T_min:
 		i = 1
@@ -173,7 +174,7 @@ def anneal():
 				print ('AP = ', ap, ' < ', r, ' Reject!')
 			i += 1
 		T *= alpha
-		jumping_ratio /= alpha
+		# jumping_ratio /= alpha
 	os.system('rm '+ system.path + '{*.flp,*.lcf,*.ptrace,*.steady}')
 	return system_best, step_best, temp_best, length_best
 
