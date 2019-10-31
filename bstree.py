@@ -15,6 +15,11 @@ class Node:
 		self.width = width
 		self.height = height
 
+def printTree(tree):
+	if tree != None:
+		printTree(tree.left)
+		print (tree.ind)
+		printTree(tree.right)
 
 class Bstree:
 	def __init__(self, root = None):
@@ -28,10 +33,11 @@ class Bstree:
 
 	# def bstree2flp():
 
-	def addnode(self, ind, x, y, width, height):
+	def addnode(self, node, ind, x, y, width, height):
 		if self.root.ind == None:
 			print ('root is None')
 			self.root.set_node_value(ind, x, y, width, height)
+
 
 
 	def flp2bstree(self, ox, oy, owidth, oheight):
@@ -47,7 +53,8 @@ class Bstree:
 		# self.root.set_node_value(ind[0], x[0], y[0], width[0], height[0])
 		print (self.root)
 		for i in range(chiplet_count):
-			self.addnode(ind[i], x[i], y[i], width[i], height[i])
+			self.addnode(self.root, ind[i], x[i], y[i], width[i], height[i])
+		printTree(self.root)
 
 
 if __name__ == "__main__":
