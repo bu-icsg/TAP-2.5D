@@ -15,12 +15,6 @@ class Node:
 		self.width = width
 		self.height = height
 
-def printTree(tree):
-	if tree != None:
-		printTree(tree.left)
-		print (tree.ind)
-		printTree(tree.right)
-
 class Bstree:
 	def __init__(self, root = None):
 		self.root = root
@@ -57,9 +51,9 @@ class Bstree:
 			# else:
 			# 	return self.addnode(node.right, ind, x, y, width, height)		
 		print (x, 'is not equal to either', node.x, 'or', node.x+node.width)
-		try_left = self.addnode(node.left, ind, x, y, width, height)
-		if not try_left:
-			return self.addnode(node.right, ind, x, y, width, height)
+		try_right = self.addnode(node.right, ind, x, y, width, height)
+		if not try_right:
+			return self.addnode(node.left, ind, x, y, width, height)
 		else:
 			return True
 
@@ -79,6 +73,11 @@ class Bstree:
 		print ('print tree inorder')
 		printTree(self.root)
 
+def printTree(tree):
+	if tree != None:
+		printTree(tree.left)
+		print (tree.ind)
+		printTree(tree.right)
 
 if __name__ == "__main__":
 	# example 1
@@ -92,6 +91,12 @@ if __name__ == "__main__":
 	y = [0, 0, 2, 1.5, 1.5, 3, 5, 4]
 	width = [3, 4, 2, 2, 1, 4, 3, 4]
 	height = [2, 1.5, 3, 1.5, 1, 1, 2, 2]
+
+	# example 3
+	# x = [0, 0, 1, 1]
+	# y = [0, 1, 0, 1]
+	# width = [1,1,1,1]
+	# height = [1,1,1,1]
 
 	root = Bstree()
 	root.flp2bstree(x, y, width, height)
