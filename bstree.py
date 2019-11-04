@@ -27,6 +27,7 @@ class Bstree:
 	# 	self.right = Node(newnode)
 
 	def addnode(self, node, ind, x, y, width, height):
+		# adding a new node (provided ind, x, y, width, height) to the left or right child of current node
 		if node == None:
 			return False
 		if self.root.ind == None:
@@ -130,9 +131,29 @@ class Bstree:
 		node1.ind, node2.ind = node2.ind, node1.ind
 		self.bstree2flp()
 
-	# def delete(self, node):
-		
-		
+	def delete(self, node):
+		if node.left:
+			if node.parent.left == node:
+				node.parent.left = node.left
+			elif node.parent.right == node:
+				node.parent.right = node.left
+			node.left.parent = node.parent
+		elif node.right:
+			if node.parent.left == node:
+				node.parent.left = node.right
+			elif node.parent.right == node:
+				node.parent.right = node.right
+			node.right.parent = node.parent
+		else:
+			# the node is a leaf, just delete it
+			if node.parent.left == node:
+				node.parent.left = None
+			elif node.parent.right == node:
+				node.parent.right = None
+			node.parent = None
+
+	def insert(self, node):
+
 	# def move(self, node1)???
 
 def printTree(tree):
