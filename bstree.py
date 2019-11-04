@@ -19,13 +19,11 @@ class Bstree:
 	def __init__(self, root = None):
 		self.root = root
 
-	def insertLeft(self, newnode):
-		self.left = Node(newnode)
+	# def insertLeft(self, newnode):
+	# 	self.left = Node(newnode)
 
-	def insertRight(self, newnode):
-		self.right = Node(newnode)
-
-	# def bstree2flp():
+	# def insertRight(self, newnode):
+	# 	self.right = Node(newnode)
 
 	def addnode(self, node, ind, x, y, width, height):
 		if node == None:
@@ -40,17 +38,13 @@ class Bstree:
 				node.left.set_node_value(ind, x, y, width, height)
 				print ('Node ', ind, 'add to the left of ', node.ind)
 				return True
-			# else:
-			# 	return self.addnode(node.left, ind, x, y, width, height)
 		elif x == node.x:
 			if node.right == None:
 				node.right = Node()
 				node.right.set_node_value(ind, x, y, width, height)
 				print ('Node ', ind, 'add to the right of ', node.ind)
 				return True
-			# else:
-			# 	return self.addnode(node.right, ind, x, y, width, height)		
-		print (x, 'is not equal to either', node.x, 'or', node.x+node.width)
+		# print (x, 'is not equal to either', node.x, 'or', node.x+node.width)
 		try_right = self.addnode(node.right, ind, x, y, width, height)
 		if not try_right:
 			return self.addnode(node.left, ind, x, y, width, height)
@@ -72,11 +66,60 @@ class Bstree:
 			self.addnode(self.root, ind[i], x[i], y[i], width[i], height[i])
 		print ('print tree inorder')
 		printTree(self.root)
+		return self.root
+
+	def resetloc(self, node):
+		if node == None:
+			return
+		node.x, node.y = None, None
+		self.resetloc(node.left)
+		self.resetloc(node.right)
+
+	def computex(self, node):
+		if node == None:
+			return
+		if node.left:
+			node.left.x = node.x + node.width
+			self.xpoint.add(node.left.x)
+			self.xpoint.add(node.left.x + node.left.width)
+			self.computex(node.left)
+		if node.right:
+			node.right.x = node.x
+			self.xpoint.add(node.right.x)
+			self.xpoint.add(node.right.x + node.right.width)
+			self.computex(node.right)
+
+	def computey(self, node):
+		if node == None:
+			return
+		y = 0
+		for i in range(len(self.xpoint)):
+			if node.x <= self.xpoint[i] < node.x + node.width:
+				y = max(y, self.flp[i])
+		node.y = y
+		for i in range(len(self.xpoint)):
+			if node.x <= self.xpoint[i] < node.x + node.width:
+				self.flp[i] = y + node.height
+		self.computey(node.left)
+		self.computey(node.right)
+
+	def bstree2flp(self):
+		# need to recompute the x, y location. since the tree may have rotate/swapped/moved node
+		self.root.x = 0
+		self.root.y = 0
+		self.xpoint = set([0])
+		self.computex(self.root)
+		self.xpoint = sorted(list(self.xpoint))
+		self.flp = [0] * len(self.xpoint)
+		print (self.xpoint)
+		self.computey(self.root)
+
+	
 
 def printTree(tree):
 	if tree != None:
 		printTree(tree.left)
-		print (tree.ind)
+		print (tree.ind, tree.x, tree.y, tree.width, tree.height)
 		printTree(tree.right)
 
 if __name__ == "__main__":
@@ -87,10 +130,11 @@ if __name__ == "__main__":
 	# height = [2, 1, 2, 1]
 
 	# example 2
-	x = [0, 3, 0, 3, 5, 2, 0, 3]
-	y = [0, 0, 2, 1.5, 1.5, 3, 5, 4]
-	width = [3, 4, 2, 2, 1, 4, 3, 4]
-	height = [2, 1.5, 3, 1.5, 1, 1, 2, 2]
+	# node   0  1    2  3    4    5  6  7
+	x = 	[0, 3, 	 0, 3, 	 5,   2, 0, 3]
+	y = 	[0, 0, 	 2, 1.5, 1.5, 3, 5, 4]
+	width = [3, 4, 	 2, 2, 	 1,   4, 3, 4]
+	height =[2, 1.5, 3, 1.5, 1,   1, 2, 2]
 
 	# example 3
 	# x = [0, 0, 1, 1]
@@ -98,5 +142,11 @@ if __name__ == "__main__":
 	# width = [1,1,1,1]
 	# height = [1,1,1,1]
 
-	root = Bstree()
-	root.flp2bstree(x, y, width, height)
+	tree = Bstree()
+	root = tree.flp2bstree(x, y, width, height)
+	tree.resetloc(root)
+	print
+	printTree(root)
+	tree.bstree2flp()
+	print
+	printTree(root)
