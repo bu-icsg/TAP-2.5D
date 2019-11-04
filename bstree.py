@@ -25,6 +25,16 @@ class Bstree:
 
 	# def insertRight(self, newnode):
 	# 	self.right = Node(newnode)
+	
+	def find_node(self, node, ind):
+		if node == None:
+			return None
+		if node.ind == ind:
+			return node
+		res = self.find_node(node.left, ind)
+		if res:
+			return res
+		return self.find_node(node.right, ind)
 
 	def addnode(self, node, ind, x, y, width, height):
 		# adding a new node (provided ind, x, y, width, height) to the left or right child of current node
@@ -132,13 +142,30 @@ class Bstree:
 		self.bstree2flp()
 
 	def delete(self, node):
-		if node.left:
+		if node.left and node.right:
+			# the node has two children
+			snode = node
+			while (snode.left and snode.right):
+				self.swap(snode, snode.left)
+				snode = snode.left
+			if snode.left:
+				snode.parent.left = snode.left
+				snode.left.parent = snode.parent
+			elif snode.right:
+				snode.parent.left = snode.right
+				snode.right.parent = snode.parent
+			else:
+				snode.parent.left = None
+				snode.parent = None
+		elif node.left:
+			# the node has only left child
 			if node.parent.left == node:
 				node.parent.left = node.left
 			elif node.parent.right == node:
 				node.parent.right = node.left
 			node.left.parent = node.parent
 		elif node.right:
+			# the node has only right child
 			if node.parent.left == node:
 				node.parent.left = node.right
 			elif node.parent.right == node:
@@ -152,7 +179,7 @@ class Bstree:
 				node.parent.right = None
 			node.parent = None
 
-	def insert(self, node):
+	# def insert(self, node):
 
 	# def move(self, node1)???
 
@@ -185,11 +212,13 @@ if __name__ == "__main__":
 	tree = Bstree()
 	root = tree.flp2bstree(x, y, width, height)
 	tree.resetloc(root)
-	print
+	print (' ')
 	printTree(root)
 	tree.bstree2flp()
-	print
+	print (' ')
 	printTree(root)
-	tree.swap(root.left, root.right)
-	print
+	# tree.swap(root.left, root.right)
+	tree.delete(tree.find_node(root, 2))
+	tree.bstree2flp()
+	print (' ')
 	printTree(root)
