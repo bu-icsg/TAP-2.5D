@@ -104,7 +104,8 @@ class Bstree:
 		self.computey(node.right)
 
 	def bstree2flp(self):
-		# need to recompute the x, y location. since the tree may have rotate/swapped/moved node
+		# need to recompute the x, y location. since the tree may have rotate/swap/move node
+		self.resetloc(self.root)
 		self.root.x = 0
 		self.root.y = 0
 		self.xpoint = set([0])
@@ -114,7 +115,18 @@ class Bstree:
 		print (self.xpoint)
 		self.computey(self.root)
 
-	
+	def rotate(self, node):
+		# rotate do not change B*-tree structure, but will impact the flp
+		node.width, node.height = node.height, node.width
+		self.bstree2flp()
+
+	def swap(self, node1, node2):
+		node1.width, node2.width = node2.width, node1.width
+		node1.height, node2.height = node2.height, node1.height
+		node1.ind, node2.ind = node2.ind, node1.ind
+		self.bstree2flp()
+
+	# def move(self, node1)???
 
 def printTree(tree):
 	if tree != None:
@@ -148,5 +160,8 @@ if __name__ == "__main__":
 	print
 	printTree(root)
 	tree.bstree2flp()
+	print
+	printTree(root)
+	tree.swap(root.left, root.right)
 	print
 	printTree(root)
