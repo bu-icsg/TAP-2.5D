@@ -2,6 +2,7 @@ class Node:
 	def __init__(self, value = None, left = None, right = None):
 		self.left = left
 		self.right = right
+		self.parent = None
 		self.ind = value
 		self.x = None
 		self.y = None
@@ -36,12 +37,14 @@ class Bstree:
 			if node.left == None:
 				node.left = Node()
 				node.left.set_node_value(ind, x, y, width, height)
+				node.left.parent = node
 				print ('Node ', ind, 'add to the left of ', node.ind)
 				return True
 		elif x == node.x:
 			if node.right == None:
 				node.right = Node()
 				node.right.set_node_value(ind, x, y, width, height)
+				node.right.parent = node
 				print ('Node ', ind, 'add to the right of ', node.ind)
 				return True
 		# print (x, 'is not equal to either', node.x, 'or', node.x+node.width)
@@ -121,11 +124,15 @@ class Bstree:
 		self.bstree2flp()
 
 	def swap(self, node1, node2):
+		# instead of applying insert and delete operations, we use an alternative by swapping the index, width and height, but maintain the tree relationship and update the xy coordinates.
 		node1.width, node2.width = node2.width, node1.width
 		node1.height, node2.height = node2.height, node1.height
 		node1.ind, node2.ind = node2.ind, node1.ind
 		self.bstree2flp()
 
+	# def delete(self, node):
+		
+		
 	# def move(self, node1)???
 
 def printTree(tree):
