@@ -79,7 +79,7 @@ class Bstree:
 		for i in range(chiplet_count):
 			self.addnode(self.root, ind[i], x[i], y[i], width[i], height[i])
 		print ('print tree preorder')
-		printTree(self.root)
+		self.printTree(self.root)
 		return self.root
 
 	def resetloc(self, node):
@@ -183,11 +183,13 @@ class Bstree:
 
 	# def move(self, node1)???
 
-def printTree(tree):
-	if tree != None:
-		print (tree.ind, tree.x, tree.y, tree.width, tree.height, tree.parent.ind if tree.parent else None, tree.left.ind if tree.left else None, tree.right.ind if tree.right else None, sep='\t')
-		printTree(tree.left)
-		printTree(tree.right)
+	def printTree(self, tree):
+		if tree == self.root:
+			print ('ind', 'x', 'y', 'width', 'height', 'parent','left','right', sep = '\t')
+		if tree != None:
+			print (tree.ind, tree.x, tree.y, tree.width, tree.height, tree.parent.ind if tree.parent else None, tree.left.ind if tree.left else None, tree.right.ind if tree.right else None, sep='\t')
+			self.printTree(tree.left)
+			self.printTree(tree.right)
 
 if __name__ == "__main__":
 	# example 1
@@ -213,13 +215,13 @@ if __name__ == "__main__":
 	root = tree.flp2bstree(x, y, width, height)
 	tree.resetloc(root)
 	print (' ')
-	printTree(root)
+	tree.printTree(root)
 	tree.bstree2flp()
 	print (' ')
-	printTree(root)
+	tree.printTree(root)
 	# tree.swap(root.left, root.right)
 	tree.delete(tree.find_node(root, 0))
 	tree.bstree2flp()
 	print (' ')
-	printTree(root)
+	tree.printTree(root)
 	print (tree.root.ind)
