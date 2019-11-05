@@ -178,8 +178,41 @@ class Bstree:
 			elif node.parent.right == node:
 				node.parent.right = None
 			node.parent = None
+		return node
 
-	# def insert(self, node):
+	def insert(self, node, parent, direction):
+		# add the node to the leaf of the parent, direction indicates left or right child
+		if parent == None:
+			# the only case the parent is none is to insert the node to the root
+			if direction == 'left':
+				node.left = self.root
+				self.root.parent = node
+				node.right = None
+				node.parent = None
+				self.root = node
+			elif direction == 'right':
+				node.right = self.root
+				self.root.parent = node
+				node.left = None
+				node.parent = None
+				self.root = node
+		elif direction == 'left':
+			if parent.left:
+				node.left = parent.left
+				parent.left.parent = node
+				node.right = None
+			parent.left = node
+			node.parent = parent
+		elif direction == 'right':
+			if parent.right:
+				node.right = parent.right
+				parent.right.parent = node
+				node.left = None
+			parent.right = node
+			node.parent = parent
+
+	# def compact(self):
+		# reconstruct the bstree to make it admissible since rotate/move/swap may lead to non-compact structure.
 
 	# def move(self, node1)???
 
@@ -220,8 +253,13 @@ if __name__ == "__main__":
 	print (' ')
 	tree.printTree(root)
 	# tree.swap(root.left, root.right)
-	tree.delete(tree.find_node(root, 0))
+	del_node = tree.delete(tree.find_node(root, 1))
 	tree.bstree2flp()
 	print (' ')
 	tree.printTree(root)
+	tree.insert(del_node, root.parent, 'left')
+	tree.bstree2flp()
+	print (' ')
+	tree.printTree(tree.root)
 	print (tree.root.ind)
+
