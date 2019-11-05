@@ -78,7 +78,7 @@ class Bstree:
 		print (self.root)
 		for i in range(chiplet_count):
 			self.addnode(self.root, ind[i], x[i], y[i], width[i], height[i])
-		print ('print tree inorder')
+		print ('print tree preorder')
 		printTree(self.root)
 		return self.root
 
@@ -185,8 +185,8 @@ class Bstree:
 
 def printTree(tree):
 	if tree != None:
+		print (tree.ind, tree.x, tree.y, tree.width, tree.height, tree.parent.ind if tree.parent else None, tree.left.ind if tree.left else None, tree.right.ind if tree.right else None, sep='\t')
 		printTree(tree.left)
-		print (tree.ind, tree.x, tree.y, tree.width, tree.height)
 		printTree(tree.right)
 
 if __name__ == "__main__":
@@ -218,7 +218,8 @@ if __name__ == "__main__":
 	print (' ')
 	printTree(root)
 	# tree.swap(root.left, root.right)
-	tree.delete(tree.find_node(root, 2))
+	tree.delete(tree.find_node(root, 0))
 	tree.bstree2flp()
 	print (' ')
 	printTree(root)
+	print (tree.root.ind)
