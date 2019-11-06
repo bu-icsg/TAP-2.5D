@@ -45,21 +45,33 @@ class Bstree:
 			return False
 		if self.root.ind == None:
 			self.root.set_node_value(ind, x, y, width, height)
-			print ('Node ', ind, 'add to the root')
+			try:
+				DEBUG
+				print ('Node ', ind, 'add to the root')
+			except NameError:
+				pass
 			return True
 		elif x == node.x + node.width and y <= node.y + node.height and y + height >= node.y:
 			if node.left == None:
 				node.left = Node()
 				node.left.set_node_value(ind, x, y, width, height)
 				node.left.parent = node
-				print ('Node ', ind, 'add to the left of ', node.ind)
+				try:
+					DEBUG
+					print ('Node ', ind, 'add to the left of ', node.ind)
+				except NameError:
+					pass
 				return True
 		elif x == node.x:
 			if node.right == None:
 				node.right = Node()
 				node.right.set_node_value(ind, x, y, width, height)
 				node.right.parent = node
-				print ('Node ', ind, 'add to the right of ', node.ind)
+				try:
+					DEBUG
+					print ('Node ', ind, 'add to the right of ', node.ind)
+				except NameError:
+					pass
 				return True
 		try_right = self.addnode(node.right, ind, x, y, width, height)
 		if not try_right:
@@ -79,7 +91,11 @@ class Bstree:
 		chiplet_count = len(x)
 		# ind = [i for i in range(chiplet_count)]
 		x, y, width, height, ind = list(map(list, zip(*sorted(zip(x,y,width,height, ind), key=lambda pair: pair[0:2]))))
-		# print (ind, x, y, width, height,'', sep = '\n')
+		try:
+			DEBUG
+			print (ind, x, y, width, height,'', sep = '\n')
+		except NameError:
+			pass
 		self.root = Node()
 		for i in range(chiplet_count):
 			self.addnode(self.root, ind[i], x[i], y[i], width[i], height[i])
@@ -106,7 +122,7 @@ class Bstree:
 		self.y_arr = y[:]
 		self.width_arr = width[:]
 		self.height_arr = height[:]
-		print (ind, x, y, width, height,'', sep='\n')
+		# print (ind, x, y, width, height,'', sep='\n')
 
 	def resetloc(self, node):
 		if node == None:
@@ -311,7 +327,7 @@ if __name__ == "__main__":
 	# y = [0, 1, 0, 1]
 	# width = [1,1,1,1]
 	# height = [1,1,1,1]
-
+	DEBUG = True
 	tree = Bstree()
 	root = tree.flp2bstree(ind, x, y, width, height)
 	# tree.swap(root.left, root.right)
@@ -322,7 +338,7 @@ if __name__ == "__main__":
 	tree.printTree(tree.root)
 	tree.insert(del_node, tree.root.parent, 'left')
 	tree.reconstruct()
-	print (' ')
+	print ('\n after insert node 1 to the root')
 	tree.printTree(tree.root)
 	print (tree.root.ind)
 
