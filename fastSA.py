@@ -1,6 +1,7 @@
 from bstree import Bstree
 
-def cost_function(W):
+def cost_function(tree):
+	W = compute_wirelength(tree)
 	return W
 
 def accept_probability(old_cost, new_cost, T):
@@ -21,14 +22,25 @@ def get_connections():
 				t.append(j)
 				net += 1
 	return net, s, t
-# def compute_wirelength():
 
+def compute_wirelength(tree):
+	total_wirelength = 0
+	for i in range(net):
+		s_index = tree.ind_arr.index(s[i])
+		t_index = tree.ind_arr.index(t[i])
+		wirelength = (abs(tree.x_arr[s_index] + tree.width_arr[s_index] / 2 - tree.x_arr[t_index] - tree.width_arr[t_index] / 2) + abs(tree.y_arr[s_index] + tree.height_arr[s_index] / 2 - tree.y_arr[t_index] - tree.height_arr[t_index] / 2)) * connection_matrix[s_index][t_index]
+		total_wirelength += wirelength
+	return total_wirelength
 
 def anneal():
-	# read config and generate initial placement
-	tree= Bstree()
+	# generate initial placement, and evaluate initial cost
+	tree = Bstree()
 	tree.flp2bstree(ind, x, y, width, height)
+	tree.reconstruct()
+	global net, s, t
 	net, s, t = get_connections()
+	cost = cost_function(tree)
+
 	# set annealing parameters
 	alpha = 0.85   # temperature decay factor
 
