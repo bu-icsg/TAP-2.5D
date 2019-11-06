@@ -329,7 +329,8 @@ if __name__ == "__main__":
 	# height = [1,1,1,1]
 	DEBUG = True
 	tree = Bstree()
-	root = tree.flp2bstree(ind, x, y, width, height)
+	tree.flp2bstree(ind, x, y, width, height)
+	tree.reconstruct()
 	# tree.swap(root.left, root.right)
 	# tree.move(tree.find_node(root, 1), root.parent, 'left')
 	del_node = tree.delete(tree.find_node(tree.root, 1))
