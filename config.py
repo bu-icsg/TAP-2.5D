@@ -124,6 +124,7 @@ def parse_command():
 if __name__ == "__main__":
 	system = read_config()
 	print (system.chiplet_count, system.intp_size, system.power, system.x)
+	print (system.connection_matrix)
 	filename = 'example'
 	system.gen_flp(filename)
 	system.gen_ptrace(filename)
