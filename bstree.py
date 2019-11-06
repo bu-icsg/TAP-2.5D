@@ -19,13 +19,16 @@ class Node:
 class Bstree:
 	def __init__(self, root = None):
 		self.root = root
+		self.xpoint = set()
+		self.ypoint = set()
+		self.hct = []
+		self.vct = []
+		self.ind_arr = []
+		self.x_arr = []
+		self.y_arr = []
+		self.width_arr = []
+		self.height_arr = []
 
-	# def insertLeft(self, newnode):
-	# 	self.left = Node(newnode)
-
-	# def insertRight(self, newnode):
-	# 	self.right = Node(newnode)
-	
 	def find_node(self, node, ind):
 		if node == None:
 			return None
@@ -92,32 +95,47 @@ class Bstree:
 	def computex(self, node):
 		if node == None:
 			return
+		self.xpoint.add(node.x)
+		self.xpoint.add(node.x + node.width)
 		if node.left:
 			node.left.x = node.x + node.width
-			self.xpoint.add(node.left.x)
-			self.xpoint.add(node.left.x + node.left.width)
 			self.computex(node.left)
 		if node.right:
 			node.right.x = node.x
-			self.xpoint.add(node.right.x)
-			self.xpoint.add(node.right.x + node.right.width)
 			self.computex(node.right)
 
-	def computey(self, node):
+	def compacty(self, node):
 		if node == None:
 			return
 		y = 0
 		for i in range(len(self.xpoint)):
 			if node.x <= self.xpoint[i] < node.x + node.width:
-				y = max(y, self.flp[i])
+				y = max(y, self.hct[i])
 		node.y = y
 		for i in range(len(self.xpoint)):
 			if node.x <= self.xpoint[i] < node.x + node.width:
-				self.flp[i] = y + node.height
-		self.computey(node.left)
-		self.computey(node.right)
+				self.hct[i] = y + node.height
+		self.ypoint.add(node.y)
+		self.ypoint.add(node.y + node.height)
+		self.compacty(node.left)
+		self.compacty(node.right)
 
-	def bstree2flp(self):
+	def compactx(self, node):
+		# reconstruct the bstree to make it admissible since rotate/move/swap may lead to non-compact structure.
+		if node == None:
+			return
+		x = 0
+		for i in range(len(self.ypoint)):
+			if node.y <= self.ypoint[i] < node.y + node.height:
+				x = max(x, self.vct[i])
+		node.x = x
+		for i in range(len(self.ypoint)):
+			if node.y <= self.ypoint[i] < node.y + node.height:
+				self.vct[i] = x + node.width
+		self.compactx(node.left)
+		self.compactx(node.right)
+
+	def reconstruct(self):
 		# need to recompute the x, y location. since the tree may have rotate/swap/move node
 		self.resetloc(self.root)
 		self.root.x = 0
@@ -125,21 +143,26 @@ class Bstree:
 		self.xpoint = set([0])
 		self.computex(self.root)
 		self.xpoint = sorted(list(self.xpoint))
-		self.flp = [0] * len(self.xpoint)
+		self.hct = [0] * len(self.xpoint) # hct for horizontal contour line
 		print (self.xpoint)
-		self.computey(self.root)
+		self.ypoint = set([0])
+		self.compacty(self.root)
+		self.ypoint = sorted(list(self.ypoint))
+		self.vct = [0] * len(self.ypoint) # vct for vertical contour line
+		print (self.ypoint)
+		self.compactx(self.root)
 
 	def rotate(self, node):
 		# rotate do not change B*-tree structure, but will impact the flp
 		node.width, node.height = node.height, node.width
-		self.bstree2flp()
+		self.reconstruct()
 
 	def swap(self, node1, node2):
 		# instead of applying insert and delete operations, we use an alternative by swapping the index, width and height, but maintain the tree relationship and update the xy coordinates.
 		node1.width, node2.width = node2.width, node1.width
 		node1.height, node2.height = node2.height, node1.height
 		node1.ind, node2.ind = node2.ind, node1.ind
-		self.bstree2flp()
+		self.reconstruct()
 
 	def delete(self, node):
 		if node.left and node.right:
@@ -211,10 +234,11 @@ class Bstree:
 			parent.right = node
 			node.parent = parent
 
-	# def compact(self):
-		# reconstruct the bstree to make it admissible since rotate/move/swap may lead to non-compact structure.
+	def move(self, node1, node2, direction):
+		node = self.delete(node1)
+		self.insert(node, node2, direction)
 
-	# def move(self, node1)???
+
 
 	def printTree(self, tree):
 		if tree == self.root:
@@ -249,16 +273,17 @@ if __name__ == "__main__":
 	tree.resetloc(root)
 	print (' ')
 	tree.printTree(root)
-	tree.bstree2flp()
+	tree.reconstruct()
 	print (' ')
 	tree.printTree(root)
 	# tree.swap(root.left, root.right)
+	# tree.move(tree.find_node(root, 1), root.parent, 'left')
 	del_node = tree.delete(tree.find_node(root, 1))
-	tree.bstree2flp()
+	tree.reconstruct()
 	print (' ')
 	tree.printTree(root)
 	tree.insert(del_node, root.parent, 'left')
-	tree.bstree2flp()
+	tree.reconstruct()
 	print (' ')
 	tree.printTree(tree.root)
 	print (tree.root.ind)
