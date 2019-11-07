@@ -1,3 +1,5 @@
+# DEBUG = True
+
 class Node:
 	def __init__(self, value = None, left = None, right = None):
 		self.left = left
@@ -100,6 +102,11 @@ class Bstree:
 		for i in range(chiplet_count):
 			self.addnode(self.root, ind[i], x[i], y[i], width[i], height[i])
 		# self.printTree(self.root)
+		try:
+			DEBUG
+			print (' ')
+		except NameError:
+			pass
 		return self.root
 
 	def parsenode(self, node, ind, x, y, width, height):
@@ -307,6 +314,16 @@ class Bstree:
 			self.printTree(tree.left)
 			self.printTree(tree.right)
 
+	def gen_flp(self, filename):
+		import os
+		path = 'outputs/bstree/'
+		with open(path+filename + 'sim.flp','w') as SIMP:
+			for i in range(len(self.ind_arr)):
+				SIMP.write("node_"+str(self.ind_arr[i])+"\t"+str(self.width_arr[i])+"\t"+str(self.height_arr[i])+"\t"+str(self.x_arr[i])+"\t"+str(self.y_arr[i])+"\n")
+			SIMP.write(' \t10\t10\t0\t\0\n')
+		os.system("perl util/tofig.pl -f 20 "+path+filename+"sim.flp | fig2dev -L ps | ps2pdf - "+path+filename+"sim.pdf")
+
+
 if __name__ == "__main__":
 	# example 1
 	# x = [0, 2, 2, 0]
@@ -332,12 +349,12 @@ if __name__ == "__main__":
 	tree.flp2bstree(ind, x, y, width, height)
 	tree.reconstruct()
 	# tree.swap(root.left, root.right)
-	# tree.move(tree.find_node(root, 1), root.parent, 'left')
-	del_node = tree.delete(tree.find_node(tree.root, 1))
-	tree.reconstruct()
-	print ('after delete node 1')
-	tree.printTree(tree.root)
-	tree.insert(del_node, tree.root.parent, 'left')
+	tree.move(tree.find_node(tree.root, 1), tree.root.parent, 'left')
+	# del_node = tree.delete(tree.find_node(tree.root, 1))
+	# tree.reconstruct()
+	# print ('after delete node 1')
+	# tree.printTree(tree.root)
+	# tree.insert(del_node, tree.root.parent, 'left')
 	tree.reconstruct()
 	print ('\n after insert node 1 to the root')
 	tree.printTree(tree.root)
