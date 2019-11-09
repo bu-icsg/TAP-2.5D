@@ -1,4 +1,6 @@
 from bstree import Bstree
+from copy import deepcopy
+import random, math, os
 
 def cost_function(tree):
 	W = compute_wirelength(tree)
@@ -32,18 +34,83 @@ def compute_wirelength(tree):
 		total_wirelength += wirelength
 	return total_wirelength
 
+def neighbor(tree):
+	tree_new = deepcopy(tree)
+	op_dice = random.randint(0, n_chiplet + 2 * n_chiplet * n_chiplet + n_chiplet *(n_chiplet-1)/2 - 1)
+	if op_dice < n_chiplet:
+		# rotate, only determine which node to rotate
+		print ('rotate node', op_dice)
+		tree_new.rotate(tree_new.find_node(tree_new.root, tree_new.ind_arr[op_dice]))
+	elif n_chiplet <= op_dice < n_chiplet + n_chiplet * (n_chiplet - 1) / 2:
+		# swap, determine two nodes
+		n1 = random.randint(0, n_chiplet - 1)
+		n2 = random.randint(0, n_chiplet - 1)
+		while n2 == n1:
+			n2 = random.randint(0, n_chiplet - 1)
+		node1 = tree_new.find_node(tree_new.root, tree_new.ind_arr[n1])
+		node2 = tree_new.find_node(tree_new.root, tree_new.ind_arr[n2])
+		print ('swap nodes', n1, 'and', n2)
+		tree_new.swap(node1, node2)
+	else:
+		# move, determine the node to move, and the target position (left/right child of other nodes or insert to replace root)
+		n1 = random.randint(0, n_chiplet - 1)
+		n2 = random.randint(0, n_chiplet - 1)
+		d = random.randint(0, 1)
+		dirs = 'right' if d else 'left'
+		node1 = tree_new.find_node(tree_new.root, tree_new.ind_arr[n1]) # the node to be moved
+		node2 = tree_new.find_node(tree_new.root, tree_new.ind_arr[n2]) # the parent node that the moved node is going to insert to.
+		if n1 == n2:
+			node2 = tree_new.root.parent
+			print ('move node', n1, 'to the root')
+		else:
+			print ('move node', n1, 'to the', dirs, 'child of node', n2)
+		tree_new.move(node1, node2, dirs)
+	tree_new.reconstruct()
+	return tree_new
+
 def anneal():
 	# generate initial placement, and evaluate initial cost
 	tree = Bstree()
 	tree.flp2bstree(ind, x, y, width, height)
 	tree.reconstruct()
+	tree_best = deepcopy(tree)
 	global net, s, t
 	net, s, t = get_connections()
-	cost = cost_function(tree)
+	cost_current = cost_function(tree)
+	cost_best = cost_current
+	step, step_best = 0, 0
 
 	# set annealing parameters
-	alpha = 0.85   # temperature decay factor
+	alpha = 0.85   	# temperature decay factor
+	T = 10			# check the paper
+	T_min = 0.01	# check the paper
 
+	print ('initial tree')
+	tree.printTree(tree.root)
+	tree.gen_flp('step_0')
+
+	while T > T_min:
+		step += 1
+		print ('step_'+str(step), ' T=', T)
+		tree_new = neighbor(tree)
+		tree_new.printTree(tree_new.root)
+		tree_new.gen_flp('step_'+str(step))
+		cost_new = cost_function(tree_new)
+		print ('wirelength = ', cost_new)
+		ap = accept_probability(cost_current, cost_new, T)
+		r = random.random()
+		if ap > r:
+			tree = deepcopy(tree_new)
+			cost_current = cost_new
+			if cost_current < cost_best:
+				cost_best = cost_current
+				tree_best = deepcopy(tree)
+				step_best = step
+			print ('AP = ', ap, ' > ', r, ' Accept!')
+		else:
+			print ('AP = ', ap, ' < ', r, ' Reject!')
+		T *= alpha
+	return tree_best, step_best, cost_best
 
 if __name__ == "__main__":
 	# initial placement
@@ -64,7 +131,12 @@ if __name__ == "__main__":
 						[128,0,128,0,0,0,128,0]]
 	n_chiplet = len(connection_matrix)
 
-	anneal()
+	tree_best, step_best, cost_best = anneal()
+	tree_best.printTree(tree_best.root)
+	tree_best.gen_flp('best')
+	print ('step_best = ', step_best)
+	print ('wirelength = ', 'cost_best')
+	os.system('gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=outputs/bstree/combine.pdf step_{0..10}.pdf')
 
 	# tree = Bstree()
 	# root = tree.flp2bstree(ind, x, y, width, height)
