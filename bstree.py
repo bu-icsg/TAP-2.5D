@@ -409,6 +409,7 @@ class Bstree:
 			node.parent = parent
 
 	def move(self, node1, node2, direction):
+		n2 = node2 if node2 == None else node2.ind
 		print ('move', node1.ind, node2 if node2 == None else node2.ind, direction)
 		node = self.delete(node1)
 		try:
@@ -420,7 +421,11 @@ class Bstree:
 			self.gen_flp(str(count))
 		except NameError:
 			pass		
-		self.insert(node, node2, direction)
+		if n2 == None:
+			self.insert(node, None, direction)
+		else:
+			self.insert(node, self.find_node(self.root, n2), direction)
+		# self.insert(node, node2, direction)
 		try:
 			DEBUG
 			print (count)
@@ -453,7 +458,7 @@ class Bstree:
 
 
 if __name__ == "__main__":
-	# DEBUG = True
+	DEBUG = True
 	global count
 	count = 1
 	# example 1
@@ -490,6 +495,13 @@ if __name__ == "__main__":
 	width = [3, 4,   2,   2,   1, 4, 3,   4]
 	height =[2, 1.5, 3,   1.5, 1, 1, 2,   2]
 
+	# example 6
+	ind = 	[0,   1,   2,   3,   4, 5, 6, 7]
+	x = 	[0,   2,   0,   0,   6, 6, 7, 2]
+	y = 	[4.5, 0,   1.5, 0,   0, 2, 0, 1.5]
+	width = [3,   4,   2,   2,   1, 4, 3, 4]
+	height =[2,   1.5, 3,   1.5, 1, 1, 2, 2]
+
 	tree = Bstree()
 	tree.set_flp(ind, x, y, width, height)
 	tree.flp2bstree(ind, x, y, width, height)
@@ -498,8 +510,10 @@ if __name__ == "__main__":
 	# tree.rotate(tree.find_node(tree.root, 1))
 	# print ('swap 1 and 2')
 	# tree.swap(tree.find_node(tree.root, 1), tree.find_node(tree.root, 2))
-	print ('move 2 to the root')
-	tree.move(tree.find_node(tree.root, 2), tree.root.parent, 'left')
+	# print ('move 2 to the root')
+	# tree.move(tree.find_node(tree.root, 2), tree.root.parent, 'left')
+	print ('move 2 to the right child of node 7')
+	tree.move(tree.find_node(tree.root, 2), tree.find_node(tree.root, 7), 'right')
 	# del_node = tree.delete(tree.find_node(tree.root, 1))
 	# tree.reconstruct()
 	# print ('after delete node 1')
