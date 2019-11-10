@@ -107,7 +107,8 @@ class Bstree:
 		try:
 			DEBUG
 			global count
-			print (' ')
+			print (count)
+			print (ind, x, y, width, height,'', sep='\n')
 			self.gen_flp(str(count))
 			count += 1
 		except NameError:
@@ -314,12 +315,14 @@ class Bstree:
 		self.flp2bstree()
 
 	def rotate(self, node):
+		print ('rotate', node.ind)
 		# rotate do not change B*-tree structure, but will impact the flp
 		node.width, node.height = node.height, node.width
 		self.bstree2flp()
 		self.reconstruct()
 
 	def swap(self, node1, node2):
+		print ('swap', node1.ind, node2.ind)
 		# instead of applying insert and delete operations, we use an alternative by swapping the index, width and height, but maintain the tree relationship and update the xy coordinates.
 		node1.width, node2.width = node2.width, node1.width
 		node1.height, node2.height = node2.height, node1.height
@@ -330,21 +333,24 @@ class Bstree:
 		# self.printTree(self.root)
 
 	def delete(self, node):
+		print ('delete', node.ind)
 		if node.left and node.right:
 			# the node has two children
-			snode = node
-			while (snode.left and snode.right):
-				self.swap(snode, snode.left)
-				snode = snode.left
-			if snode.left:
-				snode.parent.left = snode.left
-				snode.left.parent = snode.parent
-			elif snode.right:
-				snode.parent.left = snode.right
-				snode.right.parent = snode.parent
+			while (node.left and node.right):
+				# self.swap(node, node.left)
+				node.width, node.left.width = node.left.width, node.width
+				node.height, node.left.height = node.left.height, node.height
+				node.ind, node.left.ind = node.left.ind, node.ind
+				node = node.left
+			if node.left:
+				node.parent.left = node.left
+				node.left.parent = node.parent
+			elif node.right:
+				node.parent.left = node.right
+				node.right.parent = node.parent
 			else:
-				snode.parent.left = None
-				snode.parent = None
+				node.parent.left = None
+				node.parent = None
 		elif node.left:
 			# the node has only left child
 			if node.parent.left == node:
@@ -372,6 +378,7 @@ class Bstree:
 
 	def insert(self, node, parent, direction):
 		# add the node to the leaf of the parent, direction indicates left or right child
+		print ('insert', node.ind, parent if parent == None else parent.ind, direction)
 		if parent == None:
 			# the only case the parent is none is to insert the node to the root
 			if direction == 'left':
@@ -402,14 +409,15 @@ class Bstree:
 			node.parent = parent
 
 	def move(self, node1, node2, direction):
+		print ('move', node1.ind, node2 if node2 == None else node2.ind, direction)
 		node = self.delete(node1)
 		try:
 			DEBUG
 			global count
 			print (count)
 			self.printTree(self.root)
+			self.bstree2flp()
 			self.gen_flp(str(count))
-			count += 1
 		except NameError:
 			pass		
 		self.insert(node, node2, direction)
@@ -417,6 +425,7 @@ class Bstree:
 			DEBUG
 			print (count)
 			self.printTree(self.root)
+			self.bstree2flp()
 			self.gen_flp(str(count))
 			count += 1
 		except NameError:
@@ -444,6 +453,9 @@ class Bstree:
 
 
 if __name__ == "__main__":
+	# DEBUG = True
+	global count
+	count = 1
 	# example 1
 	# x = [0, 2, 2, 0]
 	# y = [0, 0, 1, 3]
@@ -470,9 +482,14 @@ if __name__ == "__main__":
 	y = 	[0, 0,   2, 2.5, 1.5, 1.5, 4, 6]
 	width = [3, 4,   2, 2,   1,   4,   3, 4]
 	height =[2, 1.5, 3, 1.5, 1,   1,   2, 2]	
-	DEBUG = True
-	global count
-	count = 0
+
+	# example 5
+	ind = 	[0, 1,   2,   3,   4, 5, 6,   7]
+	x = 	[6, 2,   0,   0,   2, 2, 0,   3]
+	y = 	[0, 2,   1.5, 0,   0, 1, 4.5, 3.5]
+	width = [3, 4,   2,   2,   1, 4, 3,   4]
+	height =[2, 1.5, 3,   1.5, 1, 1, 2,   2]
+
 	tree = Bstree()
 	tree.set_flp(ind, x, y, width, height)
 	tree.flp2bstree(ind, x, y, width, height)
@@ -481,8 +498,8 @@ if __name__ == "__main__":
 	# tree.rotate(tree.find_node(tree.root, 1))
 	# print ('swap 1 and 2')
 	# tree.swap(tree.find_node(tree.root, 1), tree.find_node(tree.root, 2))
-	print ('move 1 to the right of node 5')
-	tree.move(tree.find_node(tree.root, 1), tree.find_node(tree.root, 5), 'left')
+	print ('move 2 to the root')
+	tree.move(tree.find_node(tree.root, 2), tree.root.parent, 'left')
 	# del_node = tree.delete(tree.find_node(tree.root, 1))
 	# tree.reconstruct()
 	# print ('after delete node 1')
