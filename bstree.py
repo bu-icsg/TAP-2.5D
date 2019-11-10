@@ -353,14 +353,20 @@ class Bstree:
 				node.parent = None
 		elif node.left:
 			# the node has only left child
-			if node.parent.left == node:
+			if node.parent == None:
+				# delete the root node
+				self.root = node.left
+			elif node.parent.left == node:
 				node.parent.left = node.left
 			elif node.parent.right == node:
 				node.parent.right = node.left
 			node.left.parent = node.parent
 		elif node.right:
 			# the node has only right child
-			if node.parent.left == node:
+			if node.parent == None:
+				# delete the root node
+				self.root = node.right
+			elif node.parent.left == node:
 				node.parent.left = node.right
 			elif node.parent.right == node:
 				node.parent.right = node.right
