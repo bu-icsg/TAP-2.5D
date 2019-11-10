@@ -315,14 +315,14 @@ class Bstree:
 		self.flp2bstree()
 
 	def rotate(self, node):
-		print ('rotate', node.ind)
+		# print ('rotate', node.ind)
 		# rotate do not change B*-tree structure, but will impact the flp
 		node.width, node.height = node.height, node.width
 		self.bstree2flp()
 		self.reconstruct()
 
 	def swap(self, node1, node2):
-		print ('swap', node1.ind, node2.ind)
+		# print ('swap', node1.ind, node2.ind)
 		# instead of applying insert and delete operations, we use an alternative by swapping the index, width and height, but maintain the tree relationship and update the xy coordinates.
 		node1.width, node2.width = node2.width, node1.width
 		node1.height, node2.height = node2.height, node1.height
@@ -333,7 +333,7 @@ class Bstree:
 		# self.printTree(self.root)
 
 	def delete(self, node):
-		print ('delete', node.ind)
+		# print ('delete', node.ind)
 		if node.left and node.right:
 			# the node has two children
 			while (node.left and node.right):
@@ -384,7 +384,7 @@ class Bstree:
 
 	def insert(self, node, parent, direction):
 		# add the node to the leaf of the parent, direction indicates left or right child
-		print ('insert', node.ind, parent if parent == None else parent.ind, direction)
+		# print ('insert', node.ind, parent if parent == None else parent.ind, direction)
 		if parent == None:
 			# the only case the parent is none is to insert the node to the root
 			if direction == 'left':
@@ -416,7 +416,7 @@ class Bstree:
 
 	def move(self, node1, node2, direction):
 		n2 = node2 if node2 == None else node2.ind
-		print ('move', node1.ind, node2 if node2 == None else node2.ind, direction)
+		# print ('move', node1.ind, node2 if node2 == None else node2.ind, direction)
 		node = self.delete(node1)
 		try:
 			DEBUG
