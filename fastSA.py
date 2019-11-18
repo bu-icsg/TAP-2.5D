@@ -2,13 +2,15 @@ from bstree import Bstree
 from copy import deepcopy
 import random, math, os
 
-# def cost_function(wl, cost_norm):
-# 	# normalize the cost function
-# 	return wl
-
-def accept_probability(wl_current, wl_new, T):
-	old_cost = (wl_current - wl_min) / (wl_max - wl_min)
-	new_cost = (wl_new - wl_min) / (wl_max - wl_min)
+def accept_probability(wl_current, wl_new, T, step):
+	if wl_min != wl_max:
+		old_cost = (wl_current - wl_min) / (wl_max - wl_min)
+		new_cost = (wl_new - wl_min) / (wl_max - wl_min)
+	else:
+		old_cost = (wl_current - wl_min)
+		new_cost = (wl_new - wl_min)
+	global cost_chg_avg
+	cost_chg_avg = (cost_chg_avg * (step-1) + abs(new_cost - old_cost)) / step
 	delta = - (new_cost - old_cost)
 	if delta > 0:
 		ap = 1
@@ -105,8 +107,10 @@ def anneal():
 
 	# set annealing parameters
 	# alpha = 0.99   	# temperature decay factor
-	T = 8			# check the paper
-	T_min = 0.02	# check the paper
+	T1 = 10			# check the paper
+	T = T1
+	# T_min = 0.01	# check the paper
+	# instead of T_min, use 100 consecutive reject as stopping condition
 	c = 100
 	k = 7
 
@@ -114,16 +118,16 @@ def anneal():
 	tree.printTree(tree.root)
 	tree.gen_flp('step_1')
 
-	while step <= k or T > T_min:
+	while step < 1000:
 		step += 1
-		print ('step_'+str(step), ' T=', T)
+		print ('step_'+str(step), ' T=', T, ' avg_change =', cost_chg_avg, ' reject=', reject_cont, ' best=', wl_best)
 		tree_new = neighbor(tree)
-		tree_new.printTree(tree_new.root)
+		# tree_new.printTree(tree_new.root)
 		tree_new.gen_flp('step_'+str(step))
 		wl_new = compute_wirelength(tree_new, step)
 		# cost_new = cost_function(wl_new, cost_norm)
 		print ('wirelength = ', wl_new)
-		ap = accept_probability(wl_current, wl_new, T)
+		ap = accept_probability(wl_current, wl_new, T, step)
 		r = random.random()
 		if ap > r:
 			tree = deepcopy(tree_new)
@@ -133,13 +137,18 @@ def anneal():
 				tree_best = deepcopy(tree)
 				step_best = step
 			print ('AP = ', ap, ' > ', r, ' Accept!')
+			reject_cont = 0
 		else:
 			print ('AP = ', ap, ' < ', r, ' Reject!')
+			reject_cont += 1
+			if reject_cont > 35:
+				print ('hit early stop condition')
+				break
 		# T *= alpha
 		if step <= k:
-			T = 0.067/step
+			T = T1 * cost_chg_avg / 100 / step
 		else:
-			T = 6.7/step
+			T = T1 * cost_chg_avg / step
 	return tree_best, step_best, wl_best
 
 if __name__ == "__main__":
