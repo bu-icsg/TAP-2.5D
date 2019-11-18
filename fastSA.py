@@ -2,11 +2,13 @@ from bstree import Bstree
 from copy import deepcopy
 import random, math, os
 
-def cost_function(tree, cost_norm):
-	W = compute_wirelength(tree)
-	return W
+# def cost_function(wl, cost_norm):
+# 	# normalize the cost function
+# 	return wl
 
-def accept_probability(old_cost, new_cost, T):
+def accept_probability(wl_current, wl_new, T):
+	old_cost = (wl_current - wl_min) / (wl_max - wl_min)
+	new_cost = (wl_new - wl_min) / (wl_max - wl_min)
 	delta = - (new_cost - old_cost)
 	if delta > 0:
 		ap = 1
@@ -15,6 +17,7 @@ def accept_probability(old_cost, new_cost, T):
 	return ap
 
 def get_connections():
+	# get connection information. One time execution
 	s, t = [], []
 	net, wire_count = 0, 0
 	for i in range(n_chiplet):
@@ -26,7 +29,8 @@ def get_connections():
 				wire_count += connection_matrix[i][j]
 	return net, s, t, wire_count
 
-def compute_wirelength(tree):
+def compute_wirelength(tree, step):
+	# length_per_wire value, do not normalize
 	total_wirelength = 0
 	for i in range(net):
 		s_index = tree.ind_arr.index(s[i])
@@ -35,7 +39,15 @@ def compute_wirelength(tree):
 		# print (len(tree.ind_arr), s_index, t_index)
 		wirelength = (abs(tree.x_arr[s_index] + tree.width_arr[s_index] / 2 - tree.x_arr[t_index] - tree.width_arr[t_index] / 2) + abs(tree.y_arr[s_index] + tree.height_arr[s_index] / 2 - tree.y_arr[t_index] - tree.height_arr[t_index] / 2)) * connection_matrix[s_index][t_index]
 		total_wirelength += wirelength
-	return total_wirelength / wire_count
+	wl = total_wirelength / wire_count
+	# update the wirelength stats for normalization
+	global wl_max, wl_min, wl_avg
+	if wl > wl_max:
+		wl_max = wl
+	if wl < wl_min:
+		wl_min = wl
+	wl_avg = (wl_avg * (step - 1) + wl) / step
+	return wl
 
 def neighbor(tree):
 	tree_new = deepcopy(tree)
@@ -75,21 +87,26 @@ def neighbor(tree):
 
 def anneal():
 	# generate initial placement, and evaluate initial cost
+	step, step_best = 1, 1
 	tree = Bstree()
 	tree.flp2bstree(ind, x, y, width, height)
 	tree.reconstruct()
 	tree_best = deepcopy(tree)
 	global net, s, t, wire_count
 	net, s, t, wire_count = get_connections()
-	cost_norm = 1
-	cost_current = cost_function(tree, cost_norm)
-	cost_best = cost_current
-	step, step_best = 1, 1
+	global wl_max, wl_min, wl_avg, cost_chg_avg
+	wl_max, wl_min, wl_avg = 0, 100, 0
+	cost_chg_avg = 0
+	wl_current = compute_wirelength(tree, step)
+	wl_best = wl_current
+	reject_cont = 0
+	# cost_current = cost_function(wl_current, cost_norm)
+	# cost_best = cost_current
 
 	# set annealing parameters
 	# alpha = 0.99   	# temperature decay factor
 	T = 8			# check the paper
-	T_min = 0.01	# check the paper
+	T_min = 0.02	# check the paper
 	c = 100
 	k = 7
 
@@ -103,15 +120,16 @@ def anneal():
 		tree_new = neighbor(tree)
 		tree_new.printTree(tree_new.root)
 		tree_new.gen_flp('step_'+str(step))
-		cost_new = cost_function(tree_new, cost_norm)
-		print ('wirelength = ', cost_new)
-		ap = accept_probability(cost_current, cost_new, T)
+		wl_new = compute_wirelength(tree_new, step)
+		# cost_new = cost_function(wl_new, cost_norm)
+		print ('wirelength = ', wl_new)
+		ap = accept_probability(wl_current, wl_new, T)
 		r = random.random()
 		if ap > r:
 			tree = deepcopy(tree_new)
-			cost_current = cost_new
-			if cost_current < cost_best:
-				cost_best = cost_current
+			wl_current = wl_new
+			if wl_current < wl_best:
+				wl_best = wl_current
 				tree_best = deepcopy(tree)
 				step_best = step
 			print ('AP = ', ap, ' > ', r, ' Accept!')
@@ -122,7 +140,7 @@ def anneal():
 			T = 0.067/step
 		else:
 			T = 6.7/step
-	return tree_best, step_best, cost_best
+	return tree_best, step_best, wl_best
 
 if __name__ == "__main__":
 	# initial placement
