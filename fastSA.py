@@ -18,10 +18,11 @@ def accept_probability(wl_current, wl_new, T, step):
 		ap = math.exp(delta / T )
 	return ap
 
-def get_connections():
+def get_connections(connection_matrix):
 	# get connection information. One time execution
 	s, t = [], []
 	net, wire_count = 0, 0
+	n_chiplet = len(connection_matrix)
 	for i in range(n_chiplet):
 		for j in range(n_chiplet):
 			if (i!=j) and (connection_matrix[i][j]>0):
@@ -31,7 +32,7 @@ def get_connections():
 				wire_count += connection_matrix[i][j]
 	return net, s, t, wire_count
 
-def compute_wirelength(tree, step):
+def compute_wirelength(tree, step, connection_matrix):
 	# length_per_wire value, do not normalize
 	total_wirelength = 0
 	for i in range(net):
@@ -53,6 +54,7 @@ def compute_wirelength(tree, step):
 
 def neighbor(tree):
 	tree_new = deepcopy(tree)
+	n_chiplet = len(tree.ind_arr)
 	op_dice = random.randint(0, n_chiplet + 2 * n_chiplet * n_chiplet + n_chiplet *(n_chiplet-1)/2 - 1)
 	if op_dice < n_chiplet:
 		# rotate, only determine which node to rotate
@@ -87,7 +89,7 @@ def neighbor(tree):
 	tree_new.reconstruct()
 	return tree_new
 
-def anneal():
+def anneal(ind, x, y, width, height, connection_matrix):
 	# generate initial placement, and evaluate initial cost
 	step, step_best = 1, 1
 	tree = Bstree()
@@ -95,11 +97,11 @@ def anneal():
 	tree.reconstruct()
 	tree_best = deepcopy(tree)
 	global net, s, t, wire_count
-	net, s, t, wire_count = get_connections()
+	net, s, t, wire_count = get_connections(connection_matrix)
 	global wl_max, wl_min, wl_avg, cost_chg_avg
 	wl_max, wl_min, wl_avg = 0, 100, 0
 	cost_chg_avg = 0
-	wl_current = compute_wirelength(tree, step)
+	wl_current = compute_wirelength(tree, step, connection_matrix)
 	wl_best = wl_current
 	reject_cont = 0
 	# cost_current = cost_function(wl_current, cost_norm)
@@ -124,7 +126,7 @@ def anneal():
 		tree_new = neighbor(tree)
 		# tree_new.printTree(tree_new.root)
 		tree_new.gen_flp('step_'+str(step))
-		wl_new = compute_wirelength(tree_new, step)
+		wl_new = compute_wirelength(tree_new, step, connection_matrix)
 		# cost_new = cost_function(wl_new, cost_norm)
 		print ('wirelength = ', wl_new)
 		ap = accept_probability(wl_current, wl_new, T, step)
@@ -167,8 +169,6 @@ if __name__ == "__main__":
 	width = [3,   4,   2,   2,   1, 4, 3, 4]
 	height =[2,   1.5, 3,   1.5, 1, 1, 2, 2]
 
-
-
 	connection_matrix = [[0,128,128,0,0,0,0,128],
 						[128,0,128,0,0,0,128,0],
 						[128,128,0,128,128,128,128,128],
@@ -179,7 +179,7 @@ if __name__ == "__main__":
 						[128,0,128,0,0,0,128,0]]
 	n_chiplet = len(connection_matrix)
 
-	tree_best, step_best, cost_best = anneal()
+	tree_best, step_best, cost_best = anneal(ind, x, y, width, height, connection_matrix)
 	tree_best.printTree(tree_best.root)
 	tree_best.gen_flp('best')
 	print ('step_best = ', step_best)
