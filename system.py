@@ -65,10 +65,14 @@ class System_25D:
 			self.x = xx
 			self.y = yy
 		elif init_place_option == 'bstree':
-			x, y, rotation = init_placement.init_place_bstree(self.intp_size, self.granularity, self.chiplet_count, new_width, new_height, self.connection_matrix)
+			x, y, width, height = init_placement.init_place_bstree(self.intp_size, self.granularity, self.chiplet_count, new_width, new_height, self.connection_matrix)
 			self.x = x
 			self.y = y
-			self.rotation = rotation
+			for i in range(self.chiplet_count):
+				new_width[i] = width[i] - 2 * self.hubump[i]
+				new_height[i] = height[i] - 2 * self.hubump[i]
+			self.width = new_width
+			self.height = new_height
 
 	def gen_flp(self):
 		pass
