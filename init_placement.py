@@ -50,7 +50,7 @@ def init_place_tight(intp_size, granularity, chiplet_count, width, height):
 
 def init_place_bstree(intp_size, granularity, chiplet_count, width, height, connection_matrix):
 	# step 1: construct initial bstree and run fast SA
-	x, y, rotation = [0] * chiplet_count, [0] * chiplet_count, [0] * chiplet_count
+	x, y = [0] * chiplet_count, [0] * chiplet_count
 	ind = [i for i in range(chiplet_count)]
 	tree, step_best, cost_best = fastSA.anneal(ind, x, y, width, height, connection_matrix)
 	tree.printTree(tree.root)
@@ -76,9 +76,22 @@ def init_place_bstree(intp_size, granularity, chiplet_count, width, height, conn
 	tree.printTree(tree.root)
 
 	# step 3: convert left-bottom coordinates to center coordinates.
-	
-	# step 4: move the chiplets to the center. offset all x and y's
+	x_max, y_max = 0, 0
+	for i in range(chiplet_count):
+		tree.x_arr[i] = math.ceil((tree.x_arr[i] + 0.05 + tree.width_arr[i] / 2) / granularity) * granularity
+		x_max = max(x_max, tree.x_arr[i] + tree.width_arr[i] / 2)
+		tree.y_arr[i] = math.ceil((tree.y_arr[i] + 0.05 + tree.height_arr[i] / 2) / granularity) * granularity
+		y_max = max(y_max, tree.y_arr[i] + tree.height_arr[i] / 2)
+	print (tree.ind_arr, tree.x_arr, tree.y_arr, tree.width_arr, tree.height_arr, sep='\n')
 
+	# step 4: move the chiplets to the center. offset all x and y's
+	x_offset = int((intp_size - x_max) / 2 / granularity) * granularity
+	y_offset = int((intp_size - y_max) / 2 / granularity) * granularity
+	for i in range(chiplet_count):
+		tree.x_arr[i] += x_offset
+		tree.y_arr[i] += y_offset
+	x, y, width, height = tree.x_arr[:], tree.y_arr[:], tree.width_arr[:], tree.height_arr[:]
+	return x, y, width, height
 
 if __name__ == "__main__":
 	width = [3, 4, 	 2, 2, 	 1,   4, 3, 4]
@@ -91,4 +104,4 @@ if __name__ == "__main__":
 						[0,0,128,0,0,0,0,0],
 						[0,128,128,0,0,0,0,128],
 						[128,0,128,0,0,0,128,0]]
-	init_place_bstree(40, 1, 8, width, height, connection_matrix)
+	x, y, rotation = init_place_bstree(40, 1, 8, width, height, connection_matrix)
