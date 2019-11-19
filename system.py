@@ -64,6 +64,11 @@ class System_25D:
 		elif init_place_option == 'given':
 			self.x = xx
 			self.y = yy
+		elif init_place_option == 'bstree':
+			x, y, rotation = init_placement.init_place_bstree(self.intp_size, self.granularity, self.chiplet_count, new_width, new_height)
+			self.x = x
+			self.y = y
+			self.rotation = rotation
 
 	def gen_flp(self):
 		pass
