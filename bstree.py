@@ -1,4 +1,5 @@
 # DEBUG = True
+import math
 
 class Node:
 	def __init__(self, value = None, left = None, right = None):
@@ -184,6 +185,19 @@ class Bstree:
 			node.right.x = node.x
 			self.computex(node.right)
 
+	def relax_x(self, node, granularity):
+		# left-bottom coordinate
+		if node == None:
+			return
+		self.xpoint.add(node.x)
+		self.xpoint.add(math.ceil((node.x + node.width + 0.1) / granularity) * granularity)
+		if node.left:
+			node.left.x  = math.ceil((node.x + node.width + 0.1) / granularity) * granularity
+			self.relax_x(node.left, granularity)
+		if node.right:
+			node.right.x = node.x
+			self.relax_x(node.right, granularity)
+
 	def computey(self, node):
 		try:
 			DEBUG
@@ -205,6 +219,22 @@ class Bstree:
 		self.ypoint.add(node.y + node.height)
 		self.computey(node.left)
 		self.computey(node.right)
+
+	def relax_y(self, node, granularity):
+		if node == None:
+			return
+		y = 0
+		for i in range(len(self.xpoint)):
+			if node.x <= self.xpoint[i] < math.ceil((node.x + node.width + 0.1) / granularity) * granularity:
+				y = max(y, self.hct[i])
+		node.y = y
+		for i in range(len(self.xpoint)):
+			if node.x <= self.xpoint[i] < math.ceil((node.x + node.width + 0.1) / granularity) * granularity:
+					self.hct[i] = math.ceil((y + node.height + 0.1)/granularity) * granularity
+		self.ypoint.add(node.y)
+		self.ypoint.add(math.ceil((y + node.height + 0.1)/granularity) * granularity)
+		self.relax_y(node.left, granularity)
+		self.relax_y(node.right, granularity)
 
 	def compacty(self):
 		try:
