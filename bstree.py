@@ -508,6 +508,13 @@ if __name__ == "__main__":
 	width = [3,   4,   2,   2,   1, 4, 3, 4]
 	height =[2,   1.5, 3,   1.5, 1, 1, 2, 2]
 
+	# example 7
+	ind = 	[0,   1,   2,   3,   4, 5, 6, 7]
+	x = 	[0,   0,   0,   0,   0, 0, 0, 0]
+	y = 	[0,   0,   0,   0,   0, 0, 0, 0]
+	width = [3,   4,   2,   2,   1, 4, 3, 4]
+	height =[2,   1.5, 3,   1.5, 1, 1, 2, 2]
+
 	tree = Bstree()
 	tree.set_flp(ind, x, y, width, height)
 	tree.flp2bstree(ind, x, y, width, height)
