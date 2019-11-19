@@ -1,8 +1,9 @@
 # for initial placement, I don't think it's very necessary to define a new class. 
 # use a seperate module is clean enough
 
-import random, math
+import random, math, os
 import block_occupation
+import fastSA
 
 '''
 I use occupation grid (the matrix) to present and check if the unit grid is available or
@@ -47,3 +48,47 @@ def init_place_tight(intp_size, granularity, chiplet_count, width, height):
 	# block_occupation.print_grid(grid)
 	return x, y, rotation
 
+def init_place_bstree(intp_size, granularity, chiplet_count, width, height, connection_matrix):
+	# step 1: construct initial bstree and run fast SA
+	x, y, rotation = [0] * chiplet_count, [0] * chiplet_count, [0] * chiplet_count
+	ind = [i for i in range(chiplet_count)]
+	tree, step_best, cost_best = fastSA.anneal(ind, x, y, width, height, connection_matrix)
+	tree.printTree(tree.root)
+	tree.gen_flp('best')
+	print ('step_best = ', step_best)
+	print ('wirelength = ', cost_best)
+	os.system('gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=outputs/bstree/comb_init.pdf outputs/bstree/step_{1..'+str(step_best)+'}sim.pdf')
+
+	# step 2: relax the bstree structure, here the x, y coordinates are still left-bottom coordinates
+	grid = block_occupation.initialize_grid(int(intp_size/granularity))
+	tree.root.x = 0
+	tree.root.y = 0
+	tree.xpoint = set([0])
+	tree.relax_x(tree.root, granularity)
+	tree.xpoint = sorted(list(tree.xpoint))
+	tree.bstree2flp()
+	tree.hct = [0] * chiplet_count
+	tree.ypoint = set([0])
+	tree.relax_y(tree.root, granularity)
+	tree.ypoint = sorted(list(tree.ypoint))
+	tree.bstree2flp()
+	tree.gen_flp('relax')
+	tree.printTree(tree.root)
+
+	# step 3: convert left-bottom coordinates to center coordinates.
+	
+	# step 4: move the chiplets to the center. offset all x and y's
+
+
+if __name__ == "__main__":
+	width = [3, 4, 	 2, 2, 	 1,   4, 3, 4]
+	height =[2, 1.5, 3, 1.5, 1,   1, 2, 2]
+	connection_matrix = [[0,128,128,0,0,0,0,128],
+						[128,0,128,0,0,0,128,0],
+						[128,128,0,128,128,128,128,128],
+						[0,0,128,0,0,0,0,0],
+						[0,0,128,0,0,0,0,0],
+						[0,0,128,0,0,0,0,0],
+						[0,128,128,0,0,0,0,128],
+						[128,0,128,0,0,0,128,0]]
+	init_place_bstree(40, 1, 8, width, height, connection_matrix)
