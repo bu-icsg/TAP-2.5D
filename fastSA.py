@@ -148,9 +148,9 @@ def anneal(ind, x, y, width, height, connection_matrix):
 				break
 		# T *= alpha
 		if step <= k:
-			T = T1 * cost_chg_avg / 100 / step
+			T = T1 * (cost_chg_avg + 0.000001) / 100 / step
 		else:
-			T = T1 * cost_chg_avg / step
+			T = T1 * (cost_chg_avg + 0.000001) / step
 	return tree_best, step_best, wl_best
 
 if __name__ == "__main__":
