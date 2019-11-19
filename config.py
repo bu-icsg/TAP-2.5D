@@ -60,7 +60,7 @@ def read_config():
 	try:
 		init_place_option = config.get('general', 'initial_placement')
 	except:
-		init_place_option = 'tight'
+		init_place_option = 'bstree'
 	if init_place_option == 'given':
 		if x == None:
 			chiplet_x = get_list(config.get('chiplets', 'x'))
