@@ -189,10 +189,17 @@ class Bstree:
 		# left-bottom coordinate
 		if node == None:
 			return
+		# left edge
 		self.xpoint.add(node.x)
-		self.xpoint.add(math.ceil((node.x + node.width + 0.1) / granularity) * granularity)
+		# center point
+		cx = (node.x + node.width + 1) / 2
+		cx_grid = math.ceil(cx / granularity) * granularity
+		# right edge
+		rt = node.x + node.width + 1 + cx_grid - cx
+		rt_grid = math.ceil(rt / granularity) * granularity
+		self.xpoint.add(rt_grid)
 		if node.left:
-			node.left.x  = math.ceil((node.x + node.width + 0.1) / granularity) * granularity
+			node.left.x  = rt_grid
 			self.relax_x(node.left, granularity)
 		if node.right:
 			node.right.x = node.x
@@ -224,15 +231,27 @@ class Bstree:
 		if node == None:
 			return
 		y = 0
+		# x center point
+		cx = (node.x + node.width + 1) / 2
+		cx_grid = math.ceil(cx / granularity) * granularity
+		# x right edge
+		rt = node.x + node.width + 1 + cx_grid - cx
+		rt_grid = math.ceil(rt / granularity) * granularity		
 		for i in range(len(self.xpoint)):
-			if node.x <= self.xpoint[i] < math.ceil((node.x + node.width + 0.1) / granularity) * granularity:
+			if node.x <= self.xpoint[i] < rt_grid:
 				y = max(y, self.hct[i])
 		node.y = y
+		# y center point
+		cy = (node.y + node.height + 1) / 2
+		cy_grid = math.ceil(cy / granularity) * granularity
+		# y top edge
+		top = node.y + node.height + 1 + cy_grid - cy
+		top_grid = math.ceil(top / granularity) * granularity
 		for i in range(len(self.xpoint)):
-			if node.x <= self.xpoint[i] < math.ceil((node.x + node.width + 0.1) / granularity) * granularity:
-					self.hct[i] = math.ceil((y + node.height + 0.1)/granularity) * granularity
+			if node.x <= self.xpoint[i] < rt_grid:
+					self.hct[i] = top_grid
 		self.ypoint.add(node.y)
-		self.ypoint.add(math.ceil((y + node.height + 0.1)/granularity) * granularity)
+		self.ypoint.add(top_grid)
 		self.relax_y(node.left, granularity)
 		self.relax_y(node.right, granularity)
 
@@ -489,7 +508,7 @@ class Bstree:
 		with open(path+filename + 'sim.flp','w') as SIMP:
 			for i in range(len(self.ind_arr)):
 				SIMP.write("node_"+str(self.ind_arr[i])+"\t"+str(self.width_arr[i])+"\t"+str(self.height_arr[i])+"\t"+str(self.x_arr[i])+"\t"+str(self.y_arr[i])+"\n")
-			SIMP.write(' \t10\t10\t0\t0\n')
+			SIMP.write(' \t50\t50\t0\t0\n')
 		os.system("perl util/tofig.pl -f 20 "+path+filename+"sim.flp | fig2dev -L ps | ps2pdf - "+path+filename+"sim.pdf")
 
 
