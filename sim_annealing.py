@@ -75,13 +75,13 @@ def jumping_neighbor(system, grid):
 	return pick_chiplet, x_new, y_new, rotation
 
 def accept_probability(old_temp, new_temp, old_length, new_length, T, length_threshold):
-	if new_length <= length_threshold and old_length <= length_threshold:
-		# already meet length threshold, highlight temperature term
-		delta = 0.9 * (old_temp - new_temp) * 4.0 + 0.1 * (old_length - new_length)
-	else:
-		# not meet length threshold, highlight length term
-		delta = 0.1 * (old_temp - new_temp) * 4.0 + 0.9 * (old_length - new_length)
-	# delta = (old_temp - new_temp) * 4.0 + min(0, length_threshold - new_length)
+	# if new_length <= length_threshold and old_length <= length_threshold:
+	# 	# already meet length threshold, highlight temperature term
+	# 	delta = 0.9 * (old_temp - new_temp) * 4.0 + 0.1 * (old_length - new_length)
+	# else:
+	# 	# not meet length threshold, highlight length term
+	# 	delta = 0.1 * (old_temp - new_temp) * 4.0 + 0.9 * (old_length - new_length)
+	delta = (old_temp - new_temp) * 4.0 + (old_length - new_length)
 	print (old_temp, new_temp, old_length, new_length, T, delta)
 	if delta > 0:
 		ap = 1
