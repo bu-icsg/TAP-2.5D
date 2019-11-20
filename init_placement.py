@@ -60,7 +60,6 @@ def init_place_bstree(intp_size, granularity, chiplet_count, width, height, conn
 	os.system('gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=outputs/bstree/comb_init.pdf outputs/bstree/step_{1..'+str(step_best)+'}sim.pdf')
 
 	# step 2: relax the bstree structure, here the x, y coordinates are still left-bottom coordinates
-	grid = block_occupation.initialize_grid(int(intp_size/granularity))
 	tree.root.x = 0
 	tree.root.y = 0
 	tree.xpoint = set([0])
@@ -74,6 +73,7 @@ def init_place_bstree(intp_size, granularity, chiplet_count, width, height, conn
 	tree.bstree2flp()
 	tree.gen_flp('relax')
 	tree.printTree(tree.root)
+	print (tree.ind_arr, tree.x_arr, tree.y_arr, tree.width_arr, tree.height_arr, sep='\n')
 
 	# step 3: convert left-bottom coordinates to center coordinates.
 	x_max, y_max = 0, 0
@@ -82,7 +82,12 @@ def init_place_bstree(intp_size, granularity, chiplet_count, width, height, conn
 		x_max = max(x_max, tree.x_arr[i] + tree.width_arr[i] / 2)
 		tree.y_arr[i] = math.ceil((tree.y_arr[i] + 0.05 + tree.height_arr[i] / 2) / granularity) * granularity
 		y_max = max(y_max, tree.y_arr[i] + tree.height_arr[i] / 2)
-	print (tree.ind_arr, tree.x_arr, tree.y_arr, tree.width_arr, tree.height_arr, sep='\n')
+	x, y, width, height = tree.x_arr[:], tree.y_arr[:], tree.width_arr[:], tree.height_arr[:]
+	print (tree.ind_arr, x, y, width, height, sep='\n')
+	for i in range(chiplet_count):
+		tree.x_arr[i] -= tree.width_arr[i] / 2
+		tree.y_arr[i] -= tree.height_arr[i] / 2
+	tree.gen_flp('relax2')
 
 	# step 4: move the chiplets to the center. offset all x and y's
 	x_offset = int((intp_size - x_max) / 2 / granularity) * granularity
@@ -90,7 +95,16 @@ def init_place_bstree(intp_size, granularity, chiplet_count, width, height, conn
 	for i in range(chiplet_count):
 		tree.x_arr[i] += x_offset
 		tree.y_arr[i] += y_offset
-	x, y, width, height = tree.x_arr[:], tree.y_arr[:], tree.width_arr[:], tree.height_arr[:]
+		x[i] += x_offset
+		y[i] += y_offset
+	# x, y, width, height = tree.x_arr[:], tree.y_arr[:], tree.width_arr[:], tree.height_arr[:]
+	print (tree.ind_arr, x, y, width, height, sep='\n')
+	tree.gen_flp('relax3')
+
+	grid = block_occupation.initialize_grid(int(intp_size/granularity))
+	for i in range(chiplet_count):
+		grid = block_occupation.set_block_occupation(grid, granularity, x[i], y[i], width[i], height[i], i)
+	block_occupation.print_grid(grid)
 	return x, y, width, height
 
 if __name__ == "__main__":
