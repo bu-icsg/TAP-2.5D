@@ -49,13 +49,13 @@ def init_place_tight(intp_size, granularity, chiplet_count, width, height):
 	# block_occupation.print_grid(grid)
 	return x, y, rotation
 
-def init_place_bstree(intp_size, granularity, chiplet_count, width, height, connection_matrix):
+def init_place_bstree(intp_size, granularity, chiplet_count, width, height, connection_matrix, path):
 	for ms in range(10):
 		print ('start point ', ms)
 		# step 1: construct initial bstree and run fast SA
 		x, y = [0] * chiplet_count, [0] * chiplet_count
 		ind = [i for i in range(chiplet_count)]
-		tree, step_best, wl_best = fastSA.anneal(ind, x, y, width, height, connection_matrix)
+		tree, step_best, wl_best = fastSA.anneal(ind, x, y, width, height, connection_matrix, path + str(ms) + '/')
 		# tree.printTree(tree.root)
 		tree.gen_flp('best')
 		# print ('step_best = ', step_best)
@@ -125,4 +125,4 @@ if __name__ == "__main__":
 						[0,0,128,0,0,0,0,0],
 						[0,128,128,0,0,0,0,128],
 						[128,0,128,0,0,0,128,0]]
-	x, y, width, height = init_place_bstree(40, 1, 8, width, height, connection_matrix)
+	x, y, width, height = init_place_bstree(40, 1, 8, width, height, connection_matrix, 'outputs/bstree/')
