@@ -120,7 +120,7 @@ def solve_Cplex(system):
 				wire_count += R[i][j]
 	Nmax = n
 	# print ('time to initialize s,t', time.time() - start_time)
-	print ('number of nets', Nmax)
+	# print ('number of nets', Nmax)
 	start_time = time.time()
 
 	# Eq. 11. initialize f[i][h][j][k][n] and set lower bound 0
@@ -137,7 +137,7 @@ def solve_Cplex(system):
 	start_time = time.time()
 
 	num_val = problem.variables.get_num()
-	print (num_val)
+	# print (num_val)
 
 	# print ('time to get variable count', time.time() - start_time)
 	start_time = time.time()
@@ -299,10 +299,10 @@ def solve_Cplex(system):
 	problem.solve()	
 	# print('time to solve cplex:', time.time() - start_time)
 
-	for f_index,x in enumerate(problem.solution.get_values()):
-		if x!=0:
-			i, h, j, k, n = translate_index(f_index, Nchiplet, Nclump, Nmax)
-			print (f_index, i, h, j, k, n, x, d[i][h][j][k], sep='\t')
+	# for f_index,x in enumerate(problem.solution.get_values()):
+	# 	if x!=0:
+	# 		i, h, j, k, n = translate_index(f_index, Nchiplet, Nclump, Nmax)
+	# 		print (f_index, i, h, j, k, n, x, d[i][h][j][k], sep='\t')
 
 	# for n in range(Nmax):
 	# 	print (n, s[n], t[n])
