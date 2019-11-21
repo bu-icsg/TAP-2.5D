@@ -2,13 +2,14 @@ from bstree import Bstree
 from copy import deepcopy
 import random, math, os
 
-def accept_probability(wl_current, wl_new, T, step):
-	if wl_min != wl_max:
-		old_cost = (wl_current - wl_min) / (wl_max - wl_min)
-		new_cost = (wl_new - wl_min) / (wl_max - wl_min)
+def accept_probability(wl_current, wl_new, area_current, area_new, T, step):
+	# assume the weights for wirelength and area term are equal
+	if wl_min != wl_max and area_min != area_max:
+		old_cost = 0.5 * (wl_current - wl_min) / (wl_max - wl_min) + 0.5 * (area_current - area_min) / (area_max - area_min)
+		new_cost = 0.5 * (wl_new - wl_min) / (wl_max - wl_min) + 0.5 * (area_new - area_min) / (area_max - area_min)
 	else:
-		old_cost = (wl_current - wl_min)
-		new_cost = (wl_new - wl_min)
+		old_cost = 0.5 * (wl_current - wl_min) + 0.5 * (area_current - area_min)
+		new_cost = 0.5 * (wl_new - wl_min) + 0.5 * (area_new - area_min)
 	global cost_chg_avg
 	cost_chg_avg = (cost_chg_avg * (step-1) + abs(new_cost - old_cost)) / step
 	delta = - (new_cost - old_cost)
@@ -50,6 +51,21 @@ def compute_wirelength(tree, step, connection_matrix):
 	if wl < wl_min:
 		wl_min = wl
 	return wl
+
+def compute_area(tree, step):
+	n_chiplet = len(tree.ind_arr)
+	edge = 0
+	for i in range(n_chiplet):
+		if edge < tree.x_arr[i] + tree.width_arr[i]:
+			edge = tree.x_arr[i] + tree.width_arr[i]
+		if edge < tree.y_arr[i] + tree.height_arr[i]:
+			edge = tree.y_arr[i] + tree.height_arr[i]
+	global area_max, area_min
+	if edge > area_max:
+		area_max = edge
+	if edge < area_min:
+		area_min = edge
+	return edge
 
 def neighbor(tree):
 	tree_new = deepcopy(tree)
@@ -98,14 +114,15 @@ def anneal(ind, x, y, width, height, connection_matrix):
 	global net, s, t, wire_count
 	net, s, t, wire_count = get_connections(connection_matrix)
 	global wl_max, wl_min, cost_chg_avg
-	# global area_max, area_min_area
+	global area_max, area_min   # we use the longer edge length to represent interposer area
 	wl_max, wl_min= 0, 100
+	area_max, area_min = 0, 100
 	cost_chg_avg = 0
 	wl_current = compute_wirelength(tree, step, connection_matrix)
 	wl_best = wl_current
+	area_current = compute_area(tree, step)
+	area_best = area_current
 	reject_cont = 0
-	# cost_current = cost_function(wl_current, cost_norm)
-	# cost_best = cost_current
 
 	# set annealing parameters
 	# alpha = 0.99   	# temperature decay factor
@@ -127,15 +144,17 @@ def anneal(ind, x, y, width, height, connection_matrix):
 		# tree_new.printTree(tree_new.root)
 		tree_new.gen_flp('step_'+str(step))
 		wl_new = compute_wirelength(tree_new, step, connection_matrix)
-		# cost_new = cost_function(wl_new, cost_norm)
-		print ('wirelength = ', wl_new)
-		ap = accept_probability(wl_current, wl_new, T, step)
+		print ('wirelength = ', wl_new, 'area = ', area_new)
+		area_new = compute_area(tree_new, step)
+		ap = accept_probability(wl_current, wl_new, area_current, area_new, T, step)
 		r = random.random()
 		if ap > r:
 			tree = deepcopy(tree_new)
 			wl_current = wl_new
+			area_current = area_new
 			if wl_current < wl_best:
 				wl_best = wl_current
+				area_best = area_current
 				tree_best = deepcopy(tree)
 				step_best = step
 			print ('AP = ', ap, ' > ', r, ' Accept!')
@@ -151,6 +170,7 @@ def anneal(ind, x, y, width, height, connection_matrix):
 			T = T1 * (cost_chg_avg + 0.000001) / 100 / step
 		else:
 			T = T1 * (cost_chg_avg + 0.000001) / step
+	print ('wirelength_best = ', wl_best, 'area_best', area_best)
 	return tree_best, step_best, wl_best
 
 if __name__ == "__main__":
@@ -179,11 +199,11 @@ if __name__ == "__main__":
 						[128,0,128,0,0,0,128,0]]
 	n_chiplet = len(connection_matrix)
 
-	tree_best, step_best, cost_best = anneal(ind, x, y, width, height, connection_matrix)
+	tree_best, step_best, wl_best = anneal(ind, x, y, width, height, connection_matrix)
 	tree_best.printTree(tree_best.root)
 	tree_best.gen_flp('best')
 	print ('step_best = ', step_best)
-	print ('wirelength = ', cost_best)
+	print ('wirelength = ', wl_best)
 	os.system('gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=outputs/bstree/combine.pdf outputs/bstree/step_{1..'+str(step_best)+'}sim.pdf')
 
 	# tree = Bstree()
