@@ -73,7 +73,11 @@ def neighbor(tree):
 	op_dice = random.randint(0, n_chiplet + 2 * n_chiplet * n_chiplet + n_chiplet *(n_chiplet-1)/2 - 1)
 	if op_dice < n_chiplet:
 		# rotate, only determine which node to rotate
-		print ('rotate node', op_dice)
+		try:
+			DEBUG
+			print ('rotate node', op_dice)
+		except NameError:
+			pass
 		tree_new.rotate(tree_new.find_node(tree_new.root, tree_new.ind_arr[op_dice]))
 	elif n_chiplet <= op_dice < n_chiplet + n_chiplet * (n_chiplet - 1) / 2:
 		# swap, determine two nodes
@@ -83,7 +87,11 @@ def neighbor(tree):
 			n2 = random.randint(0, n_chiplet - 1)
 		node1 = tree_new.find_node(tree_new.root, tree_new.ind_arr[n1])
 		node2 = tree_new.find_node(tree_new.root, tree_new.ind_arr[n2])
-		print ('swap nodes', n1, 'and', n2)
+		try:
+			DEBUG
+			print ('swap nodes', n1, 'and', n2)
+		except NameError:
+			pass
 		tree_new.swap(node1, node2)
 	else:
 		# move, determine the node to move, and the target position (left/right child of other nodes or insert to replace root)
@@ -97,9 +105,17 @@ def neighbor(tree):
 			if tree_new.root == node2:
 				return neighbor(tree)
 			node2 = tree_new.root.parent
-			print ('move node', n1, 'to the root')
+			try:
+				DEBUG
+				print ('move node', n1, 'to the root')
+			except NameError:
+				pass
 		else:
-			print ('move node', n1, 'to the', dirs, 'child of node', n2)
+			try:
+				DEBUG
+				print ('move node', n1, 'to the', dirs, 'child of node', n2)
+			except NameError:
+				pass
 		tree_new.move(node1, node2, dirs)
 	tree_new.reconstruct()
 	return tree_new
@@ -133,19 +149,27 @@ def anneal(ind, x, y, width, height, connection_matrix):
 	c = 100
 	k = 7
 
-	print ('initial tree')
-	tree.printTree(tree.root)
-	tree.gen_flp('step_1')
+	try:
+		DEBUG
+		print ('initial tree')
+		tree.printTree(tree.root)
+		tree.gen_flp('step_1')
+	except NameError:
+		pass
 
 	while step < 1000:
 		step += 1
-		print ('step_'+str(step), ' T=', T, ' avg_change =', cost_chg_avg, ' reject=', reject_cont, ' best=', wl_best)
 		tree_new = neighbor(tree)
 		# tree_new.printTree(tree_new.root)
 		tree_new.gen_flp('step_'+str(step))
 		wl_new = compute_wirelength(tree_new, step, connection_matrix)
-		print ('wirelength = ', wl_new, 'area = ', area_new)
 		area_new = compute_area(tree_new, step)
+		try:
+			DEBUG
+			print ('step_'+str(step), ' T=', T, ' avg_change =', cost_chg_avg, ' reject=', reject_cont, ' best=', wl_best)
+			print ('wirelength = ', wl_new, 'area = ', area_new)
+		except NameError:
+			pass
 		ap = accept_probability(wl_current, wl_new, area_current, area_new, T, step)
 		r = random.random()
 		if ap > r:
@@ -157,13 +181,25 @@ def anneal(ind, x, y, width, height, connection_matrix):
 				area_best = area_current
 				tree_best = deepcopy(tree)
 				step_best = step
-			print ('AP = ', ap, ' > ', r, ' Accept!')
+			try:
+				DEBUG
+				print ('AP = ', ap, ' > ', r, ' Accept!')
+			except NameError:
+				pass
 			reject_cont = 0
 		else:
-			print ('AP = ', ap, ' < ', r, ' Reject!')
+			try:
+				DEBUG
+				print ('AP = ', ap, ' < ', r, ' Reject!')
+			except NameError:
+				pass			
 			reject_cont += 1
 			if reject_cont > 35:
-				print ('hit early stop condition')
+				try:
+					DEBUG
+					print ('hit early stop condition')
+				except NameError:
+					pass
 				break
 		# T *= alpha
 		if step <= k:
@@ -174,6 +210,7 @@ def anneal(ind, x, y, width, height, connection_matrix):
 	return tree_best, step_best, wl_best
 
 if __name__ == "__main__":
+	DEBUG = True
 	# initial placement
 	# node   0  1    2  3    4    5  6  7
 	ind = 	[0, 1,   2, 3, 	 4,   5, 6, 7]
