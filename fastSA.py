@@ -120,10 +120,11 @@ def neighbor(tree):
 	tree_new.reconstruct()
 	return tree_new
 
-def anneal(ind, x, y, width, height, connection_matrix):
+def anneal(ind, x, y, width, height, connection_matrix, path):
 	# generate initial placement, and evaluate initial cost
 	step, step_best = 1, 1
 	tree = Bstree()
+	tree.set_path(path)
 	tree.flp2bstree(ind, x, y, width, height)
 	tree.reconstruct()
 	tree_best = deepcopy(tree)
@@ -236,11 +237,10 @@ if __name__ == "__main__":
 						[128,0,128,0,0,0,128,0]]
 	n_chiplet = len(connection_matrix)
 
-	tree_best, step_best, wl_best = anneal(ind, x, y, width, height, connection_matrix)
+	tree_best, step_best, wl_best = anneal(ind, x, y, width, height, connection_matrix, 'outputs/bstree/')
 	tree_best.printTree(tree_best.root)
 	tree_best.gen_flp('best')
-	print ('step_best = ', step_best)
-	print ('wirelength = ', wl_best)
+	print ('step_best = ', step_best, 'wirelength = ', wl_best)
 	os.system('gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=outputs/bstree/combine.pdf outputs/bstree/step_{1..'+str(step_best)+'}sim.pdf')
 
 	# tree = Bstree()
