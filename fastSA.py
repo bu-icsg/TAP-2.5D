@@ -44,12 +44,11 @@ def compute_wirelength(tree, step, connection_matrix):
 		total_wirelength += wirelength
 	wl = total_wirelength / wire_count
 	# update the wirelength stats for normalization
-	global wl_max, wl_min, wl_avg
+	global wl_max, wl_min
 	if wl > wl_max:
 		wl_max = wl
 	if wl < wl_min:
 		wl_min = wl
-	wl_avg = (wl_avg * (step - 1) + wl) / step
 	return wl
 
 def neighbor(tree):
@@ -98,8 +97,9 @@ def anneal(ind, x, y, width, height, connection_matrix):
 	tree_best = deepcopy(tree)
 	global net, s, t, wire_count
 	net, s, t, wire_count = get_connections(connection_matrix)
-	global wl_max, wl_min, wl_avg, cost_chg_avg
-	wl_max, wl_min, wl_avg = 0, 100, 0
+	global wl_max, wl_min, cost_chg_avg
+	# global area_max, area_min_area
+	wl_max, wl_min= 0, 100
 	cost_chg_avg = 0
 	wl_current = compute_wirelength(tree, step, connection_matrix)
 	wl_best = wl_current
