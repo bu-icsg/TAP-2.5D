@@ -2,6 +2,7 @@ import configparser
 import getopt
 import os, sys
 from passive_interposer import PassiveInterposer
+import routing
 
 def get_intp_types():
 	return ['passive']
@@ -127,8 +128,11 @@ if __name__ == "__main__":
 	print (system.connection_matrix)
 	filename = 'example'
 	system.gen_flp(filename)
-	system.gen_ptrace(filename)
-	temp = system.run_hotspot(filename)
-	print (temp)
-	os.system('perl util/grid_thermal_map.pl ' + system.path+filename+'L4_ChipLayer.flp '+system.path + filename + '.grid.steady > '+system.path+filename+'.svg')
-	os.system('convert '+system.path + filename + '.svg '+system.path + filename + '.pdf')
+	# system.gen_ptrace(filename)
+	# temp = system.run_hotspot(filename)
+	# print (temp)
+	# os.system('perl util/grid_thermal_map.pl ' + system.path+filename+'L4_ChipLayer.flp '+system.path + filename + '.grid.steady > '+system.path+filename+'.svg')
+	# os.system('convert '+system.path + filename + '.svg '+system.path + filename + '.pdf')
+
+	length = routing.solve_Cplex(system)
+	print (length)
