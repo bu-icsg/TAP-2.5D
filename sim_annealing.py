@@ -87,7 +87,7 @@ def accept_probability(old_temp, new_temp, old_length, new_length, T):
 		ap = 1
 	else:
 		ap = math.exp( delta / T )
-	print (old_temp, new_temp, old_length, new_length, T, delta, ap)
+	# print (old_temp, new_temp, old_length, new_length, T, delta, ap)
 	return ap
 
 # def accept_probability(old_temp, new_temp, T):
@@ -117,7 +117,8 @@ def anneal():
 	system = config.read_config()
 	system_new = deepcopy(system)
 	system_best = deepcopy(system)
-	step = 0
+	step = 1
+	step_best = 1
 	system.gen_flp('step_'+str(step))
 	system.gen_ptrace('step_'+str(step))
 	temp_current = system.run_hotspot('step_'+str(step))
@@ -125,7 +126,6 @@ def anneal():
 	temp_best, length_best = temp_current, length_current
 	update_minmax(temp_current, length_current)
 	print ('step_'+str(step), 'temp =', temp_current, 'length =', length_current)
-	step_best = 0
 	x_best, y_best = system.x[:], system.y[:]
 	intp_size = system.intp_size
 	granularity = system.granularity
@@ -182,14 +182,15 @@ def anneal():
 					length_best = length_new
 					system_best = deepcopy(system_new)
 					step_best = step
-				print ('AP = ', ap, ' > ', r, ' Accept!')				
+				print ('AP = ', ap, ' > ', r, ' Accept!')
 				# block_occupation.print_grid(grid)
 			else:
 				print ('AP = ', ap, ' < ', r, ' Reject!')
 			i += 1
 		T *= alpha
 		# jumping_ratio /= alpha
-	os.system('rm '+ system.path + '{*.flp,*.lcf,*.ptrace,*.steady}')
+	# os.system('rm '+ system.path + '{*.flp,*.lcf,*.ptrace,*.steady}')
+	os.system('gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile='+system.path+'combine.pdf '+system.path + 'step_{1..'+str(step_best)+'}L4.pdf')
 	return system_best, step_best, temp_best, length_best
 
 if __name__ == "__main__":
