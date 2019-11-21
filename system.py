@@ -65,7 +65,7 @@ class System_25D:
 			self.x = xx
 			self.y = yy
 		elif init_place_option == 'bstree':
-			x, y, width, height = init_placement.init_place_bstree(self.intp_size, self.granularity, self.chiplet_count, new_width, new_height, self.connection_matrix)
+			x, y, width, height = init_placement.init_place_bstree(self.intp_size, self.granularity, self.chiplet_count, new_width, new_height, self.connection_matrix, self.path + 'bstree/')
 			self.x = x
 			self.y = y
 			for i in range(self.chiplet_count):
