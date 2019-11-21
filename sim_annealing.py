@@ -74,13 +74,7 @@ def jumping_neighbor(system, grid):
 			return close_neighbor(system, grid)
 	return pick_chiplet, x_new, y_new, rotation
 
-def accept_probability(old_temp, new_temp, old_length, new_length, T, length_threshold):
-	# if new_length <= length_threshold and old_length <= length_threshold:
-	# 	# already meet length threshold, highlight temperature term
-	# 	delta = 0.9 * (old_temp - new_temp) * 4.0 + 0.1 * (old_length - new_length)
-	# else:
-	# 	# not meet length threshold, highlight length term
-	# 	delta = 0.1 * (old_temp - new_temp) * 4.0 + 0.9 * (old_length - new_length)
+def accept_probability(old_temp, new_temp, old_length, new_length, T):
 	delta = (old_temp - new_temp) * 4.0 + (old_length - new_length)
 	print (old_temp, new_temp, old_length, new_length, T, delta)
 	if delta > 0:
@@ -91,7 +85,6 @@ def accept_probability(old_temp, new_temp, old_length, new_length, T, length_thr
 
 # def accept_probability(old_temp, new_temp, T):
 # 	delta = (old_temp - new_temp)
-# 	# delta = (old_temp - new_temp) * 4.0 + min(0, length_threshold - new_length)
 # 	# print (old_temp, new_temp, T, delta)
 # 	if delta > 0:
 # 		ap = 1
@@ -104,7 +97,6 @@ def anneal():
 	system = config.read_config()
 	system_new = deepcopy(system)
 	system_best = deepcopy(system)
-	length_threshold = system.length_threshold
 	step = 0
 	system.gen_flp('step_'+str(step))
 	system.gen_ptrace('step_'+str(step))
@@ -150,7 +142,7 @@ def anneal():
 			length_new = routing.solve_Cplex(system_new)
 			print ('Temp =', temp_new, 'Length =', length_new)
 			# ap = accept_probability(temp_current, temp_new, T)
-			ap = accept_probability(temp_current, temp_new, length_current, length_new, T, length_threshold)
+			ap = accept_probability(temp_current, temp_new, length_current, length_new, T)
 			r = random.random()
 			if ap > r:
 				# clear last step's occupation of chiplet_moving (system)
@@ -161,7 +153,7 @@ def anneal():
 				system = deepcopy(system_new)
 				temp_current = temp_new
 				length_current = length_new
-				bap = accept_probability(temp_best, temp_current, length_best, length_current, T, length_threshold)
+				bap = accept_probability(temp_best, temp_current, length_best, length_current, T)
 				if bap >=1:
 				# if temp_new < temp_best:
 					temp_best = temp_new
