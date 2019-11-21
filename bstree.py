@@ -1,5 +1,5 @@
 # DEBUG = True
-import math
+import math, os
 
 class Node:
 	def __init__(self, value = None, left = None, right = None):
@@ -31,6 +31,11 @@ class Bstree:
 		self.y_arr = []
 		self.width_arr = []
 		self.height_arr = []
+		self.path = ''
+
+	def set_path(self, path):
+		self.path = path
+		os.system('mkdir -p ' + path)
 
 	def find_node(self, node, ind):
 		if node == None:
@@ -504,12 +509,12 @@ class Bstree:
 
 	def gen_flp(self, filename):
 		import os
-		path = 'outputs/bstree/'
-		with open(path+filename + 'sim.flp','w') as SIMP:
+		# path = 'outputs/bstree/'
+		with open(self.path+filename + 'sim.flp','w') as SIMP:
 			for i in range(len(self.ind_arr)):
 				SIMP.write("node_"+str(self.ind_arr[i])+"\t"+str(self.width_arr[i])+"\t"+str(self.height_arr[i])+"\t"+str(self.x_arr[i])+"\t"+str(self.y_arr[i])+"\n")
 			SIMP.write(' \t50\t50\t0\t0\n')
-		os.system("perl util/tofig.pl -f 20 "+path+filename+"sim.flp | fig2dev -L ps | ps2pdf - "+path+filename+"sim.pdf")
+		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"sim.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"sim.pdf")
 
 
 if __name__ == "__main__":
@@ -565,6 +570,7 @@ if __name__ == "__main__":
 	height =[2,   1.5, 3,   1.5, 1, 1, 2, 2]
 
 	tree = Bstree()
+	tree.set_path('outputs/bstree/')
 	tree.set_flp(ind, x, y, width, height)
 	tree.flp2bstree(ind, x, y, width, height)
 	tree.reconstruct()
