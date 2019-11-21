@@ -75,12 +75,19 @@ def jumping_neighbor(system, grid):
 	return pick_chiplet, x_new, y_new, rotation
 
 def accept_probability(old_temp, new_temp, old_length, new_length, T):
-	delta = (old_temp - new_temp) * 4.0 + (old_length - new_length)
-	print (old_temp, new_temp, old_length, new_length, T, delta)
+	# assume equal weights for wirelength and temperature
+	if temp_min != temp_max and length_min != length_max:
+		old_cost = 0.5 * (old_temp - temp_min) / (temp_max - temp_min) + 0.5 * (old_length - length_max) / (length_max - length_min)
+		new_cost = 0.5 * (new_temp - temp_min) / (temp_max - temp_min) + 0.5 * (new_length - length_max) / (length_max - length_min)
+	else:
+		old_cost = 0.5 * (old_temp - temp_min) + 0.5 * (old_length - length_max)
+		new_cost = 0.5 * (new_temp - temp_min) + 0.5 * (new_length - length_max)
+	delta = - (new_cost - old_cost)
 	if delta > 0:
 		ap = 1
 	else:
 		ap = math.exp( delta / T )
+	print (old_temp, new_temp, old_length, new_length, T, delta, ap)
 	return ap
 
 # def accept_probability(old_temp, new_temp, T):
@@ -92,8 +99,21 @@ def accept_probability(old_temp, new_temp, old_length, new_length, T):
 # 		ap = math.exp( delta / T )
 # 	return ap
 
+def update_minmax(temp, length):
+	global temp_max, temp_min, length_max, length_min
+	if temp > temp_max:
+		temp_max = temp
+	if temp < temp_min:
+		temp_min = temp
+	if length > length_max:
+		length_max = length
+	if length < length_min:
+		length_min = length
+
 def anneal():
 	# first step: read config and generate initial placement
+	global temp_max, temp_min, length_max, length_min
+	temp_max, temp_min, length_max, length_min = 0, 200, 0, 200
 	system = config.read_config()
 	system_new = deepcopy(system)
 	system_best = deepcopy(system)
@@ -103,6 +123,7 @@ def anneal():
 	temp_current = system.run_hotspot('step_'+str(step))
 	length_current = routing.solve_Cplex(system)
 	temp_best, length_best = temp_current, length_current
+	update_minmax(temp_current, length_current)
 	print ('step_'+str(step), 'temp =', temp_current, 'length =', length_current)
 	step_best = 0
 	x_best, y_best = system.x[:], system.y[:]
@@ -141,6 +162,7 @@ def anneal():
 			temp_new = system_new.run_hotspot('step_'+str(step))
 			length_new = routing.solve_Cplex(system_new)
 			print ('Temp =', temp_new, 'Length =', length_new)
+			update_minmax(temp_new, length_new)
 			# ap = accept_probability(temp_current, temp_new, T)
 			ap = accept_probability(temp_current, temp_new, length_current, length_new, T)
 			r = random.random()
