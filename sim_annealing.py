@@ -74,14 +74,21 @@ def jumping_neighbor(system, grid):
 			return close_neighbor(system, grid)
 	return pick_chiplet, x_new, y_new, rotation
 
-def accept_probability(old_temp, new_temp, old_length, new_length, T):
-	# assume equal weights for wirelength and temperature
+def accept_probability(old_temp, new_temp, old_length, new_length, T, weight):
+	if weight == 'equal':
+		a, b = 0.5, 0.5
+	elif weight == 'adpT':
+		a = 0.1 + (max(old_temp, new_temp) - 45) * 0.01
+		b = 0.5
+	elif weight == 'adpTW':
+		a = min(0.1 + (max(old_temp, new_temp) - 45) * 0.01, 0.9)
+		b = 1 - a
 	if temp_min != temp_max and length_min != length_max:
-		old_cost = 0.5 * (old_temp - temp_min) / (temp_max - temp_min) + 0.5 * (old_length - length_max) / (length_max - length_min)
-		new_cost = 0.5 * (new_temp - temp_min) / (temp_max - temp_min) + 0.5 * (new_length - length_max) / (length_max - length_min)
+		old_cost = a * (old_temp - temp_min) / (temp_max - temp_min) + b * (old_length - length_max) / (length_max - length_min)
+		new_cost = a * (new_temp - temp_min) / (temp_max - temp_min) + b * (new_length - length_max) / (length_max - length_min)
 	else:
-		old_cost = 0.5 * (old_temp - temp_min) + 0.5 * (old_length - length_max)
-		new_cost = 0.5 * (new_temp - temp_min) + 0.5 * (new_length - length_max)
+		old_cost = a * (old_temp - temp_min) + b * (old_length - length_max)
+		new_cost = a * (new_temp - temp_min) + b * (new_length - length_max)
 	delta = - (new_cost - old_cost)
 	if delta > 0:
 		ap = 1
@@ -112,7 +119,7 @@ def update_minmax(temp, length):
 
 def register_log(system_best, step_best, temp_best, length_best, T, step):
 	with open(system_best.path + 'log.txt', 'a+') as LOG:
-		LOG.write('T = ' +str(T)+'\t step = '+str(step))
+		LOG.write('T = ' +str(T)+'\t step = '+str(step)+ '\n')
 		LOG.write(str(step_best) + '\n' + str(temp_best) + '\n' + str(length_best) + '\n')
 		LOG.write(str(system_best.x)+'\n'+str(system_best.y) + '\n')
 
@@ -139,6 +146,7 @@ def anneal():
 	for i in range(system.chiplet_count):
 		grid = block_occupation.set_block_occupation(grid, granularity, system.x[i], system.y[i], system.width[i] + 2 * system.hubump[i], system.height[i] + 2 * system.hubump[i], i)
 	block_occupation.print_grid(grid)
+
 	# set annealing parameters
 	T = 1.0
 	T_min = 0.01
@@ -146,6 +154,7 @@ def anneal():
 	# jumping_ratio = T_min / alpha
 	jumping_ratio = 0.9 # fixed to 10% chance to jump
 	# start simulated annealing
+	register_log(system_best, step_best, temp_best, length_best, T, step)
 	while T > T_min:
 		i = 1
 		while i <= intp_size:
@@ -170,7 +179,7 @@ def anneal():
 			print ('Temp =', temp_new, 'Length =', length_new)
 			update_minmax(temp_new, length_new)
 			# ap = accept_probability(temp_current, temp_new, T)
-			ap = accept_probability(temp_current, temp_new, length_current, length_new, T)
+			ap = accept_probability(temp_current, temp_new, length_current, length_new, T, system.weight)
 			r = random.random()
 			if ap > r:
 				# clear last step's occupation of chiplet_moving (system)
@@ -181,7 +190,7 @@ def anneal():
 				system = deepcopy(system_new)
 				temp_current = temp_new
 				length_current = length_new
-				bap = accept_probability(temp_best, temp_current, length_best, length_current, T)
+				bap = accept_probability(temp_best, temp_current, length_best, length_current, T, system.weight)
 				if bap >=1:
 				# if temp_new < temp_best:
 					temp_best = temp_new
