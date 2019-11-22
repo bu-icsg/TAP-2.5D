@@ -110,6 +110,12 @@ def update_minmax(temp, length):
 	if length < length_min:
 		length_min = length
 
+def register_log(system_best, step_best, temp_best, length_best, T, step):
+	with open(system_best.path + 'log.txt', 'a+') as LOG:
+		LOG.write('T = ' +str(T)+'\t step = '+str(step))
+		LOG.write(str(step_best) + '\n' + str(temp_best) + '\n' + str(length_best) + '\n')
+		LOG.write(str(system_best.x)+'\n'+str(system_best.y) + '\n')
+
 def anneal():
 	# first step: read config and generate initial placement
 	global temp_max, temp_min, length_max, length_min
@@ -187,6 +193,7 @@ def anneal():
 			else:
 				print ('AP = ', ap, ' < ', r, ' Reject!')
 			i += 1
+		register_log(system_best, step_best, temp_best, length_best, T, step)
 		T *= alpha
 		# jumping_ratio /= alpha
 	os.system('rm '+ system.path + '{*.flp,*.lcf,*.ptrace,*.steady}')
