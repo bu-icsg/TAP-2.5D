@@ -142,7 +142,7 @@ def anneal():
 	# set annealing parameters
 	T = 1.0
 	T_min = 0.01
-	alpha = 0.8
+	alpha = system.decay
 	# jumping_ratio = T_min / alpha
 	jumping_ratio = 0.9 # fixed to 10% chance to jump
 	# start simulated annealing
