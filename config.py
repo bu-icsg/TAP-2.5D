@@ -26,7 +26,7 @@ def read_config():
 	interposer_size = 0
 	link_type = None
 	x, y = None, None
-	decay = None
+	decay, weight = None, None
 	for o, a in opts:
 		if o == '-h':
 			usage()
@@ -49,6 +49,8 @@ def read_config():
 			y = a
 		if o == 'decay':
 			decay = float(a)
+		if o == 'weight':
+			weight = a
 
 	config = configparser.ConfigParser()
 	config.read(filename)
@@ -82,6 +84,11 @@ def read_config():
 			decay = config.getfloat('general', 'decay')
 		except:
 			decay = 0.8
+	if weight == None:
+		try:
+			weight = config.git('general', 'weight')
+		except:
+			weight = 'equal'
 
 	interposer_type = config.get('interposer', 'intp_type')
 	assert interposer_type in get_intp_types(), 'only support for passive interposer so far (to update with active, photonic, and EMIB options)'
@@ -105,6 +112,7 @@ def read_config():
 		if os.path.exists(path) == False:
 			os.system('mkdir -p ' + path)
 		system.set_decay_factor(decay)
+		system.set_weight_option(weight)
 		system.set_chiplet_count(chiplet_count)
 		system.initialize()
 		system.set_interposer_type(interposer_type)

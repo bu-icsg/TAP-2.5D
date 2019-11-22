@@ -19,6 +19,9 @@ class System_25D:
 	def set_decay_factor(self, decay):
 		self.decay = decay
 		
+	def set_weight_option(self, weight):
+		self.weight = weight
+		
 	def set_interposer_type(self, intp_type):
 		self.intp_type = intp_type
 		
