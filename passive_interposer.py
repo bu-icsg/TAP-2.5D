@@ -121,7 +121,7 @@ class PassiveInterposer(System_25D):
 		util.fill_space.fill_space(x_offset0, self.intp_size / 1000 - x_offset0, y_offset0, self.intp_size / 1000 - y_offset0, self.path+filename+'sim', self.path+filename+'L3', self.path+filename+'L3_UbumpLayer')
 		util.fill_space.fill_space(x_offset0, self.intp_size / 1000 - x_offset0, y_offset0, self.intp_size / 1000 - y_offset0, self.path+filename+'sim', self.path+filename+'L4', self.path+filename+'L4_ChipLayer')
 		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L3_UbumpLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L3_UbumpLayer.pdf")
-		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L4_ChipLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L4_ChipLayer.pdf")
+		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"L4_ChipLayer.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"L4_ChipLayer.pdf")
 
 		with open(self.path+filename +'L5_TIM.flp','w') as L5_TIM:
 			L5_TIM.write("# Floorplan for TIM Layer \n")
@@ -208,6 +208,9 @@ class PassiveInterposer(System_25D):
 		stdout, stderr = proc.communicate()
 		outlist = stdout.split()
 		return (max(list(map(float,outlist[3::2])))-273.15)
+
+	def clean_hotspot(self, filename):
+		os.system('rm ' + self.path + filename + '{*.flp,*.lcf,*.ptrace,*.steady}')
 
 	def compute_ubump_overhead(self):
 		print (self.link_type)

@@ -135,6 +135,7 @@ def anneal():
 	system.gen_flp('step_'+str(step))
 	system.gen_ptrace('step_'+str(step))
 	temp_current = system.run_hotspot('step_'+str(step))
+	system.clean_hotspot('step_'+str(step))
 	length_current = routing.solve_Cplex(system)
 	temp_best, length_best = temp_current, length_current
 	update_minmax(temp_current, length_current)
@@ -175,6 +176,7 @@ def anneal():
 			system_new.gen_flp('step_' + str(step))
 			system_new.gen_ptrace('step_'+str(step))
 			temp_new = system_new.run_hotspot('step_'+str(step))
+			system_new.clean_hotspot('step_'+str(step))
 			length_new = routing.solve_Cplex(system_new)
 			print ('Temp =', temp_new, 'Length =', length_new)
 			update_minmax(temp_new, length_new)
