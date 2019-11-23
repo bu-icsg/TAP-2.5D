@@ -205,8 +205,9 @@ def anneal():
 		register_log(system_best, step_best, temp_best, length_best, T, step)
 		T *= alpha
 		# jumping_ratio /= alpha
-	os.system('rm '+ system.path + '{*.flp,*.lcf,*.ptrace,*.steady}')
+	os.system('rm ' + system.path + '{*.flp,*.lcf,*.ptrace,*.steady}')
 	os.system('gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile='+system.path+'combine.pdf '+system.path + 'step_{1..'+str(step_best)+'}L4.pdf')
+	os.system('rm ' + system.path + 'step_*.pdf')
 	return system_best, step_best, temp_best, length_best
 
 if __name__ == "__main__":

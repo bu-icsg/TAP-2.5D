@@ -161,8 +161,12 @@ def anneal(ind, x, y, width, height, connection_matrix, path):
 	while step < 1000:
 		step += 1
 		tree_new = neighbor(tree)
-		# tree_new.printTree(tree_new.root)
-		tree_new.gen_flp('step_'+str(step))
+		try:
+			DEBUG
+			tree_new.printTree(tree_new.root)
+			tree_new.gen_flp('step_'+str(step))
+		except NameError:
+			pass
 		wl_new = compute_wirelength(tree_new, step, connection_matrix)
 		area_new = compute_area(tree_new, step)
 		try:
