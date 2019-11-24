@@ -83,6 +83,12 @@ def accept_probability(old_temp, new_temp, old_length, new_length, T, weight):
 	elif weight == 'adpTW':
 		a = min(0.1 + (max(old_temp, new_temp) - 45) * 0.01, 0.9)
 		b = 1 - a
+	elif weight == 'adpTWv2':
+		if old_temp < 80 and new_temp < 80:
+			a = 0
+		else:
+			a = min(0.1 + (max(old_temp, new_temp) - 45) * 0.01, 0.9)
+		b = 1 - a
 	if temp_min != temp_max and length_min != length_max:
 		old_cost = a * (old_temp - temp_min) / (temp_max - temp_min) + b * (old_length - length_max) / (length_max - length_min)
 		new_cost = a * (new_temp - temp_min) / (temp_max - temp_min) + b * (new_length - length_max) / (length_max - length_min)
