@@ -1,6 +1,6 @@
 import configparser
 import getopt
-import os, sys
+import os, sys, time
 from passive_interposer import PassiveInterposer
 import routing
 
@@ -144,13 +144,20 @@ if __name__ == "__main__":
 	system = read_config()
 	print (system.chiplet_count, system.intp_size, system.power, system.x)
 	print (system.connection_matrix)
-	filename = 'example'
+	filename = system.path.split('/')[-2]
+	print (system.path)
+	print (filename)
+	start_time = time.time()
 	system.gen_flp(filename)
-	# system.gen_ptrace(filename)
-	# temp = system.run_hotspot(filename)
-	# print (temp)
-	# os.system('perl util/grid_thermal_map.pl ' + system.path+filename+'L4_ChipLayer.flp '+system.path + filename + '.grid.steady > '+system.path+filename+'.svg')
-	# os.system('convert '+system.path + filename + '.svg '+system.path + filename + '.pdf')
+	system.gen_ptrace(filename)
+	temp = system.run_hotspot(filename)
+	os.system('perl util/grid_thermal_map.pl ' + system.path+filename+'L4_ChipLayer.flp '+system.path + filename + '.grid.steady > '+system.path+filename+'.svg')
+	os.system('convert '+system.path + filename + '.svg '+system.path + filename + '.pdf')
+	print (temp, 'C,    takes ', time.time()- start_time)
 
+	start_time = time.time()
 	length = routing.solve_Cplex(system)
-	print (length)
+	print (length, 'mm,    takes ', time.time() - start_time)
+	with open (system.path + filename +  '.txt', 'w') as OUTPUT:
+		OUTPUT.write(str(temp)+'\n')
+		OUTPUT.write(str(length)+'\n')
