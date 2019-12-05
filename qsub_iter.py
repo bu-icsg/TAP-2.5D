@@ -5,13 +5,12 @@ import os, time
 cases = ['homo_ring','homo_donut']
 link_types = ['nppl','ppl']
 multi_start = 10
-intp_size = 26
 
 for c in cases:
 	for ltype in link_types:
 		for i in range(multi_start):
-			for intp_size in range(28,51,2):
-				path = 'outputs/Oct07/run_'+c+'_'+ltype+str(i)+'/'
+			for intp_size in range(26,51,2):
+				path = 'outputs/Oct14_jumping0.1/run_'+c+'_'+ltype+str(i)+'/'
 				if os.path.exists(path+str(intp_size)+'/') or os.path.isfile('run_'+c+'_'+ltype+str(i)+'_'+str(intp_size)+'.sh'):
 					continue
 				elif os.path.isfile(path+str(intp_size - 2)+'/output.txt'):
