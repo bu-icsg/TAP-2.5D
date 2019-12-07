@@ -108,7 +108,7 @@ def init_place_bstree(intp_size, granularity, chiplet_count, width, height, conn
 		# 	grid = block_occupation.set_block_occupation(grid, granularity, x[i], y[i], width[i], height[i], i)
 		# block_occupation.print_grid(grid)
 		if ms == 0 or (ms_wl_best > wl_best and area_best <= 50) or (area_best>50 and ms_area_best > area_best):
-			os.system('gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile=outputs/bstree/comb_init.pdf outputs/bstree/step_{1..'+str(step_best)+'}sim.pdf')
+			# os.system('gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile='+path+ str(ms) + '/'+'comb_init.pdf '+path+ str(ms) + '/'+'step_{1..'+str(step_best)+'}sim.pdf')
 			ms_x, ms_y, ms_width, ms_height = x, y, width, height
 			ms_wl_best, ms_area_best = wl_best, area_best
 	print (ms_wl_best, ms_area_best)
