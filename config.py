@@ -20,7 +20,7 @@ def read_config():
 	opts = parse_command()
 
 	# default config filename
-	filename = 'example.cfg'
+	filename = 'configs/example.cfg'
 	path = None
 	overwrite = []
 	interposer_size = 0
