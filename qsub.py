@@ -1,7 +1,11 @@
 # script for submitting jobs
-import os
+import os, sys
 
-start_point = 9
+if len(sys.argv)>1:
+	start_point = int(sys.argv[1])
+else:
+	start_point = 12
+
 cases = ['ascend910','multigpu','micro150','micro125','micro100','micro75']   #,'topo_a','topo_b','topo_c','topo_d'
 link_types = ['nppl', 'ppl']
 weights = ['adpTWv2']		# not going to run adpT, not perform well. adpTWh also covers the same concept as adpTW, but amend the issue in low temp region. 'equal',
@@ -24,7 +28,7 @@ for c in cases:
 							RUN.write('#$ -N run_'+run_name+'\n#$ -j y \n\n')
 							RUN.write('module load python3/3.6.5\n')
 							RUN.write('module load cplex/12.8_ac\n')
-							RUN.write('time python sim_annealing.py -d '+path +' -c sys_'+c+'.cfg -g link_type='+ltype+' -g weight='+weight+' -g decay='+str(decay)+' -g intp_size='+str(intp_size)+'\n')
+							RUN.write('time python sim_annealing.py -d '+path +' -c configs/sys_'+c+'.cfg -g link_type='+ltype+' -g weight='+weight+' -g decay='+str(decay)+' -g intp_size='+str(intp_size)+'\n')
 						os.system('qsub -l h_rt=72:00:00 -o run_'+run_name+'.o run_'+run_name+'.sh')
 						n += 1
 print ('submit ', n, ' new jobs')
