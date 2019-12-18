@@ -1,15 +1,11 @@
 # script for submitting jobs
-import os, sys, random
+import os, sys, random, time
+import subprocess
 
-def qsub():
-	if len(sys.argv)>1:
-		start_point = int(sys.argv[1])
-	else:
-		start_point = 0
-
+def qsub(start_point):
 	num_systems = 100
 	n = 0
-	for syst in range(3):
+	for syst in range(100):
 		c = 'rand' + str(syst)
 		for ltype in link_types:
 			for weight in weights:
@@ -29,11 +25,28 @@ def qsub():
 								RUN.write('time python sim_annealing.py -d '+path +' -c configs/sys_'+c+'.cfg -g link_type='+ltype+' -g weight='+weight+' -g decay='+str(decay)+' -g intp_size='+str(intp_size)+'\n')
 							os.system('qsub -l h_rt=100:00:00 -o '+path + 'run_'+run_name+'.o ' + path + 'run_'+run_name+'.sh')
 							n += 1
-	print ('submit ', n, ' new jobs')
+	return n
+
+def autocheck():
+	num_new = 0
+	num_jobs = int(subprocess.Popen("qstat -u yenai | wc -l", shell=True, stdout = subprocess.PIPE).communicate()[0]) - 2
+	start_point = 0
+	while num_jobs < 2000:
+		num_new += qsub(start_point)
+		start_point += 1
+		if start_point > 100:
+			print ('submitted ', num_new, ' new jobs, now quit')
+			exit()
+		num_jobs = int(subprocess.Popen("qstat -u yenai | wc -l", shell=True, stdout = subprocess.PIPE).communicate()[0]) - 2
+	print ('submitted ', num_new, ' new jobs')
+	print ('sleep 1h')
+	time.sleep(3600)
+	os.system('qsub autosubmit.sh')
+	exit()
 
 def random_sys_generator():
-	if len(sys.argv) > 1:
-		num_systems = int(sys.argv[1])
+	if len(sys.argv) > 2:
+		num_systems = int(sys.argv[2])
 	else:
 		num_systems = 1
 	for syst in range(num_systems):
@@ -65,8 +78,8 @@ def random_sys_generator():
 							connections[t][s] = bw
 
 						path = 'configs/'
-						# if os.path.isfile(path + 'sys_'+c + '.cfg') == False:
-						if True:
+						if os.path.isfile(path + 'sys_'+c + '.cfg') == False:
+						# if True:
 							with open (path + 'sys_'+c+'.cfg', 'w') as CONFIG:
 								CONFIG.write('[general]\n')
 								CONFIG.write('path = /projectnb/photonoc/yenai/hetero-placer/Dec2019/\n')
@@ -93,6 +106,11 @@ weights = ['adpTWv2']		# not going to run adpT, not perform well. adpTWh also co
 intp_sizes = [50, 45]		 # and 40
 decay_factors = [0.8, 0.85, 0.9, 0.95]    # and 0.95
 
-qsub()
-# random_sys_generator()
-# autocheck()
+functions = {'qsub':qsub, 'sys_gen':random_sys_generator, 'auto':autocheck}
+if len(sys.argv) > 1:
+	fun = sys.argv[1]
+else:
+	print ('please specify function')
+	exit()
+
+functions[fun]()
