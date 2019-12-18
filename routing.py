@@ -95,7 +95,7 @@ def solve_Cplex(system):
 	problem = cplex.Cplex()
 	problem.objective.set_sense(problem.objective.sense.minimize)
 	problem.parameters.threads.set(1)
-	problem.parameters.timelimit.set(300.0)
+	problem.parameters.timelimit.set(500.0)
 	problem.set_log_stream(None)
 	problem.set_results_stream(None)
 
