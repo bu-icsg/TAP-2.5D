@@ -129,6 +129,13 @@ def register_log(system_best, step_best, temp_best, length_best, T, step):
 		LOG.write(str(step_best) + '\n' + str(temp_best) + '\n' + str(length_best) + '\n')
 		LOG.write(str(system_best.x)+'\n'+str(system_best.y) + '\n')
 
+def register_step(system, step, temp, length, T):
+	with open(system.path + 'step.txt', 'a+') as LOG:
+		LOG.write('T = ' +str(T)+'\t step = '+str(step)+ '\n')
+		LOG.write(str(temp) + '\n' + str(length) + '\n')
+		LOG.write(str(system.x)+'\n'+str(system.y) + '\n')
+		LOG.write(str(system.width)+'\n' + str(system.height)+'\n')
+
 def anneal():
 	# first step: read config and generate initial placement
 	global temp_max, temp_min, length_max, length_min
@@ -162,6 +169,7 @@ def anneal():
 	jumping_ratio = 0.9 # fixed to 10% chance to jump
 	# start simulated annealing
 	register_log(system_best, step_best, temp_best, length_best, T, step)
+	register_step(system, step, temp_current, length_current, T)
 	while T > T_min:
 		i = 1
 		while i <= intp_size:
@@ -186,6 +194,7 @@ def anneal():
 			length_new = routing.solve_Cplex(system_new)
 			print ('Temp =', temp_new, 'Length =', length_new)
 			update_minmax(temp_new, length_new)
+			register_step(system_new, step, temp_new, length_new, T)
 			# ap = accept_probability(temp_current, temp_new, T)
 			ap = accept_probability(temp_current, temp_new, length_current, length_new, T, system.weight)
 			r = random.random()
