@@ -514,7 +514,7 @@ class Bstree:
 			for i in range(len(self.ind_arr)):
 				SIMP.write("node_"+str(self.ind_arr[i])+"\t"+str(self.width_arr[i])+"\t"+str(self.height_arr[i])+"\t"+str(self.x_arr[i])+"\t"+str(self.y_arr[i])+"\n")
 			SIMP.write(' \t50\t50\t0\t0\n')
-		os.system("perl util/tofig.pl -f 20 "+self.path+filename+"sim.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"sim.pdf")
+		# os.system("perl util/tofig.pl -f 20 "+self.path+filename+"sim.flp | fig2dev -L ps | ps2pdf - "+self.path+filename+"sim.pdf")
 
 
 if __name__ == "__main__":

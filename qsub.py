@@ -40,7 +40,7 @@ def autocheck():
 		num_jobs = int(subprocess.Popen("qstat -u yenai | wc -l", shell=True, stdout = subprocess.PIPE).communicate()[0]) - 2
 	print ('submitted ', num_new, ' new jobs')
 	print ('sleep 1h')
-	time.sleep(3600)
+	time.sleep(14400)
 	os.system('qsub autosubmit.sh')
 	exit()
 
