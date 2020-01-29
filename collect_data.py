@@ -1,7 +1,7 @@
 # script for submitting jobs
 import os
 
-start_points = range(10)
+start_points = range(30)
 cases = ['ascend910','multigpu','micro150','micro125','micro100','micro75','micro50']  #,'topo_a','topo_b','topo_c','topo_d'
 link_types = ['nppl', 'ppl']
 weights = ['adpTWv2']		# 'equal', 'adpT', 'adpTW', 
@@ -49,27 +49,30 @@ def check_status():
 	print ('running:  ', pending - yes)
 
 def clean():
-	for c in cases:
+	for syst in range(67, 70):
+		c = 'rand' + str(syst)
 		for ltype in link_types:
 			for weight in weights:
 				for decay in decay_factors:
 					for intp_size in intp_sizes:
 						for i in start_points:
-							path = 'outputs/Nov21/' + c + '/' + ltype + '/' + weight + '/' + str(decay) + '/' + str(intp_size) + '/' + str(i) + '/'
+							path = 'outputs/Dec2019/' + c + '/' + ltype + '/' + weight + '/' + str(decay) + '/' + str(intp_size) + '/' + str(i) + '/'
+							if not os.path.exists(path):
+								continue
 							run_name = c+'_'+ltype+'_'+weight + '_'+str(decay)+'_'+str(intp_size)+'_'+str(i)
 							print (path)
 							if os.path.isfile(path + 'output.txt'):
-								# with open('clean_' + run_name + '.sh', 'w') as CLEAN:
-								# 	CLEAN.write('rm '+path+'step*.pdf\n')
-								# 	CLEAN.write('rm ' + path + 'bstree/*/step*\n')
-								# os.system('qsub -j y clean_' + run_name + '.sh')
+								# with open('cl_' + run_name + '.sh', 'w') as CLEAN:
+								# 	CLEAN.write('rm '+path+'combine.pdf\n')
+								# 	CLEAN.write('rm ' + path + 'bstree/*/*.pdf\n')
+								# os.system('qsub -j y cl_' + run_name + '.sh')
 								pass
 							else:
-								# with open('clean_' + run_name + '.sh', 'w') as CLEAN:
-								# 	CLEAN.write('rm -r '+path+'*\n')
-								# 	CLEAN.write('rm run_'+run_name+'.*\n')
-								# os.system('qsub -j y clean_' + run_name + '.sh -j y')
-								pass
+								with open('clean_' + run_name + '.sh', 'w') as CLEAN:
+									CLEAN.write('rm -r '+path+'*\n')
+									# CLEAN.write('rm run_'+run_name+'.*\n')
+								os.system('qsub -j y clean_' + run_name + '.sh -j y')
+								# pass
 								# if os.path.isfile('run_' + run_name +'.sh'):
 								# 	os.system('rm -r ' + path + '*')
 								# 	os.system('rm run_'+run_name+'.*')
@@ -80,5 +83,5 @@ def clean():
 								# os.system('qsub -j y clean_' + run_name + '.sh -j y')
 								# pass
 
-check_status()
-# clean()
+# check_status()
+clean()
