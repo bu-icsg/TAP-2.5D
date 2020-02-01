@@ -117,9 +117,18 @@ def add_temp(conn, entry):
 #     cur.execute(sql, entry)
 #     return cur.fetchall()
 
-n = 0
-syst = 'rand0'
-path = 'outputs/Dec2019/'+ syst + '/nppl/adpTWv2/0.8/45/0/'
+if len(sys.argv) > 1:
+	syst = sys.argv[1]
+else:
+	print ('need to specify syst')
+	exit()
+if len(sys.argv) > 2:
+	path = sys.argv[2]
+else:
+	# path = 'outputs/Dec2019/'+ syst + '/nppl/adpTWv2/0.8/45/0/'
+	print ('need path')
+	exit()
+
 conn = create_connection(path + 'data' + '.sqlite3')
 # create tables if NOT exist
 create_tables(conn)
@@ -159,6 +168,7 @@ cur.execute("SELECT count(*) FROM temp")
 result = cur.fetchone()
 print ('temp end', result)
 conn.close()
+
 # path_h = path + str(h) +'ov/'
 # if os.path.isdir(path_h):
 #     s_intp = os.listdir(path_h)
