@@ -5,7 +5,7 @@ import subprocess
 def qsub(start_point):
 	num_systems = 100
 	n = 0
-	for syst in range(100):
+	for syst in range(num_systems):
 		c = 'rand' + str(syst)
 		for ltype in link_types:
 			for weight in weights:
@@ -43,6 +43,36 @@ def autocheck():
 	time.sleep(14400)
 	os.system('qsub autosubmit.sh')
 	exit()
+
+def to_database():
+	start_point = 77
+	if len(sys.argv)>2:
+		num_jobs = int(sys.argv[2])
+	else:
+		num_jobs = 1000
+	num_systems = 100
+	n = 0
+	for syst in range(start_point, num_systems):
+		c = 'rand' + str(syst)
+		for ltype in link_types:
+			for weight in weights:
+				for decay in decay_factors:
+					for intp_size in intp_sizes:
+						for i in range(100):
+							path = 'outputs/Dec2019/' + c + '/' + ltype + '/' + weight + '/' + str(decay) + '/' + str(intp_size) + '/' + str(i) + '/'
+							print (path)
+							run_name = c+'_'+ltype+'_'+weight + '_'+str(decay)+'_'+str(intp_size)+'_'+str(i)
+							if os.path.isfile(path + 'step.txt') == True and os.path.isfile(path + 'db_'+run_name + '.sh') == False:
+								with open (path + 'db_'+run_name+'.sh', 'w') as RUN:
+									RUN.write('#!/bin/bash -l\n')
+									RUN.write('#$ -N db_'+run_name+'\n#$ -j y \n\n')
+									RUN.write('module load python3/3.6.5\n')
+									RUN.write('python sql.py ' + c + ' ' + path +'\n')
+								os.system('qsub -o '+path + 'db_'+run_name+'.o ' + path + 'db_'+run_name+'.sh')
+								n += 1
+								if n > num_jobs:
+									print ('submit ', num_jobs, ' jobs, exit')
+									exit()
 
 def random_sys_generator():
 	if len(sys.argv) > 2:
@@ -106,7 +136,7 @@ weights = ['adpTWv2']		# not going to run adpT, not perform well. adpTWh also co
 intp_sizes = [50, 45]		 # and 40
 decay_factors = [0.8, 0.85, 0.9, 0.95]    # and 0.95
 
-functions = {'qsub':qsub, 'sys_gen':random_sys_generator, 'auto':autocheck}
+functions = {'qsub':qsub, 'sys_gen':random_sys_generator, 'auto':autocheck, 'db':to_database}
 if len(sys.argv) > 1:
 	fun = sys.argv[1]
 else:
