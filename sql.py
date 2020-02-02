@@ -129,7 +129,9 @@ else:
 	print ('need path')
 	exit()
 
-conn = create_connection(path + 'data' + '.sqlite3')
+local_path = '/scratch/yenai/' + path
+os.system('mkdir -p ' + local_path)
+conn = create_connection(local_path + 'data_temp' + '.sqlite3')
 # create tables if NOT exist
 create_tables(conn)
 
@@ -168,6 +170,8 @@ cur.execute("SELECT count(*) FROM temp")
 result = cur.fetchone()
 print ('temp end', result)
 conn.close()
+os.system('mv ' + local_path + 'data_temp.sqlite3 ' + path + 'data_temp.sqlite3')
+
 
 # path_h = path + str(h) +'ov/'
 # if os.path.isdir(path_h):
