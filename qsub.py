@@ -74,6 +74,35 @@ def to_database():
 									print ('submit ', num_jobs, ' jobs, exit')
 									exit()
 
+def merge_db():
+	start_point = 0
+	if len(sys.argv)>2:
+		num_jobs = int(sys.argv[2])
+	else:
+		num_jobs = 1000
+	num_systems = 100
+	n = 0
+	for syst in range(start_point, num_systems):
+		c = 'rand' + str(syst)
+		for ltype in link_types:
+			for weight in weights:
+				for decay in decay_factors:
+					for intp_size in intp_sizes:
+						path = 'outputs/Dec2019/' + c + '/' + ltype + '/' + weight + '/' + str(decay) + '/' + str(intp_size) + '/'
+						print (path)
+						run_name = c+'_'+ltype+'_'+weight + '_'+str(decay)+'_'+str(intp_size)
+						if os.path.exists(path) == True and os.path.isfile(path + 'mg_'+run_name + '.sh') == False:
+							with open (path + 'mg_'+run_name+'.sh', 'w') as RUN:
+								RUN.write('#!/bin/bash -l\n')
+								RUN.write('#$ -N mg_'+run_name+'\n#$ -j y \n\n')
+								RUN.write('module load python3/3.6.5\n')
+								RUN.write('python merge_db.py ' + path +'\n')
+							os.system('qsub -o '+path + 'mg_'+run_name+'.o ' + path + 'mg_'+run_name+'.sh')
+							n += 1
+							if n > num_jobs:
+								print ('submit ', num_jobs, ' jobs, exit')
+								exit()
+
 def random_sys_generator():
 	if len(sys.argv) > 2:
 		num_systems = int(sys.argv[2])
@@ -136,7 +165,7 @@ weights = ['adpTWv2']		# not going to run adpT, not perform well. adpTWh also co
 intp_sizes = [50, 45]		 # and 40
 decay_factors = [0.8, 0.85, 0.9, 0.95]    # and 0.95
 
-functions = {'qsub':qsub, 'sys_gen':random_sys_generator, 'auto':autocheck, 'db':to_database}
+functions = {'qsub':qsub, 'sys_gen':random_sys_generator, 'auto':autocheck, 'db':to_database, 'merge': merge_db}
 if len(sys.argv) > 1:
 	fun = sys.argv[1]
 else:
