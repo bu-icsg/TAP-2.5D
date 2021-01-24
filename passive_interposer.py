@@ -213,7 +213,7 @@ class PassiveInterposer(System_25D):
 		os.system('rm ' + self.path + filename + '{*.flp,*.lcf,*.ptrace,*.steady}')
 
 	def compute_ubump_overhead(self):
-		print (self.link_type)
+		# print (self.link_type)
 		connection = self.connection_matrix
 		for i in range(self.chiplet_count):
 			assert connection[i][i] == 0, 'a link from and to the same chiplet is not allowed'
@@ -232,7 +232,7 @@ class PassiveInterposer(System_25D):
 					exit()
 			# print (i, s, self.width[i], self.height[i], h, w_stretch)
 			self.hubump[i] = w_stretch
-		print (self.hubump)
+		# print (self.hubump)
 
 	def set_link_type(self, link_type):
 		self.link_type = link_type

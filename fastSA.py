@@ -211,7 +211,7 @@ def anneal(ind, x, y, width, height, connection_matrix, path):
 			T = T1 * (cost_chg_avg + 0.000001) / 100 / step
 		else:
 			T = T1 * (cost_chg_avg + 0.000001) / step
-	print ('wirelength_best = ', wl_best, 'area_best', area_best)
+	# print ('wirelength_best = ', wl_best, 'area_best', area_best)
 	return tree_best, step_best, wl_best, area_best
 
 if __name__ == "__main__":

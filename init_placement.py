@@ -51,7 +51,7 @@ def init_place_tight(intp_size, granularity, chiplet_count, width, height):
 
 def init_place_bstree(intp_size, granularity, chiplet_count, width, height, connection_matrix, path):
 	for ms in range(10):
-		print ('start point ', ms)
+		# print ('start point ', ms)
 		# step 1: construct initial bstree and run fast SA
 		x, y = [0] * chiplet_count, [0] * chiplet_count
 		ind = [i for i in range(chiplet_count)]
