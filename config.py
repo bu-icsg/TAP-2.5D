@@ -88,7 +88,7 @@ def read_config():
 		try:
 			weight = config.git('general', 'weight')
 		except:
-			weight = 'equal'
+			weight = 'adpTWv2'
 
 	interposer_type = config.get('interposer', 'intp_type')
 	assert interposer_type in get_intp_types(), 'only support for passive interposer so far (to update with active, photonic, and EMIB options)'
