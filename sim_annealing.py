@@ -30,19 +30,19 @@ def close_neighbor(system, grid):
 			# re-connect the direction with the appropriate function in order to easily visulize using print-grid(). The dirctions are referring to the grid printed on screen, the directions in functions are referring to conventional x-y coordinates, origin in the left-bottom corner.
 			if d == 'left':
 				if block_occupation.check_down_occupation(grid, granularity, xx, yy - granularity, width, height):
-					print ('chiplet', p + 2, d)
+					# print ('chiplet', p + 2, d)
 					return p, xx, yy - granularity
 			elif (d == 'right') and (yy + granularity <= system.intp_size):
 				if block_occupation.check_up_occupation(grid, granularity, xx, yy + granularity, width, height):
-					print ('chiplet', p + 2, d)
+					# print ('chiplet', p + 2, d)
 					return p, xx, yy + granularity
 			elif d == 'up':
 				if block_occupation.check_left_occupation(grid, granularity, xx - granularity, yy, width, height):
-					print ('chiplet', p + 2, d)
+					# print ('chiplet', p + 2, d)
 					return p, xx - granularity, yy
 			elif (d == 'down') and (xx + granularity <= system.intp_size):
 				if block_occupation.check_right_occupation(grid, granularity, xx + granularity, yy, width, height):
-					print ('chiplet', p + 2, d)
+					# print ('chiplet', p + 2, d)
 					return p, xx + granularity, yy
 	print ('No chiplet can be moved.')
 	exit()
@@ -159,7 +159,7 @@ def anneal():
 	grid = block_occupation.initialize_grid(int(intp_size/granularity))
 	for i in range(system.chiplet_count):
 		grid = block_occupation.set_block_occupation(grid, granularity, system.x[i], system.y[i], system.width[i] + 2 * system.hubump[i], system.height[i] + 2 * system.hubump[i], i)
-	block_occupation.print_grid(grid)
+	# block_occupation.print_grid(grid)
 
 	# set annealing parameters
 	T = 1.0
