@@ -50,6 +50,7 @@ def init_place_tight(intp_size, granularity, chiplet_count, width, height):
 	return x, y, rotation
 
 def init_place_bstree(intp_size, granularity, chiplet_count, width, height, connection_matrix, path):
+	print ("generating initial placement using B*-tree and fastSA")
 	for ms in range(10):
 		# print ('start point ', ms)
 		# step 1: construct initial bstree and run fast SA
@@ -111,7 +112,7 @@ def init_place_bstree(intp_size, granularity, chiplet_count, width, height, conn
 			# os.system('gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile='+path+ str(ms) + '/'+'comb_init.pdf '+path+ str(ms) + '/'+'step_{1..'+str(step_best)+'}sim.pdf')
 			ms_x, ms_y, ms_width, ms_height = x, y, width, height
 			ms_wl_best, ms_area_best = wl_best, area_best
-	print (ms_wl_best, ms_area_best)
+	# print (ms_wl_best, ms_area_best)
 	return ms_x, ms_y, ms_width, ms_height
 
 if __name__ == "__main__":
