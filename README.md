@@ -11,7 +11,15 @@ As a first step, clone the repository:
 git clone https://github.com/bu-icsg/TAP-2.5D.git
 ```
 
-
+## How to run TAP-2.5D
+### Prerequisites
+Our TAP-2.5D is written in Python 3. A python version 3.6.5 or later will work.
+Our routing optimization uses IBM CPLEX python API [5]. A python cplex package version of 12.8 or later will work.
+An example of loading python and cplex (change the module names to the correct versions and package names you installed) before running TAP-2.5D:
+```
+$ module load python3/3.6.5
+$ module load cplex/12.8_ac
+```
 
 ### Publications
 [1] Yenai Ma, Leila Delshadtehrani, Cansu Demirkiran, Jose L. Abellan and Ajay Joshi, “TAP-2.5D: A Thermally-Aware Chiplet Placement Methodology for 2.5D Systems,” to appear in *Proc. Design, Automation and Test in Europe (DATE)* 2021. [pdf](http://people.bu.edu/joshi/files/Ma_TAP-2.5D-DATE2021.pdf)
@@ -21,3 +29,7 @@ git clone https://github.com/bu-icsg/TAP-2.5D.git
 [3] A. Coskun, F. Eris, A. Joshi, A. B. Kahng, Y. Ma*, A. Narayan and V. Srinivas, “Cross-Layer Co-Optimization of Network Design and Chiplet Placement in 2.5D Systems,” in *IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems, vol. 39, no. 12, pp. 5183-5196*, Dec. 2020. (*Lead Author). [pdf](http://people.bu.edu/joshi/files/Ma_TCAD_2020.pdf)
 
 [4] A. Coskun, F. Eris*, A. Joshi, A. Kahng, Y. Ma and V. Srinivas, “A Cross-Layer Methodology for Design and Optimization of Networks in 2.5D Systems,” in *Proc. International Conference on Computer-Aided Design (ICCAD)* 2018. (*Lead Author). [pdf](http://people.bu.edu/joshi/files/interposer-nw-iccad-2018.pdf)
+
+[5] CPLEX Python API Reference Manual. [link](https://www.ibm.com/support/knowledgecenter/SSSA5P_12.8.0/ilog.odms.cplex.help/refpythoncplex/html/frames.html)
+
+
