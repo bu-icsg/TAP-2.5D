@@ -11,8 +11,7 @@ As a first step, clone the repository:
 git clone https://github.com/bu-icsg/TAP-2.5D.git
 ```
 
-## How to run TAP-2.5D
-### Prerequisites
+## Prerequisites
 Our TAP-2.5D is written in Python 3. A python version 3.6.5 or later will work.
 Our routing optimization uses IBM CPLEX python API [5]. A python cplex package version of 12.8 or later will work.
 An example of loading python and cplex (change the module names to the correct versions and package names you installed) before running TAP-2.5D:
@@ -27,23 +26,23 @@ We use HotSpot-6.0 [2] for thermal simulations. Under util/ directory, we place 
 - **grid_thermal_map.pl**, a script for thermal map (.grid.steady) visualization
 - **tofig.pl**, a script for floorplan file (.flp) visualization
 
-### Configurations
+## Configurations
 
 We use .cfg file to describe a target 2.5D system. We place three examples under configs/ directory, which we used for the case studies in our paper [1].
 Here we briefly describe the options in the .cfg file.
 
-#### [general]
+### [general]
 - **path**: the directory we save the output files.
 - **placer_granularity**: the granularity of the occupation matrix grid, in unit of *mm*.
 - **initial_placement**: *"bstree"* (generate initial placement using B*-tree and fastSA approach); *"given"* (a hack to evaluate temperature and wirelength for a dedicated placement, the simulated annealing process is skipped).
 - **decay**: simulated annealing decay factor, it should be greater than 0 and less than 1.
 
-#### [interposer]
+### [interposer]
 - **intp_type**: interposer type, currently we only support *"passive"*
 - **intp_size**: interposer size, in unit of *mm*.
 - **link_type**: *"nppl"* (non-pipelined repeaterless inter-chiplet link); *"ppl"* (gas-station inter-chiplet link).
 
-#### [chiplets]
+### [chiplets]
 - **chiplet_count**: the number of chiplets in the 2.5D system.
 - **widths**: the width of each chiplet, separated by ",".
 - **heights**: the height of each chiplet, separated by ",".
@@ -52,10 +51,23 @@ Here we briefly describe the options in the .cfg file.
 - **x**: the x-coordinate of each chiplet. It is not used in *"bstree"* initial placement, but is required for *"given"* initial placement.
 - **y**: the y-coordinate of each chiplet. It is not used in *"bstree"* initial placement, but is required for *"given"* initial placement.
 
+## How to run TAP-2.5D
+The usage of running TAP-2.5D is as follows:
+```
+$ python sim_annealing.py [-c <config-file>] [-d <outputdir>] [-g <options>] [-h]
+```
 
-### Usage
+The command line arguments are optional:
+- **-h**: print usage information.
+- **-c**: specify the target .cfg file. If not specified, the default config file is *configs/example.cfg*.
+- **-d**: overwrite the output directory (*"path"* in the .cfg file).
+- **-g**: overwrite the arguments in the .cfg file. For example, *"-g intp_size=50 -g decay=0.9"*.
 
-### Publications
+
+
+
+
+## Publications
 [1] Yenai Ma, Leila Delshadtehrani, Cansu Demirkiran, Jose L. Abellan and Ajay Joshi, “TAP-2.5D: A Thermally-Aware Chiplet Placement Methodology for 2.5D Systems,” to appear in *Proc. Design, Automation and Test in Europe (DATE)* 2021. [pdf](http://people.bu.edu/joshi/files/Ma_TAP-2.5D-DATE2021.pdf)
 
 [2] R. Zhang, M. R. Stan, and K. Skadron, "HotSpot 6.0: Validation, Acceleration and Extension." *University of Virginia, Tech. Report CS-2015-04*. [pdf](http://www.cs.virginia.edu/~skadron/Papers/HotSpot60_TR.pdf)
