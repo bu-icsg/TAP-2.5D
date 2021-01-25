@@ -21,6 +21,16 @@ $ module load python3/3.6.5
 $ module load cplex/12.8_ac
 ```
 
+We use HotSpot-6.0 [2] for thermal simulations. Under util/ directory, we place 4 files from the HotSpot-6.0 simulator [2], as follows:
+- **hotspot**, a binary file compiled from HotSpot-6.0
+- **hotspot.config**, a copy of HotSpot-6.0 default config file
+- **grid_thermal_map.pl**, a script for thermal map visualization
+- **tofig.pl**, a script for floorplan file (.flp) visualization
+
+### Configurations
+
+### Usage
+
 ### Publications
 [1] Yenai Ma, Leila Delshadtehrani, Cansu Demirkiran, Jose L. Abellan and Ajay Joshi, “TAP-2.5D: A Thermally-Aware Chiplet Placement Methodology for 2.5D Systems,” to appear in *Proc. Design, Automation and Test in Europe (DATE)* 2021. [pdf](http://people.bu.edu/joshi/files/Ma_TAP-2.5D-DATE2021.pdf)
 
