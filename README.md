@@ -36,7 +36,7 @@ Here we briefly describe the options in the .cfg file.
 - **path**: the directory we save the output files.
 - **placer_granularity**: the granularity of the occupation matrix grid, in unit of *mm*.
 - **initial_placement**: *"bstree"* (generate initial placement using B*-tree and fastSA approach); *"given"* (a hack to evaluate temperature and wirelength for a dedicated placement, the simulated annealing process is skipped).
-- **decay**: simulated annealing decay factor.
+- **decay**: simulated annealing decay factor, it should be greater than 0 and less than 1.
 
 #### [interposer]
 - **intp_type**: interposer type, currently we only support *"passive"*
@@ -44,6 +44,11 @@ Here we briefly describe the options in the .cfg file.
 - **link_type**: *"nppl"* (non-pipelined repeaterless inter-chiplet link); *"ppl"* (gas-station inter-chiplet link).
 
 #### [chiplets]
+- **chiplet_count**: the number of chiplets in the 2.5D system.
+- **widths**: the width of each chiplet, separated by ",".
+- **heights**: the height of each chiplet, separated by ",".
+- **powers**: the power of each chiplet, separated by ",".
+- **connections**: the connection matrix of chiplets. The i-th row and j-th column in the matrix is the bandwidth from chiplet i to chiplet j.
 
 ### Usage
 
