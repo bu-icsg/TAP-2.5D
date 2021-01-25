@@ -28,6 +28,8 @@ We use HotSpot-6.0 [2] for thermal simulations. Under util/ directory, we place 
 - **tofig.pl**, a script for floorplan file (*.flp) visualization
 
 ### Configurations
+We use *.config file to describe a target 2.5D system. We place three examples under configs/ directory, which we used for the case studies in our paper [1].
+
 
 ### Usage
 
