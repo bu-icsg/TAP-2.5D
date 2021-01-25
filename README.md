@@ -24,11 +24,24 @@ $ module load cplex/12.8_ac
 We use HotSpot-6.0 [2] for thermal simulations. Under util/ directory, we place 4 files from the HotSpot-6.0 simulator [2], as follows:
 - **hotspot**, a binary file compiled from HotSpot-6.0
 - **hotspot.config**, a copy of HotSpot-6.0 default config file
-- **grid_thermal_map.pl**, a script for thermal map (*.grid.steady) visualization
-- **tofig.pl**, a script for floorplan file (*.flp) visualization
+- **grid_thermal_map.pl**, a script for thermal map (.grid.steady) visualization
+- **tofig.pl**, a script for floorplan file (.flp) visualization
 
 ### Configurations
-We use *.config file to describe a target 2.5D system. We place three examples under configs/ directory, which we used for the case studies in our paper [1].
+
+We use .cfg file to describe a target 2.5D system. We place three examples under configs/ directory, which we used for the case studies in our paper [1].
+Here we briefly describe the options in the .cfg file.
+
+#### [general]
+- **path**: the directory we save the output files.
+- **placer_granularity**: the granularity of the occupation matrix grid, in unit of *mm*.
+- **initial_placement**: *"bstree"* (generate initial placement using B*-tree and fastSA approach); *"given"* (a hack to evaluate temperature and wirelength for a dedicated placement, the simulated annealing process is skipped).
+- **decay**: simulated annealing decay factor.
+
+#### [interposer]
+- **intp_type**: interposer type, currently we only support *"passive"*
+- **intp_size**: interposer size, in unit of *mm*.
+- **link_type**: *nppl* (non-pipelined repeaterless inter-chiplet link); *ppl* (gas-station inter-chiplet link).
 
 
 ### Usage
