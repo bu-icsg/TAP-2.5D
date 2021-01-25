@@ -41,8 +41,9 @@ Here we briefly describe the options in the .cfg file.
 #### [interposer]
 - **intp_type**: interposer type, currently we only support *"passive"*
 - **intp_size**: interposer size, in unit of *mm*.
-- **link_type**: *nppl* (non-pipelined repeaterless inter-chiplet link); *ppl* (gas-station inter-chiplet link).
+- **link_type**: *"nppl"* (non-pipelined repeaterless inter-chiplet link); *"ppl"* (gas-station inter-chiplet link).
 
+#### [chiplets]
 
 ### Usage
 
