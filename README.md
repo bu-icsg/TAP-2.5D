@@ -49,6 +49,9 @@ Here we briefly describe the options in the .cfg file.
 - **heights**: the height of each chiplet, separated by ",".
 - **powers**: the power of each chiplet, separated by ",".
 - **connections**: the connection matrix of chiplets. The i-th row and j-th column in the matrix is the bandwidth from chiplet i to chiplet j.
+- **x**: the x-coordinate of each chiplet. It is not used in *"bstree"* initial placement, but is required for *"given"* initial placement.
+- **y**: the y-coordinate of each chiplet. It is not used in *"bstree"* initial placement, but is required for *"given"* initial placement.
+
 
 ### Usage
 
