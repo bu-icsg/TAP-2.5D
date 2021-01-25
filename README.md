@@ -24,8 +24,8 @@ $ module load cplex/12.8_ac
 We use HotSpot-6.0 [2] for thermal simulations. Under util/ directory, we place 4 files from the HotSpot-6.0 simulator [2], as follows:
 - **hotspot**, a binary file compiled from HotSpot-6.0
 - **hotspot.config**, a copy of HotSpot-6.0 default config file
-- **grid_thermal_map.pl**, a script for thermal map visualization
-- **tofig.pl**, a script for floorplan file (.flp) visualization
+- **grid_thermal_map.pl**, a script for thermal map (*.grid.steady) visualization
+- **tofig.pl**, a script for floorplan file (*.flp) visualization
 
 ### Configurations
 
