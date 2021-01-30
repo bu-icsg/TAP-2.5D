@@ -51,7 +51,7 @@ Here we briefly describe the options in the .cfg file.
 - **x**: the x-coordinate of each chiplet. It is not used in *"bstree"* initial placement, but is required for *"given"* initial placement.
 - **y**: the y-coordinate of each chiplet. It is not used in *"bstree"* initial placement, but is required for *"given"* initial placement.
 
-## How to run TAP-2.5D
+## How to run TAP-2.5D to search for thermally-aware chiplet placement solution
 The usage of running TAP-2.5D is as follows:
 ```
 $ python sim_annealing.py [-c <config-file>] [-d <outputdir>] [-g <options>] [-h]
@@ -61,8 +61,12 @@ The command line arguments are optional:
 - **-h**: print usage information.
 - **-c**: specify the target .cfg file. If not specified, the default config file is *configs/example.cfg*.
 - **-d**: overwrite the output directory (*"path"* in the .cfg file).
-- **-g**: overwrite the arguments in the .cfg file. For example, *"-g intp_size=50 -g decay=0.9"*.
+- **-g**: overwrite the arguments in the .cfg file. For example, *"-g intp_size=45 -g decay=0.9"*. We currently support overwrite arguments of *intp_size*, *link_type*, *x*, *y*, and *decay*.
 
+For example, to save output files to './output/ascend910/' and use system configuration of configs/ascend910.cfg, and set *intp_size* to 45 and *decay* to 0.9, we can type the command:
+```
+$ python sim_annealing.py -c configs/ascend910.cfg -d output/ascend910/ -g intp_size=45 -g decay=0.9
+```
 
 
 
