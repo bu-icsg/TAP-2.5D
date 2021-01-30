@@ -68,8 +68,11 @@ For example, to save output files to './output/ascend910/' and use system config
 $ python sim_annealing.py -c configs/ascend910.cfg -d output/ascend910/ -g intp_size=45 -g decay=0.9
 ```
 
-
-
+### How to evaluate a 2.5D system with given chiplet layout.
+We provide a shortcut to help generating floorplan desciption files with provided 2.5D system configuration (.cfg), and evaluate the thermal profile and wirelength for the given 2.5D system. To do that, a user needs to provide a system configuration file (.cfg) with informations of the widths, heights, powers, x-/y-coordinates of all chiplets. To launch the evaluation of temperature and wirelength of the system, we can type the command:
+```
+$ python config.py -c configs/target_system.cfg [-d <outputdir>] [-g <options>]
+```
 
 ## Publications
 [1] Yenai Ma, Leila Delshadtehrani, Cansu Demirkiran, Jose L. Abellan and Ajay Joshi, “TAP-2.5D: A Thermally-Aware Chiplet Placement Methodology for 2.5D Systems,” to appear in *Proc. Design, Automation and Test in Europe (DATE)* 2021. [pdf](http://people.bu.edu/joshi/files/Ma_TAP-2.5D-DATE2021.pdf)
