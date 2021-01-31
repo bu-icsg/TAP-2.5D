@@ -71,7 +71,7 @@ $ python sim_annealing.py -c configs/ascend910.cfg -d output/ascend910/ -g intp_
 ### How to evaluate a 2.5D system with given chiplet layout.
 We provide a shortcut to help generating floorplan desciption files with provided 2.5D system configuration (.cfg), and evaluate the thermal profile and wirelength for the given 2.5D system. To do that, a user needs to provide a system configuration file (.cfg) with informations of the widths, heights, powers, x-/y-coordinates of all chiplets. To launch the evaluation of temperature and wirelength of the system, we can type the command:
 ```
-$ python config.py -c configs/target_system.cfg [-d <outputdir>] [-g <options>]
+$ python config.py [-c configs/target_system.cfg] [-d <outputdir>] [-g <options>]
 ```
 
 ## Publications
