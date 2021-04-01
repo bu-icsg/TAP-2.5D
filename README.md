@@ -79,9 +79,9 @@ $ python config.py [-c configs/target_system.cfg] [-d <outputdir>] [-g <options>
 
 [2] R. Zhang, M. R. Stan, and K. Skadron, "HotSpot 6.0: Validation, Acceleration and Extension." *University of Virginia, Tech. Report CS-2015-04*. [pdf](http://www.cs.virginia.edu/~skadron/Papers/HotSpot60_TR.pdf)
 
-[3] A. Coskun, F. Eris, A. Joshi, A. B. Kahng, Y. Ma*, A. Narayan and V. Srinivas, “Cross-Layer Co-Optimization of Network Design and Chiplet Placement in 2.5D Systems,” in *IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems, vol. 39, no. 12, pp. 5183-5196*, Dec. 2020. (*Lead Author). [pdf](http://people.bu.edu/joshi/files/Ma_TCAD_2020.pdf)
+[3] A. Coskun, F. Eris, A. Joshi, A. B. Kahng, Y. Ma*, A. Narayan and V. Srinivas, “Cross-Layer Co-Optimization of Network Design and Chiplet Placement in 2.5D Systems,” in *IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems, vol. 39, no. 12, pp. 5183-5196*, Dec. 2020. **(*Lead Author)**. [pdf](http://people.bu.edu/joshi/files/Ma_TCAD_2020.pdf)
 
-[4] A. Coskun, F. Eris*, A. Joshi, A. Kahng, Y. Ma and V. Srinivas, “A Cross-Layer Methodology for Design and Optimization of Networks in 2.5D Systems,” in *Proc. International Conference on Computer-Aided Design (ICCAD)* 2018. (*Lead Author). [pdf](http://people.bu.edu/joshi/files/interposer-nw-iccad-2018.pdf)
+[4] A. Coskun, F. Eris*, A. Joshi, A. Kahng, Y. Ma and V. Srinivas, “A Cross-Layer Methodology for Design and Optimization of Networks in 2.5D Systems,” in *Proc. International Conference on Computer-Aided Design (ICCAD)* 2018. **(*Lead Author)**. [pdf](http://people.bu.edu/joshi/files/interposer-nw-iccad-2018.pdf)
 
 [5] CPLEX Python API Reference Manual. [link](https://www.ibm.com/support/knowledgecenter/SSSA5P_12.8.0/ilog.odms.cplex.help/refpythoncplex/html/frames.html)
 
