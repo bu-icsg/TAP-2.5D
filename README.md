@@ -75,7 +75,7 @@ $ python config.py [-c configs/target_system.cfg] [-d <outputdir>] [-g <options>
 ```
 
 ## Publications
-[1] Yenai Ma, Leila Delshadtehrani, Cansu Demirkiran, Jose L. Abellan and Ajay Joshi, “TAP-2.5D: A Thermally-Aware Chiplet Placement Methodology for 2.5D Systems,” to appear in *Proc. Design, Automation and Test in Europe (DATE)* 2021. [pdf](http://people.bu.edu/joshi/files/Ma_TAP-2.5D-DATE2021.pdf)
+[1] Y. Ma, L. Delshadtehrani, C. Demirkiran, J. L. Abellan and A. Joshi, “TAP-2.5D: A Thermally-Aware Chiplet Placement Methodology for 2.5D Systems,” in *Proc. Design, Automation and Test in Europe (DATE)* 2021. [pdf](http://people.bu.edu/joshi/files/Ma_TAP-2.5D-DATE2021.pdf)
 
 [2] R. Zhang, M. R. Stan, and K. Skadron, "HotSpot 6.0: Validation, Acceleration and Extension." *University of Virginia, Tech. Report CS-2015-04*. [pdf](http://www.cs.virginia.edu/~skadron/Papers/HotSpot60_TR.pdf)
 
