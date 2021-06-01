@@ -1,7 +1,7 @@
 # TAP-2.5D
 
 ## Overview
-TAP-2.5D is an EDA tool to determine the thermally-aware chiplet placement for heterogeneous 2.5D systems.
+TAP-2.5D is an EDA tool to determine the thermally-aware chiplet placement for homogeneous and heterogeneous 2.5D systems.
 This tool uses a simulated annealing based algorithm to search for a chiplet placement solution that minimizes the total inter-chiplet wirelength and the system temperature.
 We use HotSpot-6.0 [2] for thermal simulation and our self-developed routing optimization tool (MILP) [1, 3, 4] for wirelength estimation.
 In this document, we provide a guideline for running TAP-2.5D [1].
